@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Speaking Coach">
+<meta name="theme-color" content="#1F3A5F">
+<title>My English Coach — Speaking Coach</title>
+<style>
+:root{
+  --primary:#1F3A5F;
+  --accent:#C5563A;
+  --accent-soft:#E8826B;
+  --sand:#F4E9DD;
+  --bg:#FAF8F4;
+  --card:#FFFFFF;
+  --text:#2A2A2A;
+  --muted:#6B6B6B;
+  --border:#E5DFD3;
+  --success:#3A7D44;
+  --danger:#D4523F;
+  --warning:#D69100;
+  --info:#3567A8;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.55;
+  font-size:16px;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+
+.header{
+  background:linear-gradient(135deg,var(--primary) 0%,#2C5081 100%);
+  color:#fff;padding:14px 16px 14px;
+  padding-top:calc(14px + env(safe-area-inset-top));
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+.header-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.title{font-size:18px;font-weight:700}
+.subtitle{font-size:12px;opacity:0.85;margin-top:2px}
+.stats{font-size:12px;opacity:0.85;margin-top:8px;display:flex;gap:14px;flex-wrap:wrap}
+.stats .stat{display:flex;align-items:center;gap:5px}
+.stats .stat strong{font-weight:700;font-size:14px;color:#FFD7B5}
+
+.container{max-width:760px;margin:0 auto;padding:14px}
+
+.section-title{
+  font-size:13px;font-weight:700;color:var(--primary);
+  letter-spacing:0.4px;text-transform:uppercase;
+  margin:18px 4px 10px;display:flex;align-items:center;gap:8px;
+}
+.section-title::before{content:"";width:18px;height:2px;background:var(--accent)}
+
+/* Target selector */
+.selector{
+  background:var(--card);border-radius:14px;padding:14px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+}
+.selector label{font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px}
+.selector select,.selector textarea{
+  width:100%;padding:11px 12px;border-radius:10px;
+  border:1px solid var(--border);background:#fff;
+  font-family:inherit;font-size:14px;
+  -webkit-appearance:none;appearance:none;
+}
+.selector select{margin-bottom:10px}
+.selector textarea{resize:vertical;min-height:60px;display:none}
+.selector.custom textarea{display:block}
+.selector select:focus,.selector textarea:focus{outline:none;border-color:var(--accent)}
+
+.voice-row{
+  display:flex;gap:8px;align-items:center;margin-top:10px;font-size:12px;
+}
+.voice-row label{margin-bottom:0}
+.voice-row select{margin-bottom:0;flex:1}
+
+/* Target display */
+.target-card{
+  background:linear-gradient(135deg,#FFF8EC 0%,#FAF0DD 100%);
+  border-radius:14px;padding:18px 16px;margin-top:10px;
+  border:1px solid var(--border);
+}
+.target-label{
+  font-size:11px;color:var(--accent);font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;
+  text-align:center;
+}
+.target-text{font-size:18px;font-weight:600;color:var(--text);line-height:1.5;text-align:center}
+.target-text .stress{font-weight:800;color:var(--primary);position:relative}
+.target-text .stress::after{
+  content:"";position:absolute;left:50%;top:-6px;transform:translateX(-50%);
+  width:5px;height:5px;border-radius:50%;background:var(--accent);
+}
+.target-text .reduce{color:var(--muted);font-weight:400}
+.target-text .word{
+  display:inline-block;cursor:pointer;
+  padding:2px 4px;border-radius:6px;transition:background 0.15s;
+}
+.target-text .word:hover{background:rgba(197,86,58,0.15)}
+.target-text .word.tricky{border-bottom:2px dashed var(--warning)}
+.target-jp{font-size:13px;color:var(--muted);margin-top:10px;text-align:center}
+
+/* Audio buttons */
+.audio-btns{
+  display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;
+}
+.audio-btn{
+  padding:9px 13px;border-radius:99px;border:none;
+  background:var(--primary);color:#fff;font-family:inherit;
+  font-size:13px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;
+  transition:transform 0.1s;
+}
+.audio-btn:active{transform:scale(0.95)}
+.audio-btn.slow{background:#5B7AA0}
+.audio-btn.word{background:#7C8E9F}
+.audio-btn.playing{background:var(--accent);animation:pulse-soft 1s infinite}
+@keyframes pulse-soft{
+  0%,100%{box-shadow:0 0 0 0 rgba(197,86,58,0.5)}
+  50%{box-shadow:0 0 0 6px rgba(197,86,58,0)}
+}
+
+/* Pronunciation guide */
+.pron-guide{
+  background:var(--card);border-radius:14px;margin-top:10px;
+  border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;
+}
+.pron-toggle{
+  padding:12px 16px;background:var(--card);
+  display:flex;justify-content:space-between;align-items:center;
+  cursor:pointer;font-size:13px;font-weight:600;color:var(--primary);
+}
+.pron-toggle::after{content:"▼";font-size:11px;transition:transform 0.2s}
+.pron-guide.open .pron-toggle::after{transform:rotate(180deg)}
+.pron-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border)}
+.pron-guide.open .pron-body{display:block}
+
+.pron-section{margin-top:12px}
+.pron-section h4{
+  font-size:12px;color:var(--accent);font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  margin:0 0 6px;
+}
+.ipa{
+  font-family:'Times New Roman',serif;font-size:16px;
+  background:#F8F6F2;padding:8px 12px;border-radius:8px;
+  color:#444;border-left:3px solid var(--info);
+}
+.tip-row{
+  display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;
+  padding:8px 10px;background:#FFFCF5;border-radius:8px;
+  border-left:3px solid var(--warning);font-size:12.5px;line-height:1.5;
+}
+.tip-icon{font-size:16px;flex-shrink:0}
+.tip-content strong{color:var(--accent)}
+.linking-row{
+  background:#F0F7F1;border-left:3px solid var(--success);
+}
+.reduction-row{
+  background:#F0F0F8;border-left:3px solid #6B5BBE;
+}
+
+/* Recorder */
+.recorder{
+  text-align:center;padding:24px 20px 20px;
+  background:var(--card);border-radius:14px;
+  box-shadow:var(--shadow);border:1px solid var(--border);margin-top:14px;
+}
+.rec-status{font-size:13px;color:var(--muted);margin-bottom:14px;min-height:20px}
+.rec-button{
+  width:110px;height:110px;border-radius:50%;border:none;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-soft) 100%);
+  color:#fff;font-size:42px;cursor:pointer;
+  box-shadow:0 8px 24px rgba(197,86,58,0.4);
+  transition:transform 0.15s;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;margin:0 auto;
+}
+.rec-button:active{transform:scale(0.95)}
+.rec-button.recording{
+  background:linear-gradient(135deg,#D4523F 0%,#FF6B5A 100%);
+  animation:pulse 1.4s infinite;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 8px 24px rgba(212,82,63,0.4)}
+  50%{box-shadow:0 8px 32px rgba(212,82,63,0.8),0 0 0 12px rgba(212,82,63,0.15)}
+}
+.rec-hint{font-size:11px;color:var(--muted);margin-top:10px}
+.live-transcript{
+  margin-top:14px;padding:11px 13px;background:#F5F1E8;border-radius:10px;
+  min-height:38px;font-size:14px;color:#5a4a3a;font-style:italic;
+  border:1px dashed var(--border);text-align:left;
+}
+.live-transcript:empty::before{content:"音声がここに表示されます...";color:#aaa}
+
+/* Result */
+.result{
+  background:var(--card);border-radius:14px;padding:16px;margin-top:14px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  display:none;
+}
+.result.show{display:block}
+.score-circle{
+  width:120px;height:120px;border-radius:50%;
+  background:conic-gradient(var(--success) calc(var(--score)*1%), #E5DFD3 0);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 12px;position:relative;
+}
+.score-circle::after{
+  content:"";position:absolute;inset:7px;background:#fff;border-radius:50%;
+}
+.score-num{
+  position:relative;z-index:1;font-size:32px;font-weight:800;color:var(--primary);
+}
+.score-num small{font-size:13px;color:var(--muted);font-weight:600}
+.score-tier{text-align:center;font-size:14px;font-weight:700;margin-bottom:14px}
+.tier-excellent{color:var(--success)}
+.tier-good{color:#5C8B3A}
+.tier-okay{color:var(--warning)}
+.tier-rough{color:var(--danger)}
+
+.diff{
+  background:#F8F6F2;border-radius:10px;padding:14px;margin-bottom:12px;
+  font-size:16px;line-height:1.9;border:1px solid var(--border);
+}
+.diff-label{font-size:11px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.w-match{color:var(--success);font-weight:600}
+.w-miss{color:var(--danger);text-decoration:line-through;font-weight:600}
+.w-extra{color:var(--warning);font-style:italic;font-weight:600}
+.diff-legend{display:flex;flex-wrap:wrap;gap:8px;font-size:11px;margin-top:6px}
+.diff-legend span{display:inline-flex;align-items:center;gap:4px}
+.diff-legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+.metric-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.metric{flex:1;min-width:90px;background:#F8F6F2;border-radius:10px;padding:10px;text-align:center;border:1px solid var(--border)}
+.metric-num{font-size:22px;font-weight:800;color:var(--primary);line-height:1}
+.metric-lbl{font-size:11px;color:var(--muted);margin-top:4px;font-weight:600}
+
+.feedback{padding:12px 14px;border-radius:10px;margin-bottom:12px;font-size:13px;line-height:1.6}
+.feedback-ok{background:#E8F5EA;color:var(--success);border-left:4px solid var(--success)}
+.feedback-warn{background:#FFF6E0;color:var(--warning);border-left:4px solid var(--warning)}
+.feedback-bad{background:#FBE6E2;color:var(--danger);border-left:4px solid var(--danger)}
+
+.tip-card{
+  background:#FFFCF5;border:1px dashed #D9C9A0;border-radius:10px;
+  padding:10px 12px;margin-bottom:8px;font-size:13px;color:#5a4a3a;line-height:1.6;
+}
+.tip-card strong{color:var(--accent)}
+
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  padding:11px 14px;border-radius:10px;border:none;
+  font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
+  transition:transform 0.1s;flex:1;min-width:100px;
+}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-secondary{background:#F2EEE6;color:var(--text)}
+.btn-play{background:var(--primary);color:#fff}
+.btn-compare{background:var(--info);color:#fff}
+
+audio{display:none}
+
+/* History */
+.history{margin-top:14px}
+.hist-entry{
+  background:var(--card);border-radius:10px;padding:10px 12px;margin-bottom:8px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;font-size:13px;
+}
+.hist-score{
+  flex-shrink:0;width:42px;height:42px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:14px;
+}
+.hist-text{flex:1;min-width:0}
+.hist-text-en{font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-text-meta{font-size:11px;color:var(--muted);margin-top:2px}
+
+.warn-banner{
+  background:#FFF6E0;border:1px solid #F5D580;border-radius:10px;
+  padding:10px 12px;margin-bottom:14px;font-size:12px;color:#7a5a00;line-height:1.5;
+  display:none;
+}
+.warn-banner.show{display:block}
+
+@media(min-width:720px){
+  .container{padding:20px}
+  .target-text{font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-row">
+    <div>
+      <div class="title">🎙 Speaking Coach</div>
+      <div class="subtitle">ネイティブ音声 · 発音解説 · AIフィードバック</div>
+    </div>
+  </div>
+  <div class="stats">
+    <span class="stat">📊 練習: <strong id="statTotal">0</strong></span>
+    <span class="stat">🏆 ベスト: <strong id="statBest">—</strong></span>
+    <span class="stat">📈 平均: <strong id="statAvg">—</strong></span>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="warn-banner" id="warnBanner">
+    ⚠️ このブラウザは音声認識に未対応です。<br>
+    <strong>Chrome（PC）</strong> または <strong>Safari（iOS 14.5以降）</strong> で開いてください。
+  </div>
+
+  <div class="section-title">① 練習するフレーズを選ぶ</div>
+  <div class="selector" id="selector">
+    <label>カテゴリ・フレーズ</label>
+    <select id="phraseSelect"></select>
+    <textarea id="customText" placeholder="自分で入力する場合はここに英文を書いてください"></textarea>
+    <div class="voice-row">
+      <label>🌍 アクセント:</label>
+      <select id="voiceSelect"></select>
+    </div>
+  </div>
+
+  <div class="target-card" id="targetCard">
+    <div class="target-label">🎯 Target — タップして単語を聞く</div>
+    <div class="target-text" id="targetText">フレーズを選んでください</div>
+    <div class="target-jp" id="targetJp"></div>
+    <div class="audio-btns">
+      <button class="audio-btn" onclick="speakTarget(1.0)">🔊 標準速度</button>
+      <button class="audio-btn slow" onclick="speakTarget(0.65)">🐢 ゆっくり</button>
+      <button class="audio-btn word" onclick="speakWordByWord()">📖 単語ごと</button>
+    </div>
+  </div>
+
+  <div class="pron-guide" id="pronGuide">
+    <div class="pron-toggle" onclick="document.getElementById('pronGuide').classList.toggle('open')">
+      <span>📚 発音解説 (タップで開く)</span>
+    </div>
+    <div class="pron-body" id="pronBody"></div>
+  </div>
+
+  <div class="section-title">② 録音する</div>
+  <div class="recorder">
+    <div class="rec-status" id="recStatus">マイクボタンをタップして話してください</div>
+    <button class="rec-button" id="recBtn" onclick="toggleRecord()">🎙</button>
+    <div class="rec-hint">タップで開始 / 停止</div>
+    <div class="live-transcript" id="liveText"></div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="score-circle" id="scoreCircle" style="--score:0">
+      <div class="score-num" id="scoreNum">0<small>/100</small></div>
+    </div>
+    <div class="score-tier" id="scoreTier"></div>
+
+    <div class="metric-row">
+      <div class="metric">
+        <div class="metric-num" id="mWords">0</div>
+        <div class="metric-lbl">合致単語</div>
+      </div>
+      <div class="metric">
+        <div class="metric-num" id="mMissed">0</div>
+        <div class="metric-lbl">抜け落ち</div>
+      </div>
+      <div class="metric">
+        <div class="metric-num" id="mWpm">0</div>
+        <div class="metric-lbl">WPM</div>
+      </div>
+    </div>
+
+    <div class="diff">
+      <div class="diff-label">📋 比較結果</div>
+      <div id="diffView"></div>
+      <div class="diff-legend">
+        <span><i style="background:var(--success)"></i>合致</span>
+        <span><i style="background:var(--danger)"></i>言えなかった</span>
+        <span><i style="background:var(--warning)"></i>余分・違う単語</span>
+      </div>
+    </div>
+
+    <div id="feedbackArea"></div>
+
+    <div class="actions">
+      <button class="btn btn-play" onclick="speakTarget(1.0)">🔊 ネイティブ</button>
+      <button class="btn btn-play" onclick="playRecording()">▶️ 自分</button>
+      <button class="btn btn-compare" onclick="compareAudios()">🆚 交互再生</button>
+      <button class="btn btn-primary" onclick="resetForRetry()">🔁 もう一度</button>
+    </div>
+  </div>
+
+  <div class="section-title">③ 練習履歴</div>
+  <div class="history" id="history"></div>
+
+</div>
+
+<audio id="audioPlayer" controls></audio>
+
+<script>
+// ============== DATA ==============
+// ipa is curated for high-priority phrases. tips are auto-generated for the rest.
+const PHRASES = [
+  // SELF-INTRO (with curated IPA & detailed pronunciation tips)
+  {cat:"Self-Intro",en:"I'm based in Tokyo.",jp:"東京を拠点にしています",
+    ipa:"/aɪm beɪst ɪn ˈtoʊkioʊ/",
+    stress:["BASED","Tokyo"],
+    tips:[
+      {type:"linking",msg:"<strong>based in</strong> → 連結して「ベイスティン」のように一語感覚で。tの音はほぼ消える"},
+      {type:"reduce",msg:"<strong>I'm</strong> は「アイム」より「アm」と短く。<strong>in</strong> も「イン」より「ン」に近く弱く"},
+      {type:"watch",msg:"<strong>Tokyo</strong> は「TOH-kee-oh」(3音節)。日本語の「東京」より口を大きく開ける"}
+    ]},
+  {cat:"Self-Intro",en:"I work for a global food company.",jp:"グローバル外食企業で働いています",
+    ipa:"/aɪ wɜːrk fər ə ˈɡloʊbəl fuːd ˈkʌmpəni/",
+    stress:["WORK","GLOBAL","FOOD","COMPANY"],
+    tips:[
+      {type:"watch",msg:"<strong>work</strong> の R: 「ワーク」ではなく舌を奥に丸めた「wɜːrk」"},
+      {type:"reduce",msg:"<strong>for a</strong> → 「fə-rə」と非常に弱く一気に。「フォー・アー」は強すぎる"},
+      {type:"watch",msg:"<strong>global</strong> の最後の L: 舌先を上の歯茎にしっかり当てる「グローバ↗ル」"},
+      {type:"linking",msg:"<strong>food company</strong> → 「フードカンパニー」と一気に。<strong>d</strong>と<strong>c</strong>の境目はくっつける"}
+    ]},
+  {cat:"Self-Intro",en:"I oversee our overseas brands.",jp:"海外ブランドを統括しています",
+    ipa:"/aɪ ˌoʊvərˈsiː aʊər ˌoʊvərˈsiːz brændz/",
+    stress:["o-ver-SEE","o-ver-SEAS","BRANDS"],
+    tips:[
+      {type:"watch",msg:"<strong>oversee</strong> と <strong>overseas</strong>: アクセントは最後の音節 (see / seas)。混同注意"},
+      {type:"watch",msg:"<strong>overseas</strong> の最後の <strong>s</strong> は <strong>z</strong> の音 (オーバスィー<u>ズ</u>)"},
+      {type:"watch",msg:"<strong>brands</strong> の最後の <strong>nds</strong>: 子音3つを一気に発音。日本語的に「ンドゥズ」と母音を入れない"}
+    ]},
+  {cat:"Self-Intro",en:"I'm in charge of strategy.",jp:"戦略を担当しています",
+    ipa:"/aɪm ɪn tʃɑːrdʒ əv ˈstrætədʒi/",
+    stress:["CHARGE","STRA-tegy"],
+    tips:[
+      {type:"linking",msg:"<strong>in charge of</strong> → 「インチャージョブ」と一息で。of の v は弱め"},
+      {type:"watch",msg:"<strong>charge</strong> の <strong>ch</strong> + <strong>r</strong>: 「チャー」の後にしっかりR"},
+      {type:"watch",msg:"<strong>strategy</strong> は STRA-tegy (第1音節アクセント)。「ストラテジー」と平坦にしない"}
+    ]},
+  {cat:"Self-Intro",en:"I lead the strategy team.",jp:"戦略チームを率いています",
+    ipa:"/aɪ liːd ðə ˈstrætədʒi tiːm/",
+    stress:["LEAD","STRA-tegy","TEAM"],
+    tips:[
+      {type:"watch",msg:"<strong>lead</strong> の L: 舌先を上の歯茎に。<strong>read</strong> (R) と区別"},
+      {type:"reduce",msg:"<strong>the</strong> → ə (弱形)。「ザ」より「ダ」に近い"}
+    ]},
+  {cat:"Self-Intro",en:"I report to the CSO.",jp:"CSOに報告しています"},
+  {cat:"Self-Intro",en:"I've been in this role for two years.",jp:"この役職について2年です",
+    ipa:"/aɪv bɪn ɪn ðɪs roʊl fər tuː jɪərz/",
+    stress:["BEEN","ROLE","TWO","YEARS"],
+    tips:[
+      {type:"reduce",msg:"<strong>I've been</strong> → 「アイヴ・ビン」と短く。have の v だけ残す"},
+      {type:"watch",msg:"<strong>role</strong> の R + L: R で始まり、最後は L。舌の位置が真逆になる難所"},
+      {type:"watch",msg:"<strong>years</strong> の <strong>y</strong> + <strong>ears</strong>: 「イヤーズ」。<strong>ears</strong> 単体と違う"}
+    ]},
+  {cat:"Self-Intro",en:"Pleased to meet you.",jp:"お会いできて光栄です",
+    ipa:"/pliːzd tə miːt juː/",
+    stress:["PLEASED","MEET"],
+    tips:[
+      {type:"linking",msg:"<strong>meet you</strong> → 「ミーチュ」と連結 (t + y → ch音)"},
+      {type:"watch",msg:"<strong>pleased</strong> の <strong>ed</strong> は <strong>d</strong> の音「プリーズド」"}
+    ]},
+  {cat:"Self-Intro",en:"I'm looking forward to working with you.",jp:"一緒に働けるのを楽しみにしています",
+    ipa:"/aɪm ˈlʊkɪŋ ˈfɔːrwərd tə ˈwɜːrkɪŋ wɪð juː/",
+    stress:["LOOK-ing","FOR-ward","WORK-ing"],
+    tips:[
+      {type:"watch",msg:"<strong>looking</strong> の <strong>oo</strong>: 「ルー」ではなく短い「ʊ」(book と同じ)"},
+      {type:"watch",msg:"<strong>forward</strong>: <strong>w</strong> を忘れずに。「フォーワド」"},
+      {type:"reduce",msg:"<strong>to</strong> → 「トゥ」より「tə」と弱く一瞬で"}
+    ]},
+  {cat:"Self-Intro",en:"Thanks for having me.",jp:"お招きいただきありがとうございます",
+    ipa:"/θæŋks fər ˈhævɪŋ miː/",
+    stress:["THANKS","HAV-ing"],
+    tips:[
+      {type:"watch",msg:"<strong>Thanks</strong>: 舌先を歯に当てて空気で「θ」。サ行にしない"},
+      {type:"watch",msg:"<strong>having</strong> の <strong>v</strong>: 下唇を軽く噛む。バビブベボにしない"}
+    ]},
+  {cat:"Self-Intro",en:"Nice to meet you. I'm Kazuki Onda, based in Tokyo. I work for a global food company. I oversee our overseas brands and lead the strategy team. I'm looking forward to working with you.",jp:"フル自己紹介（Day1練習用）",
+    tips:[
+      {type:"watch",msg:"全体を <strong>5つのチャンク</strong> に分けて練習: ① 挨拶 ② 名前+拠点 ③ 会社 ④ 役割 ⑤ 締め"},
+      {type:"linking",msg:"各文の終わりで <strong>1拍休む</strong>。早口にならないように"}
+    ]},
+  // EMAIL
+  {cat:"Email",en:"I hope this email finds you well.",jp:"お元気でいらっしゃいますか",
+    ipa:"/aɪ hoʊp ðɪs ˈiːmeɪl faɪndz juː wel/",
+    tips:[
+      {type:"linking",msg:"<strong>finds you</strong> → 「ファインジュ」連結"},
+      {type:"watch",msg:"<strong>well</strong> の最後 L: 舌先を歯茎に。「ウェル」より「ウェ↗ゥ」"}
+    ]},
+  {cat:"Email",en:"Thanks for your message.",jp:"ご連絡ありがとうございます"},
+  {cat:"Email",en:"Could you please share the latest sales report?",jp:"最新の売上レポートを共有いただけますか？",
+    tips:[
+      {type:"linking",msg:"<strong>could you</strong> → 「クッジュ」連結"},
+      {type:"watch",msg:"<strong>latest</strong>: 「レイテスト」より「ley-tist」、最後の t は弱く"}
+    ]},
+  {cat:"Email",en:"I'd be happy to help.",jp:"喜んでお手伝いします",
+    ipa:"/aɪd biː ˈhæpi tə help/",
+    tips:[
+      {type:"reduce",msg:"<strong>I'd be</strong> → 「アイドビー」一気に"},
+      {type:"watch",msg:"<strong>happy</strong> の <strong>æ</strong>: 「ハッピー」より口を横に開く「hæpi」"}
+    ]},
+  {cat:"Email",en:"Of course, happy to take that on.",jp:"もちろんです、喜んで引き受けます"},
+  {cat:"Email",en:"Let me know if you need anything else.",jp:"他に必要なものがあれば教えてください",
+    tips:[
+      {type:"reduce",msg:"<strong>let me</strong> → 「レッミー」(t は弱く/消える)"},
+      {type:"linking",msg:"<strong>need anything</strong> → 「ニーデニシング」"}
+    ]},
+  {cat:"Email",en:"I'll have the materials ready by Friday.",jp:"資料は金曜までに準備します",
+    tips:[
+      {type:"reduce",msg:"<strong>I'll</strong> → 「アイル」より「アゥ」と短く"},
+      {type:"watch",msg:"<strong>materials</strong>: 「マテリアル」より「muh-TIR-ee-uls」(2音節目アクセント)"}
+    ]},
+  {cat:"Email",en:"I'll get back to you by Wednesday.",jp:"水曜までに改めてご連絡します"},
+  {cat:"Email",en:"Apologies for the delayed response.",jp:"返信が遅くなり申し訳ありません",
+    tips:[
+      {type:"watch",msg:"<strong>apologies</strong>: ə-POL-ə-jeez (2音節目アクセント)"},
+      {type:"watch",msg:"<strong>response</strong>: ri-SPONS (2音節目アクセント)"}
+    ]},
+  {cat:"Email",en:"Just a quick update on the London store launch.",jp:"ロンドン店オープンの簡単な進捗共有です"},
+  {cat:"Email",en:"Looking forward to your thoughts.",jp:"ご意見をお待ちしております"},
+  {cat:"Email",en:"Could we set up a quick call this week?",jp:"今週、短い通話をセットアップできますか？"},
+  // INDUSTRY
+  {cat:"Industry",en:"Same-store sales were up five percent year over year.",jp:"既存店売上が前年同期比5%増でした",
+    stress:["SAME-store","SALES","FIVE","PER-cent","YEAR","YEAR"],
+    tips:[
+      {type:"watch",msg:"<strong>same-store</strong>: ハイフン形容詞は SAME を強く"},
+      {type:"reduce",msg:"<strong>year over year</strong> → 「ヤーロヴァヤー」と連結"}
+    ]},
+  {cat:"Industry",en:"Margins are tight in the food industry.",jp:"外食業界は利益率が薄いです",
+    stress:["MAR-gins","TIGHT","FOOD","IN-dustry"],
+    tips:[
+      {type:"watch",msg:"<strong>margins</strong> の <strong>g</strong>: 「マージン」の「ジ」音 /dʒ/"},
+      {type:"watch",msg:"<strong>industry</strong>: IN-dus-tree (第1音節アクセント)"}
+    ]},
+  {cat:"Industry",en:"We need to bring labor cost down to twenty-five percent.",jp:"人件費率を25%まで下げる必要があります"},
+  {cat:"Industry",en:"Store traffic increased seven percent this quarter.",jp:"今四半期は来店客数が7%増加しました"},
+  {cat:"Industry",en:"AOV is trending up.",jp:"客単価が上昇傾向です",
+    tips:[
+      {type:"watch",msg:"<strong>AOV</strong>: A-O-V と一文字ずつ。略語の典型読み"}
+    ]},
+  {cat:"Industry",en:"Top-line growth is strong.",jp:"売上成長は堅調です",
+    tips:[
+      {type:"watch",msg:"<strong>growth</strong> の <strong>th</strong>: 舌先を歯に。サ行ではなくθ"},
+      {type:"watch",msg:"<strong>strong</strong>: 「ストロング」より「strɔːŋ」、ngで終わる"}
+    ]},
+  {cat:"Industry",en:"We're opening three new flagship stores in Europe.",jp:"欧州で3店舗の旗艦店をオープンします"},
+  {cat:"Industry",en:"Supply chain disruption affected us in March.",jp:"3月にサプライチェーン混乱の影響を受けました"},
+  {cat:"Industry",en:"Operations are running smoothly across all twelve markets.",jp:"全12市場でオペレーションは順調です"},
+  {cat:"Industry",en:"Let me walk you through the P and L.",jp:"PLを順を追って説明します",
+    tips:[
+      {type:"linking",msg:"<strong>walk you</strong> → 「ウォーキュ」(k + y → 連結)"},
+      {type:"reduce",msg:"<strong>P and L</strong> → 「ピーアンドエル」より「ピーエニエル」と短く"}
+    ]},
+  // MEETING
+  {cat:"Meeting",en:"Thanks everyone for joining today's call.",jp:"皆さん、本日のコールにご参加ありがとうございます"},
+  {cat:"Meeting",en:"Let's get started.",jp:"始めましょう",
+    ipa:"/lets ɡet ˈstɑːrtəd/",
+    stress:["GET","START-ed"],
+    tips:[
+      {type:"linking",msg:"<strong>let's get</strong> → 「レッツゲッ」、最後の t は弱く"},
+      {type:"watch",msg:"<strong>started</strong>: 「スターティッド」より「STAR-tid」"}
+    ]},
+  {cat:"Meeting",en:"Could you walk us through the European numbers?",jp:"欧州の数字を順を追って説明してくれますか？"},
+  {cat:"Meeting",en:"I'd like to add to that.",jp:"それに付け加えたいです",
+    tips:[
+      {type:"linking",msg:"<strong>add to that</strong> → 「アッタ・ザ」と t がほぼ消える"}
+    ]},
+  {cat:"Meeting",en:"Sorry, could you repeat that more slowly?",jp:"すみません、もう少しゆっくり言ってもらえますか？"},
+  {cat:"Meeting",en:"Just to confirm, the deadline is May thirtieth.",jp:"確認ですが、期限は5月30日ですね"},
+  {cat:"Meeting",en:"I'm not sure I follow.",jp:"理解できているか自信がありません",
+    tips:[
+      {type:"reduce",msg:"<strong>I'm not</strong> → 「アイム・ナッ」と短く"},
+      {type:"watch",msg:"<strong>follow</strong>: F (下唇噛む) + 最後 L (舌先歯茎)"}
+    ]},
+  {cat:"Meeting",en:"Let's circle back to this after the budget.",jp:"予算の話の後、この件にまた戻りましょう"},
+  {cat:"Meeting",en:"Based on our market data, I'm confident this strategy will work in Japan.",jp:"市場データに基づき、この戦略は日本で機能すると確信しています"},
+  // ===== PRONUNCIATION PRACTICE (Difficult words & phrases) =====
+  {cat:"Pronunciation",en:"premiumization",jp:"プレミアム化（外資系頻出・難所単語）",
+    ipa:"/ˌpriː.mi.əm.aɪˈzeɪ.ʃən/",
+    stress:["PREE-mi-um","ai-ZAY-shun"],
+    tips:[
+      {type:"watch",msg:"5音節 <strong>PRE-mi-um-ai-ZAY-shun</strong>。第4音節 (ZAY) を最も強く"},
+      {type:"watch",msg:"<strong>ai-ZAY-shun</strong> は <strong>realization, optimization, digitization</strong> など ~ization 系すべて共通"},
+      {type:"linking",msg:"<strong>2チャンクで練習</strong>: 「PRE-mi-um」+「ai-ZAY-shun」を別々に5回ずつ → 繋げる"}
+    ]},
+  {cat:"Pronunciation",en:"realization",jp:"認識・実現（~ization シリーズの基本）",
+    ipa:"/ˌriː.ə.ləˈzeɪ.ʃən/",
+    stress:["ri-uh-luh-ZAY-shun"],
+    tips:[
+      {type:"watch",msg:"アクセントは <strong>ZAY</strong>。日本人は前のほうにアクセントを置きがち"}
+    ]},
+  {cat:"Pronunciation",en:"optimization",jp:"最適化",
+    ipa:"/ˌɒp.tɪ.maɪˈzeɪ.ʃən/",
+    stress:["op-ti-mai-ZAY-shun"],
+    tips:[
+      {type:"watch",msg:"<strong>OP-ti-mai-ZAY-shun</strong>。<strong>mai</strong> の i は long-i (ai) 音"}
+    ]},
+  {cat:"Pronunciation",en:"infrastructure",jp:"インフラ構造",
+    ipa:"/ˈɪn.frəˌstrʌk.tʃər/",
+    stress:["IN-fra-struk-cher"],
+    tips:[
+      {type:"watch",msg:"アクセントは第1音節 <strong>IN</strong>。「インフラストラクチャー」と平坦に言わない"},
+      {type:"watch",msg:"<strong>struk-cher</strong> の <strong>cher</strong> は ch + 弱母音"}
+    ]},
+  {cat:"Pronunciation",en:"category",jp:"カテゴリー（よくミスる単語）",
+    ipa:"/ˈkæt.ə.ɡɔːr.i/",
+    stress:["KAT-uh-gor-ee"],
+    tips:[
+      {type:"watch",msg:"<strong>KAT-uh-gor-ee</strong>。日本語「カテゴリー」と全く違う音"}
+    ]},
+  // ===== DAY 3 SHADOWING SCRIPT (Strategy Pitch) =====
+  {cat:"Pronunciation",en:"Thanks for the time today. Following up on the premiumization article we discussed, I'd like to propose a four-week pilot in our Tokyo flagship to test premium tiers. The Japanese market is showing strong perceived value response, and our top-line growth in Q1 was driven by exactly this kind of premium positioning. I'm confident this approach will protect our bottom line as inflation pressures continue. Let me know if you'd like the detailed breakdown by next Friday.",
+    jp:"Day 3 戦略提案ピッチ（フル版）",
+    tips:[
+      {type:"watch",msg:"全体を <strong>5チャンク</strong>に分けて練習: ① 挨拶 ② 提案 ③ 根拠 ④ 確信 ⑤ 締め"},
+      {type:"linking",msg:"<strong>following up on</strong> → 一気に。<strong>premium tiers</strong> → 連結"},
+      {type:"watch",msg:"難所: <strong>premiumization</strong>, <strong>perceived value</strong>, <strong>this kind of premium positioning</strong>"}
+    ]},
+
+  // ===== 📅 LESSON REVIEW (Day-by-Day Master Scripts) =====
+  {cat:"📅 Lesson Review",
+    en:"Nice to meet you. I'm Kazuki Onda, based in Tokyo. I work for a global food company. I oversee our overseas brands and lead the strategy team. I'm looking forward to working with you.",
+    jp:"📌 Day 1 自己紹介 — ベスト版 (5/2に92点)",
+    tips:[
+      {type:"watch",msg:"5チャンクで練習: ① 挨拶 ② 名前+拠点 ③ 会社 ④ 役割 ⑤ 締め"},
+      {type:"linking",msg:"<strong>based in Tokyo</strong> → 「ベイスティン」連結"}
+    ]},
+  {cat:"📅 Lesson Review",
+    en:"Hi everyone, thanks for joining today's call. I'd like to walk you through our Q1 results in Japan. Same-store sales were up 8% year over year, driven by strong store traffic in our flagship locations. AOV is trending up thanks to the new premium menu, which we plan to roll out to the rest of the network in Q2. Let me know if you'd like the detailed breakdown.",
+    jp:"📌 Day 2 Q1 業績アップデート — シャドーイング (5/3に84点)",
+    tips:[
+      {type:"watch",msg:"<strong>year over year</strong> → 連結 「ヤーロヴァヤー」"},
+      {type:"watch",msg:"<strong>walk you through</strong> → 「ウォーキュ」連結"}
+    ]},
+  {cat:"📅 Lesson Review",
+    en:"Hi John. I hope this email finds you well. Following up on the premiumization article, Japanese industry data shows that premium menu items have grown about 10 percentage points over three years. What is driving this shift? I believe premium items justify their higher cost through perceived value, allowing us to protect our bottom line. This strategy is likely to resonate in the Japanese market. If we delay, margins will erode under inflation pressure. I'd like to propose a 4-week pilot in our Tokyo flagship to test premium tiers. Let me know if you'd like to discuss. Best regards, Kazuki.",
+    jp:"📌 Day 2 プレミアム化提案メール — 磨き版",
+    tips:[
+      {type:"watch",msg:"難所: <strong>premiumization</strong>, <strong>perceived value</strong>"},
+      {type:"linking",msg:"文章間で1拍休む。早口にならないように"}
+    ]},
+  {cat:"📅 Lesson Review",
+    en:"Thanks for the time today. Following up on the premiumization article we discussed, I'd like to propose a four-week pilot in our Tokyo flagship to test premium tiers. The Japanese market is showing strong perceived value response, and our top-line growth in Q1 was driven by exactly this kind of premium positioning. I'm confident this approach will protect our bottom line as inflation pressures continue. Let me know if you'd like the detailed breakdown by next Friday.",
+    jp:"📌 Day 3 戦略提案ピッチ — シャドーイング (5/4に89点)",
+    tips:[
+      {type:"watch",msg:"5チャンクで: ① 挨拶 ② 提案 ③ 根拠 ④ 確信 ⑤ 締め"},
+      {type:"watch",msg:"<strong>premiumization</strong> はこのスクリプトの最難所"}
+    ]},
+  {cat:"📅 Lesson Review",
+    en:"Hi John. I hope this email finds you well. Following up on the article on loyalty programs, loyalty is no longer just a marketing tool. It is becoming a C-suite priority. Japanese industry data shows that members of well-designed programs visit 35% more often and spend 20% more per visit than non-members. I'm confident this approach will resonate in the Japanese market. I'd like to propose a 2-month pilot in Tokyo and Osaka to test the new app rewards. If successful, we will roll it out to the rest of the network within 12 months. Let me know if you'd like the detailed plan. Best regards, Kazuki.",
+    jp:"📌 Day 3 ロイヤリティ戦略メール — 磨き版 (再フレーミング統合)",
+    tips:[
+      {type:"watch",msg:"中核フレーズ: <strong>loyalty is no longer just a marketing tool. It is becoming a C-suite priority</strong>"},
+      {type:"linking",msg:"<strong>I'd like to propose</strong> → 「アイドライク・トゥプロポーズ」一気に"}
+    ]},
+  {cat:"📅 Lesson Review",
+    en:"Thanks for taking the time today. Following up on our staff retention conversation, I'd like to share three observations from our Tokyo flagship. First, our turnover rate dropped 25% after introducing the new training program. Second, employees who attend monthly co-creation sessions stay 40% longer. Third, labor cost as a percentage of revenue is now down to 28%, our best ratio in three years. I'm confident this approach will scale across our Asian markets.",
+    jp:"📌 Day 4 スタッフリテンション更新 — シャドーイング (今日の練習用)",
+    tips:[
+      {type:"watch",msg:"新語: <strong>turnover rate</strong> (離職率), <strong>retention</strong> (定着), <strong>scale across</strong> (展開する)"},
+      {type:"linking",msg:"<strong>taking the time</strong> → 「TAY-king-thuh-time」"},
+      {type:"watch",msg:"3つの数字 (25%, 40%, 28%) を強調しながらも自然なリズムで"}
+    ]},
+
+  // ===== 🔁 REFRAMING DRILL (Day 3 — 5 sentences) =====
+  {cat:"🔁 Reframing Drill",
+    en:"Store visits are no longer inspections. They are co-creation moments with our local teams.",
+    jp:"再フレーミング ① 店舗訪問は視察ではない、共創の場",
+    tips:[
+      {type:"watch",msg:"<strong>co-creation</strong> /koʊ kriˈeɪʃən/ - 5音節をしっかり"}
+    ]},
+  {cat:"🔁 Reframing Drill",
+    en:"Labor cost is no longer just a cost. It is a competitive differentiator.",
+    jp:"再フレーミング ② 人件費はコストではなく差別化要因",
+    tips:[
+      {type:"watch",msg:"<strong>differentiator</strong> /ˌdɪfəˈrɛnʃieɪtər/ - 5音節、第3音節に主アクセント"}
+    ]},
+  {cat:"🔁 Reframing Drill",
+    en:"English is no longer a bonus skill. It is a core business skill.",
+    jp:"再フレーミング ③ 英語はボーナスではなくビジネスの基本",
+    tips:[
+      {type:"watch",msg:"<strong>core business skill</strong> の語順 (形容詞 → 名詞)"}
+    ]},
+  {cat:"🔁 Reframing Drill",
+    en:"Data analytics is no longer an IT skill. It is a leadership skill.",
+    jp:"再フレーミング ④ データ分析はITではなくリーダーシップ",
+    tips:[
+      {type:"watch",msg:"<strong>an IT</strong> (a ではなく an) - 音で判断"}
+    ]},
+  {cat:"🔁 Reframing Drill",
+    en:"Franchise stores are no longer just sales channels. They are showcases for our brand experience.",
+    jp:"再フレーミング ⑤ フランチャイズはチャネルではなくブランド体験の場",
+    tips:[
+      {type:"watch",msg:"<strong>channels / showcases</strong> - 複数形に注意"}
+    ]}
+];
+
+// ============== STATE ==============
+const STORAGE_KEY = "speakingCoach_v2";
+let state = loadState();
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("speakingCoach_v1");
+    if(raw){
+      const s = JSON.parse(raw);
+      return { history: s.history || [], voicePref: s.voicePref || "" };
+    }
+  }catch(e){}
+  return { history: [], voicePref: "" };
+}
+function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+
+// ============== COMMON FUNCTIONS WORDS (for stress detection) ==============
+const FUNCTION_WORDS = new Set([
+  "a","an","the","is","are","was","were","be","been","am","'m","'s","'re","'ve","'d","'ll",
+  "i","you","he","she","it","we","they","me","him","her","us","them","my","your","his","its","our","their",
+  "this","that","these","those",
+  "and","or","but","so","yet","for","nor","because","if","when","while","as","than","that",
+  "to","of","in","on","at","by","with","from","into","onto","upon","over","under","through",
+  "do","does","did","have","has","had","will","would","can","could","should","may","might","must","shall",
+  "not","no","yes",
+  "what","who","which","whom","whose","when","where","why","how"
+]);
+
+// ============== UI INIT ==============
+function buildPhraseSelect(){
+  const sel = document.getElementById("phraseSelect");
+  const cats = [...new Set(PHRASES.map(p=>p.cat))];
+  let html = `<option value="custom">✏️ 自分で入力</option>`;
+  cats.forEach(c=>{
+    html += `<optgroup label="${c}">`;
+    PHRASES.forEach((p,i)=>{
+      if(p.cat !== c) return;
+      const short = p.en.length > 50 ? p.en.slice(0,48)+"…" : p.en;
+      html += `<option value="${i}">${escapeHtml(short)}</option>`;
+    });
+    html += `</optgroup>`;
+  });
+  sel.innerHTML = html;
+  sel.value = "10"; // full self-intro by default
+  sel.addEventListener("change", updateTarget);
+  document.getElementById("customText").addEventListener("input", updateTarget);
+  updateTarget();
+}
+
+function updateTarget(){
+  const v = document.getElementById("phraseSelect").value;
+  const sel = document.getElementById("selector");
+  if(v === "custom"){
+    sel.classList.add("custom");
+    const txt = document.getElementById("customText").value.trim();
+    currentPhrase = { en: txt, jp: "" };
+  } else {
+    sel.classList.remove("custom");
+    currentPhrase = PHRASES[parseInt(v)] || { en:"", jp:"" };
+  }
+  renderTargetText();
+  renderPronGuide();
+}
+
+let currentPhrase = { en:"", jp:"" };
+
+function renderTargetText(){
+  const t = currentPhrase.en;
+  if(!t){
+    document.getElementById("targetText").textContent = "上のテキストエリアに英文を入力してください";
+    document.getElementById("targetJp").textContent = "";
+    return;
+  }
+  // Tokenize and render with stress / tricky markers
+  const trickyRegex = /(th|^r|[aeiou]r|^l|rl|lr|[fv]|world|company|global)/i;
+  const tokens = t.split(/(\s+)/);
+  const stressList = (currentPhrase.stress || []).map(s=>s.toLowerCase().replace(/-/g,""));
+  const html = tokens.map(tok=>{
+    if(/^\s+$/.test(tok)) return tok;
+    const wordCore = tok.toLowerCase().replace(/[^\w']/g,"");
+    let cls = "word";
+    if(FUNCTION_WORDS.has(wordCore) || /^['']/.test(tok)){
+      cls += " reduce";
+    }
+    // Check if explicitly stressed
+    const wordHy = wordCore.replace(/[^a-z]/g,"");
+    const isStressed = stressList.some(s=>{
+      const sCore = s.replace(/[^a-z]/g,"");
+      return sCore === wordHy || (sCore.length > 3 && wordHy.includes(sCore.slice(0,4)));
+    });
+    if(isStressed) cls += " stress";
+    if(/[θðθ]|th/i.test(wordCore) && wordCore.length>2) cls += " tricky";
+    return `<span class="${cls}" onclick="speakWord('${escapeAttr(tok.replace(/[^\w'\- ]/g,''))}')">${escapeHtml(tok)}</span>`;
+  }).join("");
+  document.getElementById("targetText").innerHTML = html;
+  document.getElementById("targetJp").textContent = currentPhrase.jp || "";
+}
+
+function renderPronGuide(){
+  const t = currentPhrase.en;
+  const body = document.getElementById("pronBody");
+  if(!t){ body.innerHTML = ""; return; }
+
+  let html = "";
+
+  // IPA section
+  if(currentPhrase.ipa){
+    html += `<div class="pron-section">
+      <h4>🌟 IPA (発音記号)</h4>
+      <div class="ipa">${escapeHtml(currentPhrase.ipa)}</div>
+    </div>`;
+  }
+
+  // Stress
+  if(currentPhrase.stress && currentPhrase.stress.length){
+    html += `<div class="pron-section">
+      <h4>🎵 強勢パターン</h4>
+      <div style="font-size:14px;line-height:1.8">
+        ${currentPhrase.stress.map(s=>`<strong style="color:var(--accent);font-size:15px">${escapeHtml(s)}</strong>`).join(" · ")}
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">これらの単語を強く・長く発音すると一気にビジネス英語らしくなります</div>
+    </div>`;
+  }
+
+  // Curated tips
+  if(currentPhrase.tips && currentPhrase.tips.length){
+    html += `<div class="pron-section"><h4>📌 解説ポイント</h4>`;
+    currentPhrase.tips.forEach(tip=>{
+      let cls = "tip-row", icon = "⚠️";
+      if(tip.type === "linking"){ cls += " linking-row"; icon = "🔗"; }
+      else if(tip.type === "reduce"){ cls += " reduction-row"; icon = "🔉"; }
+      else if(tip.type === "watch"){ icon = "👀"; }
+      html += `<div class="${cls}">
+        <div class="tip-icon">${icon}</div>
+        <div class="tip-content">${tip.msg}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Auto-detected tips
+  const autoTips = autoDetectTips(t);
+  if(autoTips.length){
+    html += `<div class="pron-section"><h4>🤖 自動検出された注意点</h4>`;
+    autoTips.forEach(tip=>{
+      html += `<div class="tip-row">
+        <div class="tip-icon">${tip.icon}</div>
+        <div class="tip-content">${tip.msg}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Legend if nothing else
+  if(!html){
+    html = `<p style="font-size:13px;color:var(--muted);margin:12px 0">このフレーズには詳細な解説がまだありません。<strong>🔊 標準速度</strong> で音声を聞いて真似してみてください。</p>`;
+  }
+
+  body.innerHTML = html;
+}
+
+function autoDetectTips(text){
+  const tips = [];
+  const seen = new Set();
+  const words = text.match(/[a-zA-Z']+/g) || [];
+
+  // TH detection
+  const thWords = words.filter(w=>/th/i.test(w));
+  if(thWords.length && !seen.has("th")){
+    seen.add("th");
+    tips.push({
+      icon: "👅",
+      msg: `<strong>TH 音</strong>: <em>${[...new Set(thWords.slice(0,3))].join(", ")}</em>。舌先を軽く前歯に当てて空気を出す。サ行/ザ行にしない。`
+    });
+  }
+
+  // R sound (initial or after vowel)
+  const rWords = words.filter(w=>/[aeiou]r|^r/i.test(w));
+  if(rWords.length && !seen.has("r")){
+    seen.add("r");
+    tips.push({
+      icon: "🗣",
+      msg: `<strong>R 音</strong>: <em>${[...new Set(rWords.slice(0,3))].join(", ")}</em>。舌の奥を上顎に近づけ、舌先を浮かせて。日本語のラ行と全く違う音。`
+    });
+  }
+
+  // V/F
+  const vfWords = words.filter(w=>/^[vf]|[aeiou][vf]/i.test(w));
+  if(vfWords.length && !seen.has("vf")){
+    seen.add("vf");
+    tips.push({
+      icon: "💨",
+      msg: `<strong>V / F 音</strong>: <em>${[...new Set(vfWords.slice(0,3))].join(", ")}</em>。下唇を軽く噛んで息を出す。バビブベボにしない。`
+    });
+  }
+
+  // Final consonant cluster (e.g., -nds, -sts, -lds)
+  const clusterWords = words.filter(w=>/[bcdfghjklmnpqrstvwxz]{2,}$/i.test(w) && w.length > 3);
+  if(clusterWords.length && !seen.has("cluster")){
+    seen.add("cluster");
+    tips.push({
+      icon: "🔇",
+      msg: `<strong>語末子音クラスター</strong>: <em>${[...new Set(clusterWords.slice(0,3))].join(", ")}</em>。日本語の癖で母音を入れない（「ンドゥ」ではなく「nd」のまま終わる）。`
+    });
+  }
+
+  return tips.slice(0,4);
+}
+
+// ============== AUDIO PLAYBACK (Native voice) ==============
+let voices = [];
+function loadVoices(){
+  voices = window.speechSynthesis.getVoices();
+  populateVoiceSelect();
+}
+if('speechSynthesis' in window){
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+  loadVoices();
+}
+
+function populateVoiceSelect(){
+  const sel = document.getElementById("voiceSelect");
+  if(!sel) return;
+  const englishVoices = voices.filter(v=>v.lang.startsWith("en"));
+  if(englishVoices.length === 0){
+    sel.innerHTML = `<option>音声が見つかりません</option>`;
+    return;
+  }
+  // Categorize
+  const order = ["en-US","en-GB","en-AU","en-IN","en-CA","en"];
+  const sorted = englishVoices.sort((a,b)=>{
+    const ai = order.findIndex(p=>a.lang.startsWith(p));
+    const bi = order.findIndex(p=>b.lang.startsWith(p));
+    return (ai<0?99:ai) - (bi<0?99:bi);
+  });
+  sel.innerHTML = sorted.map(v=>{
+    const flag = v.lang.startsWith("en-US") ? "🇺🇸" :
+                 v.lang.startsWith("en-GB") ? "🇬🇧" :
+                 v.lang.startsWith("en-AU") ? "🇦🇺" :
+                 v.lang.startsWith("en-IN") ? "🇮🇳" :
+                 v.lang.startsWith("en-CA") ? "🇨🇦" : "🌍";
+    return `<option value="${escapeAttr(v.name)}">${flag} ${escapeHtml(v.name)} (${v.lang})</option>`;
+  }).join("");
+  // Restore preference
+  if(state.voicePref && sorted.some(v=>v.name===state.voicePref)){
+    sel.value = state.voicePref;
+  }
+  sel.addEventListener("change", ()=>{
+    state.voicePref = sel.value;
+    saveState();
+  });
+}
+
+function getSelectedVoice(){
+  const name = document.getElementById("voiceSelect").value;
+  return voices.find(v=>v.name === name) || voices.find(v=>v.lang.startsWith("en"));
+}
+
+function speakTarget(rate=1.0){
+  speak(currentPhrase.en, rate);
+}
+
+function speak(text, rate=1.0){
+  if(!('speechSynthesis' in window)){ alert("このブラウザは音声合成に対応していません"); return; }
+  if(!text) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const v = getSelectedVoice();
+  if(v){ u.voice = v; u.lang = v.lang; }
+  else u.lang = "en-US";
+  u.rate = rate;
+  u.pitch = 1.0;
+  u.volume = 1.0;
+  window.speechSynthesis.speak(u);
+}
+
+function speakWord(word){
+  if(!word) return;
+  speak(word, 0.85);
+}
+
+function speakWordByWord(){
+  if(!('speechSynthesis' in window)) return;
+  if(!currentPhrase.en) return;
+  window.speechSynthesis.cancel();
+  const words = currentPhrase.en.split(/\s+/).filter(Boolean);
+  let i = 0;
+  function next(){
+    if(i >= words.length) return;
+    const u = new SpeechSynthesisUtterance(words[i]);
+    const v = getSelectedVoice();
+    if(v){ u.voice = v; u.lang = v.lang; }
+    else u.lang = "en-US";
+    u.rate = 0.8;
+    u.onend = ()=>{ i++; setTimeout(next, 350); };
+    window.speechSynthesis.speak(u);
+  }
+  next();
+}
+
+// ============== RECORDING ==============
+let recognition = null;
+let mediaRecorder = null;
+let audioChunks = [];
+let currentAudioBlob = null;
+let liveResult = "";
+let isRecording = false;
+let recordStartTs = 0;
+let recordingDuration = 0;
+let recognitionRestartTimer = null;
+
+function getSupportedMimeType(){
+  if(typeof MediaRecorder === 'undefined') return null;
+  const types = [
+    'audio/mp4;codecs=mp4a.40.2',
+    'audio/mp4',
+    'audio/webm;codecs=opus',
+    'audio/webm',
+    'audio/ogg;codecs=opus',
+    'audio/ogg'
+  ];
+  for(const t of types){
+    try{ if(MediaRecorder.isTypeSupported(t)) return t; }catch(e){}
+  }
+  return '';
+}
+
+function checkSupport(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    document.getElementById("warnBanner").classList.add("show");
+    document.getElementById("recBtn").disabled = true;
+    return false;
+  }
+  return true;
+}
+
+async function toggleRecord(){
+  if(isRecording){ stopRecording(); return; }
+  if(!currentPhrase.en){ alert("先にフレーズを選んでください"); return; }
+  await startRecording();
+}
+
+async function startRecording(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ alert("音声認識に対応していないブラウザです"); return; }
+
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const mimeType = getSupportedMimeType();
+    try{
+      mediaRecorder = mimeType ? new MediaRecorder(stream, {mimeType}) : new MediaRecorder(stream);
+    }catch(e){
+      try{ mediaRecorder = new MediaRecorder(stream); }
+      catch(e2){ mediaRecorder = null; }
+    }
+    audioChunks = [];
+    if(mediaRecorder){
+      mediaRecorder.ondataavailable = e=>{ if(e.data && e.data.size>0) audioChunks.push(e.data); };
+      mediaRecorder.onstop = ()=>{
+        const type = mediaRecorder.mimeType || mimeType || 'audio/webm';
+        currentAudioBlob = new Blob(audioChunks, {type});
+        try{ stream.getTracks().forEach(t=>t.stop()); }catch(e){}
+        // Trigger analysis after blob is fully assembled
+        setTimeout(analyzeAndShow, 100);
+      };
+      // Use timeslice to ensure ondataavailable fires periodically (helps on iOS)
+      mediaRecorder.start(250);
+    } else {
+      try{ stream.getTracks().forEach(t=>t.stop()); }catch(e){}
+    }
+
+    liveResult = "";
+    document.getElementById("liveText").textContent = "";
+    document.getElementById("result").classList.remove("show");
+
+    recognition = new SR();
+    recognition.lang = (getSelectedVoice() && getSelectedVoice().lang) || 'en-US';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (e)=>{
+      let interim = "", finalT = "";
+      for(let i=e.resultIndex; i<e.results.length; i++){
+        const t = e.results[i][0].transcript;
+        if(e.results[i].isFinal) finalT += t;
+        else interim += t;
+      }
+      if(finalT) liveResult += finalT;
+      document.getElementById("liveText").textContent = (liveResult + interim).trim() || "聞き取り中...";
+    };
+    recognition.onerror = (e)=>{
+      console.warn("recognition error:", e.error);
+      if(e.error === "no-speech"){
+        document.getElementById("recStatus").textContent = "🔴 録音中... (音声待機)";
+        // Don't stop — let onend trigger restart
+      } else if(e.error === "not-allowed"){
+        document.getElementById("recStatus").textContent = "マイクの利用が許可されませんでした";
+        isRecording = false; // force stop
+      } else if(e.error === "aborted"){
+        // Manual abort — don't restart
+      }
+    };
+    recognition.onend = ()=>{
+      // If user is still actively recording, try to restart recognition.
+      // Web Speech API auto-stops after silence — this keeps it going for long speeches.
+      // IMPORTANT: never call stopRecording here. mediaRecorder keeps going regardless,
+      // so audio is still captured even if recognition fails to restart.
+      if(isRecording){
+        if(recognitionRestartTimer) clearTimeout(recognitionRestartTimer);
+        recognitionRestartTimer = setTimeout(()=>{
+          if(!isRecording) return;
+          try{
+            recognition.start();
+            document.getElementById("recStatus").textContent = "🔴 録音中... ターゲットを話してください";
+          }catch(err){
+            // Already started, or invalid state. Just log and continue.
+            console.warn("Recognition restart skipped:", err && err.message);
+            document.getElementById("recStatus").textContent = "🔴 録音中... (音声認識は継続)";
+          }
+        }, 250);
+      }
+    };
+
+    recognition.start();
+    isRecording = true;
+    recordStartTs = Date.now();
+    document.getElementById("recBtn").classList.add("recording");
+    document.getElementById("recBtn").textContent = "⏹";
+    document.getElementById("recStatus").textContent = "🔴 録音中... ターゲットを話してください";
+  }catch(err){
+    alert("マイクの利用許可が必要です: " + err.message);
+  }
+}
+
+function stopRecording(){
+  if(!isRecording) return;
+  isRecording = false;
+  if(recognitionRestartTimer){ clearTimeout(recognitionRestartTimer); recognitionRestartTimer = null; }
+  recordingDuration = (Date.now() - recordStartTs) / 1000;
+  document.getElementById("recBtn").classList.remove("recording");
+  document.getElementById("recBtn").textContent = "🎙";
+  document.getElementById("recStatus").textContent = "解析中...";
+  // Use stop() (not abort) so any pending audio gets processed into onresult.
+  try{ recognition && recognition.stop(); }catch(e){}
+  if(mediaRecorder && mediaRecorder.state !== 'inactive'){
+    try{
+      mediaRecorder.requestData && mediaRecorder.requestData();
+      mediaRecorder.stop();
+      // analyzeAndShow will be called from mediaRecorder.onstop
+    }catch(e){
+      setTimeout(analyzeAndShow, 100);
+    }
+  } else {
+    setTimeout(analyzeAndShow, 100);
+  }
+}
+
+// ============== ANALYSIS ==============
+function normalize(s){
+  return (s||"").toLowerCase()
+    .replace(/[.,!?;:"'""''()—\-]/g," ")
+    .replace(/\s+/g," ").trim();
+}
+function tokenize(s){ return normalize(s).split(/\s+/).filter(Boolean); }
+
+function diffWords(target, said){
+  const m = target.length, n = said.length;
+  const dp = Array.from({length:m+1},()=>Array(n+1).fill(0));
+  for(let i=1;i<=m;i++){
+    for(let j=1;j<=n;j++){
+      if(target[i-1] === said[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+      else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  const result = [];
+  let i = m, j = n;
+  while(i>0 || j>0){
+    if(i>0 && j>0 && target[i-1] === said[j-1]){
+      result.unshift({type:"match",word:target[i-1]}); i--; j--;
+    } else if(j>0 && (i===0 || dp[i][j-1] >= dp[i-1][j])){
+      result.unshift({type:"extra",word:said[j-1]}); j--;
+    } else {
+      result.unshift({type:"miss",word:target[i-1]}); i--;
+    }
+  }
+  return result;
+}
+
+function analyzeAndShow(){
+  const tWords = tokenize(currentPhrase.en);
+  const sWords = tokenize(liveResult);
+  const diff = diffWords(tWords, sWords);
+
+  const matched = diff.filter(d=>d.type==="match").length;
+  const missed = diff.filter(d=>d.type==="miss").length;
+  const total = tWords.length;
+  const accuracy = total ? Math.round(matched/total*100) : 0;
+  const wpm = recordingDuration > 0 ? Math.round(sWords.length / recordingDuration * 60) : 0;
+
+  document.getElementById("scoreCircle").style.setProperty("--score", accuracy);
+  document.getElementById("scoreNum").innerHTML = `${accuracy}<small>/100</small>`;
+
+  const tierEl = document.getElementById("scoreTier");
+  let tier, tierClass, emoji;
+  if(accuracy >= 90){ tier = "Excellent! 完璧に近い"; tierClass = "tier-excellent"; emoji = "🎉"; }
+  else if(accuracy >= 75){ tier = "Good! ほぼ伝わる"; tierClass = "tier-good"; emoji = "💪"; }
+  else if(accuracy >= 50){ tier = "Okay. もう少し練習"; tierClass = "tier-okay"; emoji = "📈"; }
+  else{ tier = "Tough one. 焦らず再挑戦"; tierClass = "tier-rough"; emoji = "🌱"; }
+  tierEl.className = "score-tier " + tierClass;
+  tierEl.textContent = `${emoji} ${tier}`;
+
+  document.getElementById("mWords").textContent = `${matched}/${total}`;
+  document.getElementById("mMissed").textContent = missed;
+  document.getElementById("mWpm").textContent = wpm || "—";
+
+  const diffView = document.getElementById("diffView");
+  diffView.innerHTML = diff.map(d=>{
+    if(d.type==="match") return `<span class="w-match">${escapeHtml(d.word)}</span> `;
+    if(d.type==="miss")  return `<span class="w-miss">${escapeHtml(d.word)}</span> `;
+    return `<span class="w-extra">[${escapeHtml(d.word)}]</span> `;
+  }).join("");
+
+  document.getElementById("feedbackArea").innerHTML = generateFeedback(accuracy, diff, tWords, sWords, wpm);
+
+  document.getElementById("result").classList.add("show");
+  document.getElementById("recStatus").textContent = "完了！結果を確認してください 👇";
+
+  state.history.unshift({
+    target: currentPhrase.en,
+    said: liveResult,
+    score: accuracy,
+    wpm,
+    ts: Date.now()
+  });
+  state.history = state.history.slice(0, 20);
+  saveState();
+  renderHistory();
+  renderStats();
+
+  document.getElementById("result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function generateFeedback(score, diff, tWords, sWords, wpm){
+  const out = [];
+  const missedWords = diff.filter(d=>d.type==="miss").map(d=>d.word);
+
+  if(score >= 90){
+    out.push(`<div class="feedback feedback-ok">✨ <strong>素晴らしい！</strong> 90%以上は実用レベル。会議で堂々と使えます。<br>🔊 ボタンでネイティブ音声と聞き比べて、リズムを最終調整しましょう。</div>`);
+  } else if(score >= 75){
+    out.push(`<div class="feedback feedback-ok">👏 <strong>しっかり伝わるレベル</strong>です。あと一歩で完璧。下記のチェックポイントで磨きをかけましょう。</div>`);
+  } else if(score >= 50){
+    out.push(`<div class="feedback feedback-warn">📊 <strong>意味は伝わるレベル</strong>。3〜5回繰り返して、苦手な単語を体に染み込ませてください。<br>👉 <strong>📚 発音解説</strong> セクションを開いて、各単語のコツを確認しましょう。</div>`);
+  } else {
+    out.push(`<div class="feedback feedback-bad">🌱 <strong>初回はこんなもの！</strong> ターゲット文を <strong>音読5回 → 再録音</strong> を試してください。<br>👉 まず <strong>🐢 ゆっくり</strong> で聞いてリズムを掴むのがオススメ。</div>`);
+  }
+
+  const tips = [];
+  const articleMissed = missedWords.filter(w=>["a","an","the"].includes(w));
+  if(articleMissed.length){
+    tips.push(`<div class="tip-card">📌 <strong>冠詞 "${[...new Set(articleMissed)].join(", ")}" が抜けました</strong>。日本語にない要素なので意識的に強調を。アクセントを置いて発音すると認識されやすいです。</div>`);
+  }
+  const rlWords = tWords.filter(w=>/[rl]/i.test(w) && missedWords.includes(w));
+  if(rlWords.length){
+    tips.push(`<div class="tip-card">🗣 <strong>R/L サウンド</strong>: <em>${[...new Set(rlWords)].slice(0,3).join(", ")}</em>。R は舌を奥に丸める／L は舌先を上の歯茎に当てる。</div>`);
+  }
+  const thWords = tWords.filter(w=>/th/i.test(w) && missedWords.includes(w));
+  if(thWords.length){
+    tips.push(`<div class="tip-card">👅 <strong>TH サウンド</strong>: <em>${[...new Set(thWords)].slice(0,3).join(", ")}</em>。舌先を軽く前歯に当てて空気を出す。</div>`);
+  }
+  const fvWords = tWords.filter(w=>/[fv]/i.test(w) && missedWords.includes(w));
+  if(fvWords.length){
+    tips.push(`<div class="tip-card">💨 <strong>F / V サウンド</strong>: <em>${[...new Set(fvWords)].slice(0,3).join(", ")}</em>。下唇を軽く噛んで息を出す。</div>`);
+  }
+  if(wpm > 0){
+    if(wpm < 90) tips.push(`<div class="tip-card">🎵 <strong>ペース ${wpm} WPM (やや遅い)</strong>: ネイティブのビジネス会話は120-150 WPM。少しテンポを上げる練習を。</div>`);
+    else if(wpm > 180) tips.push(`<div class="tip-card">🎵 <strong>ペース ${wpm} WPM (やや速い)</strong>: 早口は認識率を下げます。一語一語明瞭に。</div>`);
+    else tips.push(`<div class="tip-card">🎵 <strong>ペース ${wpm} WPM</strong>: ビジネス会話の標準スピード 👍</div>`);
+  }
+  if(tips.length === 0 && score < 90){
+    tips.push(`<div class="tip-card">💡 <strong>音読 → 録音 → 再生</strong> のサイクルを3回回すと、口の筋肉がフレーズを覚えます。</div>`);
+  }
+  return out.concat(tips).join("");
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  }[c]));
+}
+function escapeAttr(s){ return escapeHtml(s).replace(/"/g,"&quot;"); }
+
+// ============== AUDIO PLAYBACK (User recording) ==============
+function playRecording(){
+  if(!currentAudioBlob || currentAudioBlob.size === 0){
+    alert("録音データがまだ準備できていません。少し待ってから再度お試しください。");
+    return;
+  }
+  const url = URL.createObjectURL(currentAudioBlob);
+  const a = document.getElementById("audioPlayer");
+  a.src = url;
+  a.style.display = "block";
+  a.style.width = "100%";
+  a.style.maxWidth = "420px";
+  a.style.margin = "10px auto";
+  a.load();
+  const p = a.play();
+  if(p && p.catch){
+    p.catch(err=>{
+      console.warn("Audio playback failed:", err);
+      // Fallback: show controls so user can play manually
+      a.controls = true;
+    });
+  }
+}
+
+function compareAudios(){
+  if(!currentAudioBlob){ alert("先に録音してください"); return; }
+  // Play target first, then user
+  speakTarget(0.95);
+  // Wait for native to finish, then play user
+  const checkAndPlay = ()=>{
+    if(!window.speechSynthesis.speaking){
+      setTimeout(()=>playRecording(), 400);
+    } else {
+      setTimeout(checkAndPlay, 200);
+    }
+  };
+  setTimeout(checkAndPlay, 500);
+}
+
+function resetForRetry(){
+  document.getElementById("result").classList.remove("show");
+  document.getElementById("liveText").textContent = "";
+  document.getElementById("recStatus").textContent = "もう一度マイクボタンを押して話してください";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+// ============== HISTORY & STATS ==============
+function renderHistory(){
+  const el = document.getElementById("history");
+  if(state.history.length === 0){
+    el.innerHTML = `<div style="text-align:center;color:#aaa;font-size:13px;padding:20px;font-style:italic">まだ練習履歴がありません。最初の録音を始めましょう 🎙</div>`;
+    return;
+  }
+  el.innerHTML = state.history.slice(0,8).map(h=>{
+    const d = new Date(h.ts);
+    const tStr = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    let bg = "#FBE6E2", fg = "var(--danger)";
+    if(h.score >= 90){ bg = "#E8F5EA"; fg = "var(--success)"; }
+    else if(h.score >= 75){ bg = "#F1F7E5"; fg = "#5C8B3A"; }
+    else if(h.score >= 50){ bg = "#FFF6E0"; fg = "var(--warning)"; }
+    const short = h.target.length > 50 ? h.target.slice(0,48)+"…" : h.target;
+    return `
+      <div class="hist-entry">
+        <div class="hist-score" style="background:${bg};color:${fg}">${h.score}</div>
+        <div class="hist-text">
+          <div class="hist-text-en">${escapeHtml(short)}</div>
+          <div class="hist-text-meta">${tStr} · ${h.wpm||0} WPM</div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+function renderStats(){
+  const total = state.history.length;
+  document.getElementById("statTotal").textContent = total;
+  if(total === 0){
+    document.getElementById("statBest").textContent = "—";
+    document.getElementById("statAvg").textContent = "—";
+    return;
+  }
+  const best = Math.max(...state.history.map(h=>h.score));
+  const avg = Math.round(state.history.reduce((s,h)=>s+h.score,0) / total);
+  document.getElementById("statBest").textContent = best;
+  document.getElementById("statAvg").textContent = avg;
+}
+
+// ============== INIT ==============
+buildPhraseSelect();
+checkSupport();
+renderHistory();
+renderStats();
+// Trigger voice load
+setTimeout(loadVoices, 100);
+setTimeout(loadVoices, 500);
+</script>
+
+</body>
+</html>

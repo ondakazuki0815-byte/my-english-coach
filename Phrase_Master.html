@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Phrase Master">
+<meta name="theme-color" content="#1F3A5F">
+<title>My English Coach — Phrase Master</title>
+<style>
+:root{
+  --primary:#1F3A5F;
+  --accent:#C5563A;
+  --accent-soft:#E8826B;
+  --sand:#F4E9DD;
+  --bg:#FAF8F4;
+  --card:#FFFFFF;
+  --text:#2A2A2A;
+  --muted:#6B6B6B;
+  --border:#E5DFD3;
+  --success:#3A7D44;
+  --info:#3567A8;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+
+  --role-subject-bg:#E5ECF5;   --role-subject-fg:#1F3A5F;
+  --role-verb-bg:#FBE6DD;      --role-verb-fg:#C5563A;
+  --role-emotion-bg:#FBE2E6;   --role-emotion-fg:#C04565;
+  --role-object-bg:#F1E8DA;    --role-object-fg:#8B6F47;
+  --role-location-bg:#DEEFEC;  --role-location-fg:#2E7E73;
+  --role-time-bg:#ECECEC;      --role-time-fg:#5C5C5C;
+  --role-amount-bg:#FFF4D6;    --role-amount-fg:#A07000;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.55;
+  font-size:16px;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+
+.header{
+  background:linear-gradient(135deg,var(--primary) 0%,#2C5081 100%);
+  color:#fff;padding:14px 16px 14px;
+  padding-top:calc(14px + env(safe-area-inset-top));
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+.header-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.title{font-size:18px;font-weight:700;letter-spacing:-0.2px}
+.subtitle{font-size:12px;opacity:0.85;margin-top:2px}
+.progress-wrap{margin-top:10px}
+.progress-bar{height:6px;background:rgba(255,255,255,0.2);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent-soft);border-radius:99px;transition:width 0.4s ease}
+.progress-text{font-size:11px;margin-top:4px;opacity:0.9;display:flex;justify-content:space-between}
+
+.modes{
+  display:flex;gap:6px;padding:10px 12px;background:#fff;
+  border-bottom:1px solid var(--border);overflow-x:auto;
+  position:sticky;top:0;z-index:45;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.modes::-webkit-scrollbar{display:none}
+.mode-btn{
+  flex-shrink:0;padding:8px 12px;border-radius:8px;
+  font-size:12px;font-weight:600;cursor:pointer;
+  background:#F2EEE6;color:var(--muted);border:1px solid transparent;
+  white-space:nowrap;transition:all 0.15s;font-family:inherit;
+  display:flex;align-items:center;gap:5px;
+}
+.mode-btn.active{background:var(--primary);color:#fff}
+.mode-btn.quiz{background:var(--accent);color:#fff}
+.mode-btn.quiz:active{transform:scale(0.97)}
+
+.tabs{
+  display:flex;gap:6px;overflow-x:auto;padding:10px 12px;
+  background:var(--bg);position:sticky;top:46px;z-index:40;
+  border-bottom:1px solid var(--border);
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex-shrink:0;padding:7px 13px;border-radius:99px;
+  font-size:12px;font-weight:600;cursor:pointer;
+  background:#fff;color:var(--muted);border:1px solid var(--border);
+  white-space:nowrap;transition:all 0.15s;
+}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tab .count{font-size:11px;opacity:0.8;margin-left:4px}
+
+.search-row{padding:8px 12px;background:var(--bg)}
+.search{
+  width:100%;padding:10px 14px;border-radius:10px;
+  border:1px solid var(--border);background:#fff;
+  font-size:14px;font-family:inherit;
+  -webkit-appearance:none;appearance:none;
+}
+.search:focus{outline:none;border-color:var(--accent)}
+
+.section-title{
+  font-size:13px;font-weight:700;color:var(--primary);
+  letter-spacing:0.4px;text-transform:uppercase;
+  padding:18px 16px 8px;display:flex;align-items:center;gap:8px;
+}
+.section-title::before{
+  content:"";width:18px;height:2px;background:var(--accent);
+}
+
+.legend{
+  display:flex;flex-wrap:wrap;gap:6px;padding:8px 16px 4px;font-size:11px;
+}
+.legend-item{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 8px;border-radius:99px;font-weight:600;
+}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+
+.voice-row{
+  padding:8px 16px;background:var(--bg);font-size:11px;
+  display:flex;align-items:center;gap:8px;
+}
+.voice-row label{color:var(--muted);font-weight:600}
+.voice-row select{
+  flex:1;padding:6px 10px;border-radius:8px;border:1px solid var(--border);
+  background:#fff;font-family:inherit;font-size:12px;
+  -webkit-appearance:none;appearance:none;
+}
+
+.phrases{padding:0 12px}
+.phrase{
+  background:var(--card);border-radius:14px;
+  margin-bottom:10px;box-shadow:var(--shadow);
+  border:1px solid var(--border);
+  cursor:pointer;transition:all 0.15s;overflow:hidden;
+  position:relative;
+}
+.phrase.learned{background:#F0F7F1;border-color:#CDE5D2}
+
+.visual{
+  background:linear-gradient(135deg,#FFF8EC 0%,#FAF0DD 100%);
+  padding:14px 12px;
+  border-bottom:1px solid var(--border);
+  user-select:none;position:relative;
+}
+.phrase.learned .visual{background:linear-gradient(135deg,#EAF5EC 0%,#D9EDDD 100%)}
+
+.image-only-tap{
+  display:none;font-size:11px;color:var(--accent);
+  margin-top:8px;font-weight:600;letter-spacing:0.5px;
+  text-transform:uppercase;text-align:center;
+}
+body.image-only .visual .image-only-tap{display:block}
+body.image-only .phrase:not(.expanded) .phrase-body{display:none}
+body.image-only .phrase.expanded .phrase-body{display:block}
+body.image-only .vis-label{display:none}
+
+.vis-row{
+  display:flex;flex-wrap:wrap;gap:6px;align-items:stretch;
+  justify-content:flex-start;
+}
+.vis-chip{
+  flex:0 0 auto;display:flex;flex-direction:column;align-items:center;
+  padding:8px 10px 6px;border-radius:10px;
+  min-width:62px;max-width:120px;
+}
+.vis-chip svg{width:30px;height:30px;display:block}
+.vis-label{
+  font-size:10px;font-weight:600;margin-top:3px;
+  text-align:center;line-height:1.2;word-break:break-word;
+}
+.vis-chip.subject{background:var(--role-subject-bg);color:var(--role-subject-fg)}
+.vis-chip.subject svg{fill:var(--role-subject-fg)}
+.vis-chip.verb{background:var(--role-verb-bg);color:var(--role-verb-fg)}
+.vis-chip.verb svg{fill:var(--role-verb-fg)}
+.vis-chip.emotion{background:var(--role-emotion-bg);color:var(--role-emotion-fg)}
+.vis-chip.emotion svg{fill:var(--role-emotion-fg)}
+.vis-chip.object{background:var(--role-object-bg);color:var(--role-object-fg)}
+.vis-chip.object svg{fill:var(--role-object-fg)}
+.vis-chip.location{background:var(--role-location-bg);color:var(--role-location-fg)}
+.vis-chip.location svg{fill:var(--role-location-fg)}
+.vis-chip.time{background:var(--role-time-bg);color:var(--role-time-fg)}
+.vis-chip.time svg{fill:var(--role-time-fg)}
+.vis-chip.amount{background:var(--role-amount-bg);color:var(--role-amount-fg)}
+.vis-chip.amount svg{fill:var(--role-amount-fg)}
+
+.phrase-body{padding:14px 16px}
+.phrase-head{display:flex;align-items:flex-start;gap:12px}
+.check{
+  flex-shrink:0;width:24px;height:24px;border-radius:50%;
+  border:2px solid var(--border);background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  margin-top:1px;cursor:pointer;transition:all 0.15s;
+}
+.check svg{width:14px;height:14px;stroke:#fff;stroke-width:3;fill:none;display:none}
+.phrase.learned .check{background:var(--success);border-color:var(--success)}
+.phrase.learned .check svg{display:block}
+
+/* Mastery Badge (replaces check) */
+.mastery-badge{
+  flex-shrink:0;min-width:36px;height:36px;border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all 0.15s;font-size:14px;font-weight:700;
+  background:#F0F0F0;color:#666;padding:0 8px;gap:3px;
+  border:2px solid transparent;
+}
+.mastery-badge:active{transform:scale(0.92)}
+.mastery-badge .lvl-icon{font-size:14px;line-height:1}
+.mastery-badge .lvl-num{font-size:13px;font-weight:800}
+.mastery-badge.level-0{background:#F0F0F0;color:#666}
+.mastery-badge.level-1{background:#FBE6E2;color:#D4523F}
+.mastery-badge.level-2{background:#FFF6E0;color:#D69100}
+.mastery-badge.level-3{background:#E8F5EA;color:#3A7D44}
+.mastery-badge.level-4{background:#E5ECF5;color:#3567A8}
+.mastery-badge.level-5{background:#FFF4D6;color:#A07000;border-color:#E0B040}
+
+/* Mastery meta on each card */
+.mastery-meta{
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px;
+}
+.mastery-label{
+  display:inline-block;padding:2px 8px;border-radius:99px;
+  font-size:11px;font-weight:600;
+}
+.next-review{
+  font-size:11px;color:#888;background:#F8F6F2;padding:2px 8px;border-radius:99px;
+}
+.next-review.due{
+  background:#FFE5C0;color:#A05500;font-weight:700;
+}
+.phrase.due{
+  border-left:4px solid #D69100;
+}
+
+/* Mastery breakdown in header */
+.mastery-breakdown{
+  margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.15);
+}
+.brk-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.brk-chip{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:3px 8px;border-radius:99px;
+  font-size:11px;font-weight:700;
+}
+.brk-due-btn{
+  width:100%;padding:8px 12px;border-radius:8px;border:none;
+  background:linear-gradient(135deg,#FFD580 0%,#F5B850 100%);
+  color:#5A3500;font-weight:800;font-size:12px;cursor:pointer;
+  font-family:inherit;display:block;text-align:center;
+  box-shadow:0 2px 6px rgba(245,184,80,0.3);
+}
+.brk-due-btn:active{transform:scale(0.98)}
+.brk-due-empty{
+  text-align:center;font-size:11px;color:rgba(255,255,255,0.7);
+  padding:6px;font-style:italic;
+}
+.phrase-text{flex:1;min-width:0}
+
+.en-row{
+  display:flex;align-items:flex-start;gap:8px;
+}
+.phrase-en{font-size:15px;font-weight:600;color:var(--text);word-break:break-word;flex:1}
+.phrase.learned .phrase-en{text-decoration:line-through;color:var(--muted)}
+.audio-mini{
+  flex-shrink:0;width:32px;height:32px;border-radius:50%;
+  background:var(--primary);color:#fff;border:none;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;cursor:pointer;font-family:inherit;
+  transition:all 0.15s;
+}
+.audio-mini:active{transform:scale(0.92)}
+.audio-mini.slow{background:#5B7AA0;font-size:12px}
+.audio-mini.playing{animation:pulse-soft 1s infinite}
+@keyframes pulse-soft{
+  0%,100%{box-shadow:0 0 0 0 rgba(31,58,95,0.5)}
+  50%{box-shadow:0 0 0 6px rgba(31,58,95,0)}
+}
+.audio-buttons{display:flex;gap:6px;margin-top:6px}
+
+.phrase-ipa{
+  font-family:'Times New Roman',serif;font-size:13px;
+  color:var(--info);margin-top:5px;font-style:normal;
+  letter-spacing:0.3px;
+}
+body.hide-jp .phrase-ipa{display:block}
+
+.phrase-jp{font-size:13px;color:var(--muted);margin-top:3px}
+body.hide-jp .phrase-jp,
+body.hide-jp .example-jp{display:none}
+
+.phrase-detail{
+  margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);
+  font-size:13px;color:#4a4a4a;display:none;
+}
+.phrase.expanded .phrase-detail{display:block}
+.example-label{font-size:11px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.example{font-style:italic;margin-bottom:6px;line-height:1.5}
+.example-jp{color:var(--muted);font-size:12px}
+
+.log-section{margin-top:20px;padding:16px 12px 80px;background:#FFF8EC;border-top:1px solid var(--border)}
+.log-intro{
+  font-size:13px;color:#5a4a3a;background:#FFFCF5;
+  padding:12px 14px;border-radius:10px;border:1px dashed #D9C9A0;
+  margin-bottom:14px;line-height:1.5;
+}
+.log-form{
+  background:#fff;border-radius:14px;padding:14px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  margin-bottom:14px;
+}
+.log-form input,.log-form textarea{
+  width:100%;padding:10px 12px;border-radius:8px;
+  border:1px solid var(--border);font-family:inherit;font-size:14px;
+  margin-bottom:8px;-webkit-appearance:none;appearance:none;
+}
+.log-form input:focus,.log-form textarea:focus{outline:none;border-color:var(--accent)}
+.log-form textarea{resize:vertical;min-height:60px}
+.log-form-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.log-form select{
+  padding:10px 12px;border-radius:8px;border:1px solid var(--border);
+  font-family:inherit;font-size:14px;background:#fff;flex:1;
+  -webkit-appearance:none;appearance:none;
+}
+.log-form button{
+  width:100%;padding:11px;border-radius:8px;border:none;
+  background:var(--accent);color:#fff;font-weight:700;font-size:14px;
+  cursor:pointer;font-family:inherit;
+}
+.log-form button:active{background:#A4452D}
+.log-entry{
+  background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:10px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+}
+.log-entry-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.log-entry-en{font-weight:600;font-size:15px;flex:1;word-break:break-word}
+.tag{
+  display:inline-block;padding:2px 8px;border-radius:99px;
+  font-size:11px;font-weight:600;
+  background:var(--sand);color:var(--primary);
+}
+.log-entry-jp{font-size:13px;color:var(--muted);margin-top:4px}
+.log-entry-ex{font-size:13px;font-style:italic;color:#4a4a4a;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border)}
+.log-entry-foot{font-size:11px;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between;align-items:center}
+.delete-btn{
+  background:none;border:none;color:#C5563A;font-size:12px;
+  cursor:pointer;padding:4px 8px;font-family:inherit;
+}
+.empty{text-align:center;color:var(--muted);font-size:13px;padding:30px 12px;font-style:italic}
+
+.utility{padding:16px 12px;text-align:center;font-size:12px;color:var(--muted)}
+.utility a{color:var(--accent);text-decoration:none;cursor:pointer}
+
+/* Quiz Overlay */
+.quiz-overlay{
+  display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(135deg,#1F3A5F 0%,#0E2440 100%);
+  z-index:200;color:#fff;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0;
+  flex-direction:column;
+}
+.quiz-overlay.open{display:flex}
+.quiz-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.quiz-title{font-size:15px;font-weight:700}
+.quiz-progress{font-size:12px;opacity:0.85}
+.quiz-close{
+  background:rgba(255,255,255,0.15);border:none;color:#fff;
+  width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-family:inherit;
+}
+.quiz-body{
+  flex:1;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  padding:20px;overflow-y:auto;
+}
+.quiz-card{
+  width:100%;max-width:420px;background:rgba(255,255,255,0.95);
+  border:1px solid rgba(255,255,255,0.12);border-radius:20px;
+  padding:22px 18px;text-align:center;
+  min-height:260px;color:var(--text);
+  display:flex;flex-direction:column;justify-content:center;
+}
+.quiz-card .vis-row{justify-content:center;gap:8px}
+.quiz-card .vis-chip{padding:10px 12px 8px;min-width:72px;max-width:140px}
+.quiz-card .vis-chip svg{width:38px;height:38px}
+.quiz-card .vis-label{font-size:11px}
+.quiz-jp{font-size:14px;color:#7E5C40;margin-top:14px;font-weight:500}
+.quiz-en{
+  font-size:22px;font-weight:700;color:var(--primary);line-height:1.4;
+  margin-top:14px;word-break:break-word;
+}
+.quiz-ipa{
+  font-family:'Times New Roman',serif;font-size:14px;
+  color:var(--info);margin-top:6px;letter-spacing:0.3px;
+}
+.quiz-example{
+  font-size:13px;color:#4a4a4a;font-style:italic;line-height:1.55;
+  padding-top:12px;margin-top:10px;border-top:1px dashed var(--border);
+}
+.quiz-example-jp{font-size:12px;color:var(--muted);margin-top:5px}
+.quiz-audio{
+  margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+}
+.quiz-audio button{
+  padding:8px 12px;border-radius:99px;border:none;
+  background:var(--primary);color:#fff;font-family:inherit;
+  font-size:12px;font-weight:600;cursor:pointer;
+}
+.quiz-actions{display:flex;flex-direction:column;gap:10px;width:100%;max-width:420px;margin-top:20px}
+.q-btn{
+  padding:14px 16px;border-radius:12px;border:none;
+  font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;
+  transition:transform 0.1s;
+}
+.q-btn:active{transform:scale(0.97)}
+.q-btn-reveal{background:#fff;color:var(--primary)}
+.q-btn-row{display:flex;gap:10px}
+.q-btn-row .q-btn{flex:1}
+.q-btn-good{background:#3A7D44;color:#fff}
+.q-btn-bad{background:#C5563A;color:#fff}
+.quiz-result{text-align:center;padding:30px 20px;color:#fff;max-width:400px}
+.quiz-result h2{font-size:24px;margin:0 0 6px}
+.quiz-result .score{font-size:54px;font-weight:800;color:#FFD7B5;margin:18px 0}
+.quiz-result-detail{font-size:14px;opacity:0.85;margin-bottom:20px;line-height:1.6}
+
+/* ===== Quiz Mode Picker / Config ===== */
+.quiz-config{
+  text-align:center;padding:30px 20px;color:#fff;max-width:420px;width:100%;
+}
+.quiz-config h2{font-size:22px;margin:0 0 8px}
+.quiz-config p{opacity:0.85;font-size:14px;margin:0 0 18px;line-height:1.6}
+.quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+.q-opt{
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);
+  color:#fff;padding:14px 16px;border-radius:12px;
+  font-family:inherit;font-size:14px;cursor:pointer;text-align:left;
+  transition:transform 0.1s, background 0.15s;
+}
+.q-opt:hover{background:rgba(255,255,255,0.15)}
+.q-opt:active{transform:scale(0.98)}
+.q-opt > span > strong{display:block;font-size:15px;margin-bottom:3px;color:#FFD7B5}
+.q-opt > span > small{display:block;font-size:11.5px;opacity:0.8}
+
+/* ===== Quiz Scenario (Stage 1 & 2) ===== */
+.quiz-scenario{
+  background:linear-gradient(135deg,#FFF8EC 0%,#FAF0DD 100%);
+  border:1px solid #E0CB9A;border-radius:12px;
+  padding:12px 14px;margin-bottom:14px;
+  text-align:left;color:var(--text);
+}
+.quiz-scenario-label{
+  font-size:10px;color:var(--accent);font-weight:700;
+  letter-spacing:0.5px;text-transform:uppercase;margin-bottom:4px;
+}
+.quiz-scenario-text{
+  font-size:14px;color:#5a4a3a;font-weight:600;line-height:1.5;
+}
+
+/* ===== Production Mode (Stage 2) ===== */
+.prod-input{
+  width:100%;padding:12px 14px;border-radius:10px;
+  border:2px solid var(--border);font-family:inherit;font-size:15px;
+  margin-top:14px;color:var(--text);background:#fff;
+  resize:vertical;min-height:70px;line-height:1.5;
+  -webkit-appearance:none;appearance:none;
+}
+.prod-input:focus{outline:none;border-color:var(--accent)}
+
+.prod-mic-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  margin-top:18px;gap:10px;
+}
+.prod-mic{
+  width:80px;height:80px;border-radius:50%;border:none;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-soft) 100%);
+  color:#fff;font-size:32px;cursor:pointer;
+  box-shadow:0 6px 18px rgba(197,86,58,0.4);
+  transition:transform 0.15s;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;
+}
+.prod-mic:active{transform:scale(0.92)}
+.prod-mic.recording{
+  background:linear-gradient(135deg,#D4523F 0%,#FF6B5A 100%);
+  animation:prod-pulse 1.4s infinite;
+}
+@keyframes prod-pulse{
+  0%,100%{box-shadow:0 6px 18px rgba(212,82,63,0.5)}
+  50%{box-shadow:0 6px 26px rgba(212,82,63,0.85),0 0 0 10px rgba(212,82,63,0.15)}
+}
+.prod-mic-status{font-size:13px;color:#666;font-weight:500}
+.prod-mic-result{
+  font-size:14px;color:#444;font-style:italic;
+  background:#F5F1E8;padding:10px 14px;border-radius:10px;
+  border:1px dashed #D9C9A0;margin-top:6px;
+  min-height:42px;width:100%;max-width:380px;line-height:1.5;
+  word-break:break-word;text-align:left;
+}
+
+.prod-score-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  margin:16px 0 10px;
+}
+.prod-score-num{
+  font-size:42px;font-weight:800;color:var(--primary);line-height:1;
+}
+.prod-score-num small{font-size:14px;color:var(--muted);font-weight:600}
+.prod-score-label{font-size:13px;font-weight:700;color:var(--accent);margin-top:4px}
+
+.prod-diff{
+  background:#F8F6F2;border-radius:10px;padding:12px;
+  margin-top:8px;font-size:14px;line-height:1.8;border:1px solid var(--border);
+}
+.prod-diff-label{font-size:11px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.prod-diff-text{color:var(--text);word-break:break-word;text-align:left}
+.w-match{color:#3A7D44;font-weight:600}
+.w-miss{color:#D4523F;text-decoration:line-through;font-weight:600}
+.w-extra{color:#A07000;font-style:italic;font-weight:600}
+
+@media(min-width:720px){
+  body{font-size:15px}
+  .header{padding:18px 32px 16px}
+  .title{font-size:20px}
+  .modes{padding:12px 32px;top:0}
+  .tabs{padding:12px 32px;top:50px}
+  .search-row{padding:10px 32px}
+  .voice-row{padding:10px 32px}
+  .phrases{padding:0 24px;max-width:760px;margin:0 auto}
+  .log-section{padding:20px 24px 80px;max-width:760px;margin:0 auto}
+  .section-title{padding:24px 24px 8px}
+  .legend{padding:10px 32px 4px}
+  .vis-chip svg{width:34px;height:34px}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <symbol id="i-person" viewBox="0 0 24 24"><path d="M12 4a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm0 9c-4.4 0-8 2.7-8 6v3h16v-3c0-3.3-3.6-6-8-6z"/></symbol>
+  <symbol id="i-person2" viewBox="0 0 24 24"><path d="M12 4a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm0 9c-4.4 0-8 2.7-8 6v3h16v-3c0-3.3-3.6-6-8-6z"/><circle cx="19" cy="5" r="2.5" opacity="0.5"/></symbol>
+  <symbol id="i-team" viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.6"/><circle cx="5" cy="8" r="2.1"/><circle cx="19" cy="8" r="2.1"/><path d="M7 22v-2c0-2.8 2.2-5 5-5s5 2.2 5 5v2zM2 22v-1.5c0-2.5 1.7-3.8 3-4 .8-.1 1.5.1 2 .4-.6 1-1 2.2-1 3.5V22zM22 22v-1.5c0-2.5-1.7-3.8-3-4-.8-.1-1.5.1-2 .4.6 1 1 2.2 1 3.5V22z"/></symbol>
+  <symbol id="i-bow" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M5 22c0-3 2.5-6 7-7 4.5 1 7 4 7 7v1H5z"/></symbol>
+  <symbol id="i-flex" viewBox="0 0 24 24"><circle cx="9" cy="5" r="2.5"/><path d="M5 22v-3c0-3 2-5 4-5 .8 0 1.5.2 2 .5l4 4-2 2-2-2v3.5zM15 9c1.5 0 3 1.5 3 3.5 0 1-.5 2-1.5 2.5L13 11l1.5-1.5c.2-.3.5-.5 1-.5z"/></symbol>
+  <symbol id="i-walk" viewBox="0 0 24 24"><circle cx="13" cy="4" r="2.3"/><path d="M11 8l-3 5 3 1v8h2v-7l3-2-1-3-2 1zM7 13l-2 5 1.5.5 2-4z"/></symbol>
+  <symbol id="i-think" viewBox="0 0 24 24"><circle cx="12" cy="6" r="3"/><path d="M5 22c0-4 3-7 7-7s7 3 7 7z"/><circle cx="18" cy="3" r="1.2"/><circle cx="20" cy="6" r="0.8"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 22V7l8-4 8 4v15h-5v-5h-6v5z"/><rect x="7" y="9" width="2" height="2" fill="#fff" opacity="0.7"/><rect x="11" y="9" width="2" height="2" fill="#fff" opacity="0.7"/><rect x="15" y="9" width="2" height="2" fill="#fff" opacity="0.7"/><rect x="7" y="13" width="2" height="2" fill="#fff" opacity="0.7"/><rect x="15" y="13" width="2" height="2" fill="#fff" opacity="0.7"/></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24"><path d="M3 9l2-5h14l2 5v2c0 1-1 2-2 2-.8 0-1.5-.4-2-1-.5.6-1.2 1-2 1s-1.5-.4-2-1c-.5.6-1.2 1-2 1s-1.5-.4-2-1c-.5.6-1.2 1-2 1-1 0-2-1-2-2zM4 13.5c.6.3 1.3.5 2 .5.7 0 1.4-.2 2-.5.6.3 1.3.5 2 .5s1.4-.2 2-.5c.6.3 1.3.5 2 .5s1.4-.2 2-.5c.6.3 1.3.5 2 .5v8H4z"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 2c1.4 0 2.7 1.4 3.5 3.5h-7C9.3 5.4 10.6 4 12 4zm-5.7 3.5h2c-.2 1.1-.3 2.3-.3 3.5h-3c.1-1.3.6-2.5 1.3-3.5zm11.4 0c.7 1 1.2 2.2 1.3 3.5h-3c0-1.2-.1-2.4-.3-3.5zM4 13h3c.1 1.2.2 2.4.4 3.5H5.3C4.6 15.5 4.1 14.3 4 13zm5 0h6c-.1 1.2-.2 2.4-.4 3.5H9.4C9.2 15.4 9 14.2 9 13zm8 0h3c-.1 1.3-.6 2.5-1.3 3.5h-2c.2-1.1.3-2.3.3-3.5zM8.5 18h7c-.8 2.1-2.1 3.5-3.5 3.5s-2.7-1.4-3.5-3.5z"/></symbol>
+  <symbol id="i-tower" viewBox="0 0 24 24"><path d="M11 2l-1 5h4l-1-5zM10 8l-2 6h8l-2-6zM7 15l-2 7h6.5v-7zM12.5 15v7H19l-2-7z"/></symbol>
+  <symbol id="i-food" viewBox="0 0 24 24"><path d="M3 14c0-2 4-4 9-4s9 2 9 4v1H3z"/><path d="M3 16h18v2c0 1-1 2-2 2H5c-1 0-2-1-2-2z"/><path d="M11 5l-1 4h2l-1-4z"/><circle cx="11" cy="3.5" r="1"/></symbol>
+  <symbol id="i-envelope" viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="M3 6l9 7 9-7" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.8"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M5 3h9l5 5v13H5z"/><path d="M14 3v5h5" fill="none" stroke="#fff" stroke-width="1.2" opacity="0.7"/><path d="M8 12h8M8 15h8M8 18h6" stroke="#fff" stroke-width="1.2" opacity="0.8"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4l3-1c.6 0 1.2.3 1.4.9l1.5 3.6c.2.5.1 1-.3 1.4L9 10.5c1 2 2.5 3.5 4.5 4.5l1.6-1.6c.4-.4.9-.5 1.4-.3l3.6 1.5c.6.2.9.8.9 1.4l-1 3c0 .8-.7 1.5-1.5 1.5C10.5 20.5 3.5 13.5 3.5 5.5 3.5 4.7 4.2 4 5 4z"/></symbol>
+  <symbol id="i-speech" viewBox="0 0 24 24"><path d="M4 4h16v12h-9l-5 4v-4H4z"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><path d="M16 6l-7 7c-1.5 1.5-1.5 4 0 5.5s4 1.5 5.5 0L18 14V8c0-3.3-2.7-6-6-6S6 4.7 6 8v8c0 1 .8 2 2 2s2-.9 2-2V8c0-1 1-2 2-2s2 1 2 2v6"/></symbol>
+  <symbol id="i-chart-up" viewBox="0 0 24 24"><rect x="4" y="14" width="3" height="6"/><rect x="9" y="11" width="3" height="9"/><rect x="14" y="8" width="3" height="12"/><rect x="19" y="4" width="3" height="16"/></symbol>
+  <symbol id="i-chart-down" viewBox="0 0 24 24"><rect x="4" y="4" width="3" height="16"/><rect x="9" y="8" width="3" height="12"/><rect x="14" y="11" width="3" height="9"/><rect x="19" y="14" width="3" height="6"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 21V3h2v18zm4-2v-7h3v7zm5 0V8h3v11zm5 0v-4h3v4z"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M5 4h14v3c0 3-2 5-5 5.5V15h2v3H8v-3h2v-2.5C7 12 5 10 5 7zM3 5h2v3c-1 0-2-.5-2-1.5zm16 0h2v1.5c0 1-1 1.5-2 1.5zM7 20h10v2H7z"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm9 4l-2.4-.4-.6-1.4 1.4-2-2-2-2 1.4-1.4-.6L13 5h-2l-.4 2.4-1.4.6-2-1.4-2 2 1.4 2-.6 1.4L3 12l.4 2.4 1.4.6-1.4 2 2 2 2-1.4 1.4.6L11 21h2l.4-2.4 1.4-.6 2 1.4 2-2-1.4-2 .6-1.4z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="1"/><rect x="3" y="5" width="18" height="4" fill="#fff" opacity="0.4"/><rect x="6" y="2" width="2" height="4"/><rect x="16" y="2" width="2" height="4"/><circle cx="8" cy="13" r="1.2" fill="#fff"/><circle cx="12" cy="13" r="1.2" fill="#fff"/><circle cx="16" cy="13" r="1.2" fill="#fff"/><circle cx="8" cy="17" r="1.2" fill="#fff"/><circle cx="12" cy="17" r="1.2" fill="#fff"/></symbol>
+  <symbol id="i-money" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M9 9h4.5c1 0 1.5.5 1.5 1.5s-.5 1.5-1.5 1.5h-3c-1 0-1.5.5-1.5 1.5s.5 1.5 1.5 1.5H15" fill="none" stroke="#fff" stroke-width="1.5"/></symbol>
+  <symbol id="i-percent" viewBox="0 0 24 24"><circle cx="6.5" cy="6.5" r="3"/><circle cx="17.5" cy="17.5" r="3"/><path d="M5 19L19 5" stroke="currentColor" stroke-width="2.2"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4 11h12l-3-3 1.5-1.5L21 12l-6.5 5.5L13 16l3-3H4z"/></symbol>
+  <symbol id="i-arrow-circle" viewBox="0 0 24 24"><path d="M12 4c4.4 0 8 3.6 8 8h-2c0-3.3-2.7-6-6-6V4zM4 12c0-3.3 2-6 5-7.4l.8 1.8C7.5 7.4 6 9.5 6 12c0 3.3 2.7 6 6 6v2c-4.4 0-8-3.6-8-8z"/></symbol>
+  <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M11 4h2v12l5-5 1.5 1.5L12 20l-7.5-7.5L6 11l5 5z" transform="rotate(180 12 12)"/></symbol>
+  <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M11 4h2v12l5-5 1.5 1.5L12 20l-7.5-7.5L6 11l5 5z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M7 12l3.5 3.5L17 9" fill="none" stroke="#fff" stroke-width="2.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M7 12h10" stroke="#fff" stroke-width="2.5"/></symbol>
+  <symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9c0-2 1.5-3 3-3s3 1 3 2.5c0 1-.5 1.5-1.5 2-.5.3-1.5 1-1.5 2v1" fill="none" stroke="#fff" stroke-width="2"/><circle cx="12" cy="17" r="1" fill="#fff"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21S3 14.5 3 8.5C3 5.5 5.2 3 8 3c1.7 0 3.2 1 4 2.3C12.8 4 14.3 3 16 3c2.8 0 5 2.5 5 5.5 0 6-9 12.5-9 12.5z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M12 5C6 5 2 12 2 12s4 7 10 7 10-7 10-7-4-7-10-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/><circle cx="12" cy="12" r="2" fill="#fff"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h11v9H2zM13 9h5l3 3v3h-8z"/><circle cx="6.5" cy="17" r="2"/><circle cx="17.5" cy="17" r="2"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M14 2L4 14h7l-1 8 10-12h-7z"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-4 12.7V18h8v-2.3A7 7 0 0 0 12 3zM9 19h6v1c0 1-1 2-2 2h-2c-1 0-2-1-2-2z"/></symbol>
+  <symbol id="i-handshake" viewBox="0 0 24 24"><path d="M2 14l4-4 4 4-4 4z"/><path d="M22 14l-4-4-4 4 4 4z"/><path d="M9 11l3-3 3 3-3 3z"/><path d="M6 14l-2 2v3h3l2-2M18 14l2 2v3h-3l-2-2"/></symbol>
+  <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M12 2c4 2 7 7 7 12l-3 2-2-2-2 2-2-2-3-2c0-5 3-10 5-12z"/><path d="M9 16l-3 5 5-2M15 16l3 5-5-2"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.5" fill="#fff"/></symbol>
+  <symbol id="i-broken" viewBox="0 0 24 24"><path d="M3 6h18l-2 4-3-3-3 3-3-3-3 3-2-2zM3 12h2l3 3-3 3v2h14v-2l-3-3 3-3h2v8H3z"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2zM5 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1zM18 17l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></symbol>
+</defs>
+</svg>
+
+<header class="header">
+  <div class="header-row">
+    <div>
+      <div class="title">📘 Phrase Master</div>
+      <div class="subtitle">音声 + 発音記号 + シルエット文法</div>
+    </div>
+    <div style="font-size:13px;font-weight:700" id="counter">0 / 50</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-text">
+      <span>記憶定着度（重み付け）</span>
+      <span id="percent">0%</span>
+    </div>
+  </div>
+  <div id="masteryBreakdown" class="mastery-breakdown"></div>
+</header>
+
+<div class="modes">
+  <button class="mode-btn quiz" onclick="openQuiz()">🎯 クイズ開始</button>
+  <button class="mode-btn" id="hideJpBtn" onclick="toggleHideJp()">🇯🇵 日本語を隠す</button>
+  <button class="mode-btn" id="imageOnlyBtn" onclick="toggleImageOnly()">🎨 絵だけ表示</button>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div class="search-row">
+  <input type="text" class="search" id="search" placeholder="🔍 検索（英語・日本語どちらでも）">
+</div>
+<div class="voice-row">
+  <label>🌍 音声:</label>
+  <select id="voiceSelect"></select>
+</div>
+
+<div class="legend">
+  <span class="legend-item" style="background:var(--role-subject-bg);color:var(--role-subject-fg)"><span class="legend-dot" style="background:var(--role-subject-fg)"></span>主語</span>
+  <span class="legend-item" style="background:var(--role-verb-bg);color:var(--role-verb-fg)"><span class="legend-dot" style="background:var(--role-verb-fg)"></span>動詞</span>
+  <span class="legend-item" style="background:var(--role-emotion-bg);color:var(--role-emotion-fg)"><span class="legend-dot" style="background:var(--role-emotion-fg)"></span>感情</span>
+  <span class="legend-item" style="background:var(--role-object-bg);color:var(--role-object-fg)"><span class="legend-dot" style="background:var(--role-object-fg)"></span>目的語</span>
+  <span class="legend-item" style="background:var(--role-location-bg);color:var(--role-location-fg)"><span class="legend-dot" style="background:var(--role-location-fg)"></span>場所</span>
+  <span class="legend-item" style="background:var(--role-time-bg);color:var(--role-time-fg)"><span class="legend-dot" style="background:var(--role-time-fg)"></span>時/数</span>
+</div>
+
+<div class="section-title">Master List · 50 Phrases (with IPA & Audio)</div>
+<div class="phrases" id="phraseList"></div>
+
+<div class="log-section">
+  <div class="section-title" style="padding-top:0">My Phrase Log · 自分専用ログ</div>
+  <div class="log-intro">
+    💡 仕事や学習中に出会った「使いたい！」と思ったフレーズをここに追加していきましょう。<br>
+    Month 3までに <strong>200個以上</strong>の自分専用ライブラリができます。データはこの端末に保存されます。
+  </div>
+
+  <div class="log-form">
+    <input type="text" id="logEn" placeholder="英語フレーズ（例: I'd be happy to ~）">
+    <input type="text" id="logJp" placeholder="日本語の意味（例: 喜んで〜します）">
+    <textarea id="logEx" placeholder="使い方の例文・どこで聞いた／読んだか（任意）"></textarea>
+    <div class="log-form-row">
+      <select id="logCat">
+        <option value="self">Self-Intro</option>
+        <option value="email">Email</option>
+        <option value="meeting" selected>Meeting</option>
+        <option value="industry">Industry</option>
+        <option value="store">Store Visit</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <button onclick="addLog()">➕ ログに追加</button>
+  </div>
+
+  <div id="logList"></div>
+</div>
+
+<div class="utility">
+  <a onclick="exportData()">📤 データを書き出す</a> ·
+  <a onclick="resetMastery()">習得状況をリセット</a>
+</div>
+
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-header">
+    <div class="quiz-title" id="quizTitle">🎯 Quiz</div>
+    <div class="quiz-progress" id="quizProgress"></div>
+    <button class="quiz-close" onclick="closeQuiz()">✕</button>
+  </div>
+  <div class="quiz-body" id="quizBody"></div>
+</div>
+
+<script>
+// ============== DATA ==============
+const PHRASES = [
+  // SELF-INTRODUCTION (10)
+  {cat:"self",ipa:"/aɪm beɪst ɪn ˈtoʊkioʊ/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"verb",icon:"pin",label:"based in"},{role:"location",icon:"tower",label:"Tokyo"}],
+    en:"I'm based in Tokyo.",jp:"東京を拠点にしています",
+    ex:"I'm based in Tokyo, but I travel to our overseas stores frequently.",exJp:"東京拠点ですが、海外店舗にはよく出張します。"},
+  {cat:"self",ipa:"/aɪ wɜːrk fər ə ˈɡloʊbəl fuːd ˈkʌmpəni/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"verb",icon:"gear",label:"work for"},{role:"object",icon:"globe",label:"global"},{role:"object",icon:"food",label:"food co."}],
+    en:"I work for a global food company.",jp:"グローバル外食企業で働いています",
+    ex:"I work for a global food company that operates in 12 countries.",exJp:"12カ国で展開するグローバル外食企業に勤めています。"},
+  {cat:"self",ipa:"/aɪ ˌoʊvərˈsiː aʊər ˌoʊvərˈsiːz brændz/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"verb",icon:"eye",label:"oversee"},{role:"object",icon:"globe",label:"overseas"},{role:"object",icon:"store",label:"brands"}],
+    en:"I oversee our overseas brands.",jp:"海外ブランドを統括しています",
+    ex:"I oversee our overseas brands across Asia and Europe.",exJp:"アジアと欧州の海外ブランドを統括しています。"},
+  {cat:"self",ipa:"/aɪm ɪn tʃɑːrdʒ əv ˈstrætədʒi/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"verb",icon:"target",label:"in charge of"},{role:"object",icon:"chart",label:"strategy"}],
+    en:"I'm in charge of strategy.",jp:"戦略を担当しています",
+    ex:"I'm in charge of strategy for the international business unit.",exJp:"国際事業部の戦略を担当しています。"},
+  {cat:"self",ipa:"/aɪ liːd ðə ˈstrætədʒi tiːm/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"verb",icon:"arrow-right",label:"lead"},{role:"object",icon:"team",label:"team"},{role:"object",icon:"chart",label:"strategy"}],
+    en:"I lead the strategy team.",jp:"戦略チームを率いています",
+    ex:"I lead a strategy team of eight people.",exJp:"8名の戦略チームを率いています。"},
+  {cat:"self",ipa:"/aɪ rɪˈpɔːrt tə ðə siː ɛs oʊ/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"verb",icon:"arrow-up",label:"report to"},{role:"object",icon:"person2",label:"CSO"}],
+    en:"I report to the CSO.",jp:"CSOに報告しています",
+    ex:"I report to our Chief Strategy Officer based in London.",exJp:"ロンドンにいるCSOに報告しています。"},
+  {cat:"self",ipa:"/aɪv bɪn ɪn ðɪs roʊl fər tuː jɪərz/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"verb",icon:"clock",label:"have been"},{role:"time",icon:"cal",label:"2 years"}],
+    en:"I've been in this role for two years.",jp:"この役職について2年です",
+    ex:"I've been in this role for two years and with the company for ten.",exJp:"この役職は2年、会社には10年います。"},
+  {cat:"self",ipa:"/pliːzd tə miːt juː/",
+    vis:[{role:"emotion",icon:"heart",label:"Pleased"},{role:"verb",icon:"handshake",label:"to meet"},{role:"object",icon:"person2",label:"you"}],
+    en:"Pleased to meet you.",jp:"お会いできて光栄です",
+    ex:"Pleased to meet you — I've heard a lot about your work.",exJp:"お会いできて光栄です。お噂はかねがね。"},
+  {cat:"self",ipa:"/aɪm ˈlʊkɪŋ ˈfɔːrwərd tə ˈwɜːrkɪŋ wɪð juː/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"emotion",icon:"sparkle",label:"looking forward"},{role:"verb",icon:"gear",label:"working with"},{role:"object",icon:"person2",label:"you"}],
+    en:"I'm looking forward to working with you.",jp:"一緒に働けるのを楽しみにしています",
+    ex:"I'm looking forward to working with you on the new market entry.",exJp:"新規市場参入で一緒に働けるのを楽しみにしています。"},
+  {cat:"self",ipa:"/θæŋks fər ˈhævɪŋ miː/",
+    vis:[{role:"emotion",icon:"heart",label:"Thanks"},{role:"verb",icon:"handshake",label:"for having"},{role:"object",icon:"person",label:"me"}],
+    en:"Thanks for having me.",jp:"お招きいただきありがとうございます",
+    ex:"Thanks for having me — happy to be here in London this week.",exJp:"お招き感謝します。今週ロンドンに来られて嬉しいです。"},
+
+  // EMAIL BASICS (15)
+  {cat:"email",ipa:"/aɪ hoʊp ðɪs ˈiːmeɪl faɪndz juː wɛl/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"emotion",icon:"heart",label:"hope"},{role:"object",icon:"envelope",label:"this email"},{role:"object",icon:"person2",label:"you well"}],
+    en:"I hope this email finds you well.",jp:"お元気でいらっしゃいますか",
+    ex:"Hi John, I hope this email finds you well.",exJp:"Johnさん、お元気でいらっしゃいますか。"},
+  {cat:"email",ipa:"/θæŋks fər jɔːr ˈmɛsɪdʒ/",
+    vis:[{role:"emotion",icon:"heart",label:"Thanks for"},{role:"object",icon:"envelope",label:"your message"}],
+    en:"Thanks for your message.",jp:"ご連絡ありがとうございます",
+    ex:"Thanks for your message — really appreciate the quick turnaround.",exJp:"ご連絡感謝します、迅速なご対応に感謝です。"},
+  {cat:"email",ipa:"/kəd juː pliːz ʃɛr/",
+    vis:[{role:"subject",icon:"person2",label:"you"},{role:"verb",icon:"envelope",label:"please share"},{role:"object",icon:"question",label:"~?"}],
+    en:"Could you please share ~?",jp:"〜を共有いただけますか？",
+    ex:"Could you please share the latest sales report by Monday?",exJp:"月曜までに最新の売上レポートを共有いただけますか？"},
+  {cat:"email",ipa:"/aɪd biː ˈhæpi tə hɛlp/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"emotion",icon:"heart",label:"happy to"},{role:"verb",icon:"handshake",label:"help"}],
+    en:"I'd be happy to help.",jp:"喜んでお手伝いします",
+    ex:"I'd be happy to help — let me know what you need.",exJp:"喜んでお手伝いします。必要なものを教えてください。"},
+  {cat:"email",ipa:"/əv kɔːrs, ˈhæpi tuː/",
+    vis:[{role:"verb",icon:"check",label:"Of course"},{role:"emotion",icon:"heart",label:"happy to"}],
+    en:"Of course, happy to.",jp:"もちろんです、喜んで",
+    ex:"Of course, happy to take that on.",exJp:"もちろんです、喜んで引き受けます。"},
+  {cat:"email",ipa:"/lɛt mi noʊ ɪf juː niːd ˈɛniθɪŋ ɛls/",
+    vis:[{role:"subject",icon:"person2",label:"you"},{role:"verb",icon:"speech",label:"Let me know"},{role:"object",icon:"question",label:"if need"}],
+    en:"Let me know if you need anything else.",jp:"他に必要なものがあれば教えてください",
+    ex:"Let me know if you need anything else from our side.",exJp:"こちら側で他に必要なものがあれば教えてください。"},
+  {cat:"email",ipa:"/aɪl hæv ɪt ˈrɛdi baɪ ˈfraɪdeɪ/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"verb",icon:"check",label:"have ready"},{role:"object",icon:"doc",label:"it"},{role:"time",icon:"cal",label:"by Friday"}],
+    en:"I'll have it ready by Friday.",jp:"金曜までに準備します",
+    ex:"I'll have the materials ready by Friday morning.",exJp:"資料は金曜の朝までに準備します。"},
+  {cat:"email",ipa:"/aɪl ɡɛt bæk tə juː baɪ ˈwɛnzdeɪ/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"verb",icon:"arrow-circle",label:"get back to"},{role:"object",icon:"person2",label:"you"},{role:"time",icon:"cal",label:"by Wed"}],
+    en:"I'll get back to you by Wednesday.",jp:"水曜までに改めてご連絡します",
+    ex:"I'll review and get back to you by Wednesday.",exJp:"確認して水曜までに改めてご連絡します。"},
+  {cat:"email",ipa:"/əˈpɑːlədʒiz fər ðə dɪˈleɪd rɪˈspɑːns/",
+    vis:[{role:"emotion",icon:"bow",label:"Apologies"},{role:"time",icon:"clock",label:"delayed"},{role:"object",icon:"envelope",label:"response"}],
+    en:"Apologies for the delayed response.",jp:"返信が遅くなり申し訳ありません",
+    ex:"Apologies for the delayed response — I was at our Singapore store all week.",exJp:"返信遅れ失礼しました、今週はシンガポール店にいました。"},
+  {cat:"email",ipa:"/dʒʌst ə kwɪk ˈʌpdeɪt ɔːn/",
+    vis:[{role:"verb",icon:"bolt",label:"quick"},{role:"object",icon:"doc",label:"update on"},{role:"object",icon:"question",label:"~"}],
+    en:"Just a quick update on ~.",jp:"〜について簡単な進捗共有です",
+    ex:"Just a quick update on the London store launch.",exJp:"ロンドン店オープンの簡単な進捗共有です。"},
+  {cat:"email",ipa:"/tə ˈfɑːloʊ ʌp ɔːn aʊər ˌkɑːnvərˈseɪʃən/",
+    vis:[{role:"verb",icon:"arrow-circle",label:"follow up"},{role:"object",icon:"speech",label:"conversation"}],
+    en:"To follow up on our conversation, ~",jp:"先日の話のフォローですが、〜",
+    ex:"To follow up on our conversation last week, here's the proposal.",exJp:"先週のご相談のフォローで、提案書をお送りします。"},
+  {cat:"email",ipa:"/pliːz faɪnd əˈtætʃt/",
+    vis:[{role:"verb",icon:"clip",label:"Please find"},{role:"object",icon:"doc",label:"attached"}],
+    en:"Please find attached ~.",jp:"〜を添付しております",
+    ex:"Please find attached the Q1 performance summary.",exJp:"Q1業績サマリーを添付しております。"},
+  {cat:"email",ipa:"/ˈlʊkɪŋ ˈfɔːrwərd tə jɔːr θɔːts/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"emotion",icon:"sparkle",label:"looking forward"},{role:"object",icon:"bulb",label:"your thoughts"}],
+    en:"Looking forward to your thoughts.",jp:"ご意見をお待ちしております",
+    ex:"Looking forward to your thoughts on the menu strategy.",exJp:"メニュー戦略についてご意見をお待ちしております。"},
+  {cat:"email",ipa:"/kəd wi sɛt ʌp ə kwɪk kɔːl/",
+    vis:[{role:"subject",icon:"team",label:"we"},{role:"verb",icon:"phone",label:"set up"},{role:"object",icon:"bolt",label:"quick call"}],
+    en:"Could we set up a quick call?",jp:"短い通話をセットアップできますか？",
+    ex:"Could we set up a quick 15-min call this week?",exJp:"今週、15分ほど短い通話をセットアップできますか？"},
+  {cat:"email",ipa:"/bɛst rɪˈɡɑːrdz/",
+    vis:[{role:"emotion",icon:"heart",label:"Best regards"}],
+    en:"Best regards,",jp:"敬具（メール締めの定型）",
+    ex:"Best regards, Kazuki",exJp:"敬具 Kazuki"},
+
+  // INDUSTRY / OPERATIONS (15)
+  {cat:"industry",ipa:"/seɪm stɔːr seɪlz wɜːr ʌp faɪv pərˈsɛnt jɪər ˈoʊvər jɪər/",
+    vis:[{role:"subject",icon:"store",label:"Same-store sales"},{role:"verb",icon:"chart-up",label:"up"},{role:"amount",icon:"percent",label:"5%"},{role:"time",icon:"cal",label:"YoY"}],
+    en:"Same-store sales were up 5% YoY.",jp:"既存店売上が前年同期比5%増でした",
+    ex:"Same-store sales were up 5% YoY in Q1, driven by strong store traffic.",exJp:"Q1の既存店売上は来店客数好調により前年同期比5%増でした。"},
+  {cat:"industry",ipa:"/ˈmɑːrdʒɪnz ɑːr taɪt ɪn ðə fuːd ˈɪndəstri/",
+    vis:[{role:"subject",icon:"money",label:"Margins"},{role:"verb",icon:"chart-down",label:"are tight"},{role:"location",icon:"food",label:"food industry"}],
+    en:"Margins are tight in the food industry.",jp:"外食業界は利益率が薄いです",
+    ex:"Margins are tight in the food industry, so labor cost discipline is critical.",exJp:"外食業界は利益率が薄いので、人件費の管理が重要です。"},
+  {cat:"industry",ipa:"/wi niːd tə brɪŋ ˈleɪbər kɔːst daʊn tə ˈtwɛnti faɪv pərˈsɛnt/",
+    vis:[{role:"subject",icon:"team",label:"We"},{role:"verb",icon:"arrow-down",label:"bring down"},{role:"object",icon:"money",label:"labor cost"},{role:"amount",icon:"percent",label:"to 25%"}],
+    en:"We need to bring labor cost down to 25%.",jp:"人件費率を25%まで下げる必要があります",
+    ex:"We need to bring labor cost down to 25% by year-end.",exJp:"年末までに人件費率を25%に下げる必要があります。"},
+  {cat:"industry",ipa:"/stɔːr ˈtræfɪk ɪnˈkriːst ðɪs ˈkwɔːrtər/",
+    vis:[{role:"subject",icon:"team",label:"Store traffic"},{role:"verb",icon:"chart-up",label:"increased"},{role:"time",icon:"cal",label:"this Q"}],
+    en:"Store traffic increased this quarter.",jp:"今四半期は来店客数が増加しました",
+    ex:"Store traffic increased 7% this quarter, especially on weekends.",exJp:"今四半期、特に週末の来店客数が7%増えました。"},
+  {cat:"industry",ipa:"/eɪ oʊ viː ɪz ˈtrɛndɪŋ ʌp/",
+    vis:[{role:"subject",icon:"doc",label:"AOV"},{role:"verb",icon:"chart-up",label:"trending up"}],
+    en:"AOV is trending up.",jp:"客単価が上昇傾向です",
+    ex:"AOV is trending up thanks to the new premium menu.",exJp:"新しいプレミアムメニューのおかげで客単価が上昇傾向です。"},
+  {cat:"industry",ipa:"/tɑːp laɪn ɡroʊθ ɪz strɔːŋ/",
+    vis:[{role:"subject",icon:"chart-up",label:"Top-line"},{role:"verb",icon:"chart-up",label:"growth"},{role:"emotion",icon:"flex",label:"strong"}],
+    en:"Top-line growth is strong.",jp:"売上成長は堅調です",
+    ex:"Top-line growth is strong, but bottom-line is under pressure.",exJp:"売上成長は堅調ですが、利益面はプレッシャーがあります。"},
+  {cat:"industry",ipa:"/wɪər ˈoʊpənɪŋ θriː njuː ˈflæɡʃɪp stɔːrz/",
+    vis:[{role:"subject",icon:"team",label:"We"},{role:"verb",icon:"plus",label:"opening"},{role:"amount",icon:"sparkle",label:"3 new"},{role:"object",icon:"store",label:"flagship"}],
+    en:"We're opening three new flagship stores.",jp:"3店舗の旗艦店を新規オープンします",
+    ex:"We're opening three new flagship stores in Q3 across Europe.",exJp:"Q3に欧州で3店舗の旗艦店をオープンします。"},
+  {cat:"industry",ipa:"/səˈplaɪ tʃeɪn dɪsˈrʌpʃən əˈfɛktɪd ʌs/",
+    vis:[{role:"subject",icon:"truck",label:"Supply chain"},{role:"verb",icon:"broken",label:"disruption"},{role:"object",icon:"team",label:"affected us"}],
+    en:"Supply chain disruption affected us.",jp:"サプライチェーンの混乱の影響を受けました",
+    ex:"Supply chain disruption affected us in March, especially seafood.",exJp:"3月はサプライチェーン混乱の影響、特に海鮮で受けました。"},
+  {cat:"industry",ipa:"/ˈkwɔːrtərli ˈbɪznəs rɪˈvjuː ɪz nɛkst ˈmʌndeɪ/",
+    vis:[{role:"subject",icon:"chart",label:"QBR"},{role:"verb",icon:"arrow-right",label:"is"},{role:"time",icon:"cal",label:"next Mon"}],
+    en:"Quarterly business review is next Monday.",jp:"四半期業績レビューは来週月曜です",
+    ex:"Our quarterly business review is next Monday at 3 PM London time.",exJp:"四半期業績レビューは来週月曜午後3時（ロンドン時間）です。"},
+  {cat:"industry",ipa:"/ˌɑːpəˈreɪʃənz ɑːr ˈrʌnɪŋ ˈsmuːðli/",
+    vis:[{role:"subject",icon:"gear",label:"Operations"},{role:"verb",icon:"check",label:"running"},{role:"emotion",icon:"sparkle",label:"smoothly"}],
+    en:"Operations are running smoothly.",jp:"オペレーションは順調です",
+    ex:"Operations are running smoothly across all 12 markets.",exJp:"全12市場でオペレーションは順調です。"},
+  {cat:"industry",ipa:"/wi hæd ə ˈrɛkərd ˈbreɪkɪŋ ˈkwɔːrtər/",
+    vis:[{role:"subject",icon:"team",label:"We"},{role:"verb",icon:"trophy",label:"record-breaking"},{role:"time",icon:"cal",label:"quarter"}],
+    en:"We had a record-breaking quarter.",jp:"記録的な四半期でした",
+    ex:"Japan had a record-breaking quarter in revenue terms.",exJp:"日本は売上面で記録的な四半期でした。"},
+  {cat:"industry",ipa:"/ɛf ɛl ˈreɪʃoʊ ɪz ʌp tuː pɔɪnts/",
+    vis:[{role:"subject",icon:"money",label:"FL ratio"},{role:"verb",icon:"arrow-up",label:"up"},{role:"amount",icon:"percent",label:"2 pts"}],
+    en:"FL ratio is up 2 points.",jp:"FL比率が2ポイント上昇しています",
+    ex:"FL ratio is up 2 points QoQ, mainly driven by labor.",exJp:"FL比率は前四半期比2pt上昇、主に人件費起因です。"},
+  {cat:"industry",ipa:"/kɔːst əv ɡʊdz soʊld wɛnt ʌp/",
+    vis:[{role:"subject",icon:"food",label:"COGS"},{role:"verb",icon:"arrow-up",label:"went up"}],
+    en:"Cost of goods sold went up.",jp:"原価が上昇しました",
+    ex:"Cost of goods sold went up 3 points due to ingredient inflation.",exJp:"食材インフレで原価が3pt上昇しました。"},
+  {cat:"industry",ipa:"/jɪər ɛnd ˈfɔːrkæst ɪz ɔːn træk/",
+    vis:[{role:"subject",icon:"cal",label:"Year-end"},{role:"object",icon:"target",label:"forecast"},{role:"verb",icon:"check",label:"on track"}],
+    en:"Year-end forecast is on track.",jp:"年度末予想は計画通りです",
+    ex:"Year-end forecast is on track despite April's softness.",exJp:"4月の弱さにもかかわらず、年度末予想は計画通りです。"},
+  {cat:"industry",ipa:"/lɛt mi wɔːk juː θruː ðə piː ænd ɛl/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"verb",icon:"walk",label:"walk through"},{role:"object",icon:"person2",label:"you"},{role:"object",icon:"chart",label:"P&L"}],
+    en:"Let me walk you through the P&L.",jp:"PLを順を追って説明します",
+    ex:"Let me walk you through the P&L for Q1 store-level performance.",exJp:"Q1の店舗別業績PLを順を追って説明します。"},
+
+  // MEETING BASICS (10)
+  {cat:"meeting",ipa:"/θæŋks ˈɛvriwʌn fər ˈdʒɔɪnɪŋ/",
+    vis:[{role:"emotion",icon:"heart",label:"Thanks"},{role:"object",icon:"team",label:"everyone"},{role:"verb",icon:"handshake",label:"for joining"}],
+    en:"Thanks everyone for joining.",jp:"皆さん、ご参加ありがとうございます",
+    ex:"Thanks everyone for joining today's call.",exJp:"皆さん、本日のコールにご参加ありがとうございます。"},
+  {cat:"meeting",ipa:"/lɛts ɡɛt ˈstɑːrtɪd/",
+    vis:[{role:"subject",icon:"team",label:"Let's"},{role:"verb",icon:"rocket",label:"get started"}],
+    en:"Let's get started.",jp:"始めましょう",
+    ex:"Alright, let's get started — we have a lot to cover.",exJp:"では始めましょう、議題が多いので。"},
+  {cat:"meeting",ipa:"/kəd juː wɔːk ʌs θruː/",
+    vis:[{role:"subject",icon:"person2",label:"you"},{role:"verb",icon:"walk",label:"walk through"},{role:"object",icon:"team",label:"us"},{role:"object",icon:"question",label:"~?"}],
+    en:"Could you walk us through ~?",jp:"〜について順を追って説明してくれますか？",
+    ex:"John, could you walk us through the European numbers?",exJp:"Johnさん、欧州の数字を順を追って説明してくれますか？"},
+  {cat:"meeting",ipa:"/aɪd laɪk tə æd tə ðæt/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"verb",icon:"plus",label:"add to"},{role:"object",icon:"speech",label:"that"}],
+    en:"I'd like to add to that.",jp:"それに付け加えたいです",
+    ex:"I'd like to add to that — from the Japan side, we're seeing similar trends.",exJp:"付け加えますと、日本でも同様の傾向があります。"},
+  {cat:"meeting",ipa:"/ˈsɑːri, kəd juː rɪˈpiːt ðæt/",
+    vis:[{role:"emotion",icon:"bow",label:"Sorry"},{role:"subject",icon:"person2",label:"you"},{role:"verb",icon:"arrow-circle",label:"repeat"}],
+    en:"Sorry, could you repeat that?",jp:"すみません、もう一度お願いできますか？",
+    ex:"Sorry, could you repeat that last point a bit more slowly?",exJp:"すみません、最後の点をもう少しゆっくりお願いできますか？"},
+  {cat:"meeting",ipa:"/dʒʌst tə kənˈfɜːrm/",
+    vis:[{role:"verb",icon:"check",label:"to confirm"},{role:"object",icon:"question",label:"~"}],
+    en:"Just to confirm, ~",jp:"確認ですが、〜",
+    ex:"Just to confirm, the deadline is May 30, correct?",exJp:"確認ですが、期限は5月30日でよろしいですか？"},
+  {cat:"meeting",ipa:"/aɪm nɑːt ʃʊr aɪ ˈfɑːloʊ/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"emotion",icon:"think",label:"not sure"},{role:"verb",icon:"question",label:"follow"}],
+    en:"I'm not sure I follow.",jp:"理解できているか自信がありません",
+    ex:"I'm not sure I follow — could you give an example?",exJp:"理解できているか自信がないので、例をいただけますか？"},
+  {cat:"meeting",ipa:"/lɛts ˈsɜːrkəl bæk tə ðɪs/",
+    vis:[{role:"subject",icon:"team",label:"Let's"},{role:"verb",icon:"arrow-circle",label:"circle back"},{role:"object",icon:"speech",label:"this"}],
+    en:"Let's circle back to this.",jp:"この件はまた後で戻ってきましょう",
+    ex:"Let's circle back to this after we cover the budget.",exJp:"予算の話の後、この件にまた戻りましょう。"},
+  {cat:"meeting",ipa:"/ði ˈækʃən ˈaɪtəm ɪz/",
+    vis:[{role:"subject",icon:"check",label:"action item"},{role:"verb",icon:"arrow-right",label:"is"},{role:"object",icon:"doc",label:"~"}],
+    en:"The action item is ~.",jp:"アクションアイテムは〜です",
+    ex:"The action item is for me to send the proposal by Friday.",exJp:"アクションアイテムは、私が金曜までに提案書を送ることです。"},
+  {cat:"meeting",ipa:"/aɪm ˈkɑːnfɪdənt ðɪs wɪl wɜːrk/",
+    vis:[{role:"subject",icon:"person",label:"I"},{role:"emotion",icon:"flex",label:"confident"},{role:"object",icon:"speech",label:"this"},{role:"verb",icon:"check",label:"will work"}],
+    en:"I'm confident this will work.",jp:"これは上手く機能すると確信しています",
+    ex:"Based on our market data, I'm confident this strategy will work in Japan.",exJp:"市場データに基づき、この戦略は日本で機能すると確信しています。"}
+];
+
+const CATS = [
+  {id:"all",label:"🌐 All"},
+  {id:"self",label:"👋 Self-Intro"},
+  {id:"email",label:"📧 Email"},
+  {id:"meeting",label:"💬 Meeting"},
+  {id:"industry",label:"🍽 Industry"}
+];
+
+// ============== SCENARIOS (when to use each phrase) ==============
+const SCENARIOS = {
+  // Self-Intro
+  "I'm based in Tokyo.": "初対面の海外取引先に、自分の拠点を伝える",
+  "I work for a global food company.": "自分の所属（業界）を簡潔に紹介する",
+  "I oversee our overseas brands.": "「あなたの仕事は何ですか？」と聞かれた時の答え",
+  "I'm in charge of strategy.": "ロンドン本社で会った同僚に役職を伝える",
+  "I lead the strategy team.": "会議の冒頭で自分のチームを紹介する",
+  "I report to the CSO.": "組織図の説明で、報告ラインを伝える",
+  "I've been in this role for two years.": "「この役職には長いの？」と聞かれた時",
+  "Pleased to meet you.": "初対面の相手と握手する時の挨拶",
+  "I'm looking forward to working with you.": "新しいパートナーシップ開始の挨拶",
+  "Thanks for having me.": "ロンドン HQ の会議に招かれて最初に言う",
+  // Email
+  "I hope this email finds you well.": "ビジネスメールの冒頭で相手を気遣う",
+  "Thanks for your message.": "相手のメールに返信する書き出し",
+  "Could you please share ~?": "データ・レポートを丁寧に依頼する",
+  "I'd be happy to help.": "協力依頼を温かく引き受ける",
+  "Of course, happy to.": "カジュアルに快諾する",
+  "Let me know if you need anything else.": "メール締めで追加サポートを申し出る",
+  "I'll have it ready by Friday.": "期日付きで完了を約束する",
+  "I'll get back to you by Wednesday.": "期日付きで再連絡を約束する",
+  "Apologies for the delayed response.": "返信が遅れたことを丁寧に詫びる",
+  "Just a quick update on ~.": "短い進捗共有メールの冒頭",
+  "To follow up on our conversation, ~": "前回の会話を受けてフォローする",
+  "Please find attached ~.": "資料を添付したことを伝える",
+  "Looking forward to your thoughts.": "相手の意見を求めてメールを締める",
+  "Could we set up a quick call?": "短い通話の設定を打診する",
+  "Best regards,": "ビジネスメールの締めの挨拶",
+  // Industry
+  "Same-store sales were up 5% YoY.": "四半期業績レビューで既存店売上を報告する",
+  "Margins are tight in the food industry.": "業界の収益性の特徴を説明する",
+  "We need to bring labor cost down to 25%.": "人件費削減目標を共有する",
+  "Store traffic increased this quarter.": "来店客数の改善を報告する",
+  "AOV is trending up.": "客単価の好調を共有する",
+  "Top-line growth is strong.": "売上の堅調さを強調する",
+  "We're opening three new flagship stores.": "新規旗艦店の出店計画を発表する",
+  "Supply chain disruption affected us.": "サプライチェーン問題の影響を説明する",
+  "Quarterly business review is next Monday.": "QBR の日程を共有する",
+  "Operations are running smoothly.": "オペレーションが順調と報告する",
+  "We had a record-breaking quarter.": "四半期業績が過去最高だったと伝える",
+  "FL ratio is up 2 points.": "FL 比率の変化を報告する",
+  "Cost of goods sold went up.": "原価上昇を報告する",
+  "Year-end forecast is on track.": "年度末予想が計画通りと共有する",
+  "Let me walk you through the P&L.": "PL の詳細説明を始める前置き",
+  // Meeting
+  "Thanks everyone for joining.": "会議の冒頭で参加者全員に感謝する",
+  "Let's get started.": "会議を始める合図",
+  "Could you walk us through ~?": "相手に詳細説明を依頼する",
+  "I'd like to add to that.": "他の発言者の意見に補足する",
+  "Sorry, could you repeat that?": "聞き取れなかった時に丁寧に聞き返す",
+  "Just to confirm, ~": "重要な点を再確認する",
+  "I'm not sure I follow.": "内容が分からない時に丁寧に伝える",
+  "Let's circle back to this.": "議題を後回しにする提案",
+  "The action item is ~.": "会議のアクションアイテムを宣言する",
+  "I'm confident this will work.": "自分の戦略への確信を表明する"
+};
+function getScenario(en){ return SCENARIOS[en] || ""; }
+
+// ============== MASTERY / SPACED REPETITION (Ebbinghaus) ==============
+const MASTERY_LEVELS = [
+  {id:0, label:"未着手",     icon:"⚪", color:"#999",    bg:"#F0F0F0"},
+  {id:1, label:"新規",       icon:"🔴", color:"#D4523F", bg:"#FBE6E2"},
+  {id:2, label:"学習中",     icon:"🟡", color:"#D69100", bg:"#FFF6E0"},
+  {id:3, label:"定着中",     icon:"🟢", color:"#3A7D44", bg:"#E8F5EA"},
+  {id:4, label:"準マスター", icon:"🔵", color:"#3567A8", bg:"#E5ECF5"},
+  {id:5, label:"マスター",   icon:"⭐", color:"#A07000", bg:"#FFF4D6"}
+];
+// Days until next review at each level (Ebbinghaus-inspired)
+const REVIEW_INTERVALS_DAYS = [0, 1, 3, 7, 14, 30];
+const DAY_MS = 24*60*60*1000;
+
+function getMastery(key){
+  return state.mastery[key] || { level:0, lastReviewedAt:0, nextReviewAt:0, reviewCount:0, correctCount:0 };
+}
+function levelInfo(level){ return MASTERY_LEVELS[Math.max(0, Math.min(5, level))]; }
+
+function advanceMastery(key){
+  const m = getMastery(key);
+  m.level = Math.min(5, m.level + 1);
+  m.lastReviewedAt = Date.now();
+  m.reviewCount = (m.reviewCount||0) + 1;
+  m.correctCount = (m.correctCount||0) + 1;
+  m.nextReviewAt = Date.now() + REVIEW_INTERVALS_DAYS[m.level] * DAY_MS;
+  state.mastery[key] = m;
+  saveState();
+}
+function regressMastery(key){
+  const m = getMastery(key);
+  m.level = 1; // back to "新規・要復習"
+  m.lastReviewedAt = Date.now();
+  m.reviewCount = (m.reviewCount||0) + 1;
+  m.nextReviewAt = Date.now() + REVIEW_INTERVALS_DAYS[1] * DAY_MS;
+  state.mastery[key] = m;
+  saveState();
+}
+function resetPhraseMastery(key){
+  delete state.mastery[key];
+  saveState();
+}
+
+function getMasteryStats(){
+  const counts = [0,0,0,0,0,0];
+  for(const p of PHRASES){
+    const m = getMastery(p.en);
+    counts[m.level || 0]++;
+  }
+  return counts;
+}
+
+function getDueForReview(){
+  const now = Date.now();
+  return PHRASES.filter(p=>{
+    const m = getMastery(p.en);
+    if(m.level === 0) return false; // not started
+    if(m.level === 5 && m.nextReviewAt > now) return false; // mastered, not due yet
+    return m.nextReviewAt <= now;
+  });
+}
+
+function formatDaysUntil(ts){
+  if(!ts) return "";
+  const diff = ts - Date.now();
+  if(diff <= 0) return "今すぐ";
+  const days = Math.ceil(diff / DAY_MS);
+  if(days === 1) return "明日";
+  if(days < 7) return days + "日後";
+  if(days < 30) return Math.ceil(days/7) + "週後";
+  return Math.ceil(days/30) + "ヶ月後";
+}
+
+// ============== LESSON-SOURCED PHRASES (auto-added) ==============
+const LESSON_PHRASES = [
+  {
+    lessonId:"day1_reading_2026-05-02",
+    en:"When a concept works, it gets rolled out to the rest of the network.",
+    jp:"コンセプトが機能すれば、それは他の店舗網へ展開される",
+    ex:"If the pilot succeeds in Q3, we'll roll it out to all 12 markets.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day1_reading_2026-05-02",
+    en:"The location itself becomes a destination.",
+    jp:"立地そのものが目的地になる（旗艦店戦略の核心）",
+    ex:"In Tokyo, our Shibuya store has become more than retail — the location itself is a destination.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day1_reading_2026-05-02",
+    en:"customers who are willing to spend",
+    jp:"支出意欲の高い顧客（プレミアム志向の顧客）",
+    ex:"Our flagship target is customers who are willing to spend on premium quality.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day1_reading_2026-05-02",
+    en:"Flagship stores generate 30-40% higher AOV than standard locations.",
+    jp:"旗艦店は標準店舗と比べてAOVが30-40%高い",
+    ex:"Our flagships generate 30-40% higher AOV than our standard locations, driven by premium menu mix.",
+    cat:"industry"
+  },
+  // From Day 1 Block 4 Writing (Kazuki's email to John)
+  {
+    lessonId:"day1_writing_2026-05-02",
+    en:"thanks to [the new menu mix]",
+    jp:"〜のおかげで（要因・ドライバーを示す万能コネクタ）",
+    ex:"Sales are up thanks to strong store traffic and the new premium menu.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day1_writing_2026-05-02",
+    en:"twice as strong",
+    jp:"2倍強い（倍数比較: X times as + 形容詞）",
+    ex:"Same-store sales growth was twice as strong as last year. Q4 was three times as strong as Q3.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day1_writing_2026-05-02",
+    en:"[metric] is trending up thanks to [driver]",
+    jp:"[指標]が[要因]のおかげで上昇傾向（業績解説の鉄板テンプレート）",
+    ex:"AOV is trending up thanks to the new premium menu. Store traffic is trending up thanks to the loyalty program.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day1_writing_2026-05-02",
+    en:"Let me know if you'd like the detailed breakdown.",
+    jp:"詳細データが必要ならお知らせください（メール締めの上級定型）",
+    ex:"Let me know if you'd like the detailed breakdown by region. Happy to share the deck.",
+    cat:"email"
+  },
+  // From Day 2 Block 2 Reading (Premiumization article)
+  {
+    lessonId:"day2_reading_2026-05-03",
+    en:"What is driving this shift? Three factors are at play.",
+    jp:"何がこの変化を起こしているのか？3つの要因がある（プレゼン最強のオープナー）",
+    ex:"Same-store sales were down 3% in Q1. What is driving this shift? Three factors are at play: traffic, pricing, and weather.",
+    cat:"meeting"
+  },
+  {
+    lessonId:"day2_reading_2026-05-03",
+    en:"X justifies Y through perceived value, allowing operators to protect their bottom line.",
+    jp:"XはZによって(知覚価値で)Yを正当化し、Wを実現する（因果連鎖の構文テンプレ）",
+    ex:"Premium items justify their higher cost through perceived value, allowing operators to protect their bottom line.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day2_reading_2026-05-03",
+    en:"For strategy teams planning the next 18 months, the implication is clear:",
+    jp:"今後18ヶ月を計画する戦略チームにとって、含意は明らかだ：（戦略結論への橋渡し）",
+    ex:"For strategy teams planning the next 18 months, the implication is clear: digital ordering is no longer optional.",
+    cat:"meeting"
+  },
+  // Vocabulary from Day 2 Reading
+  {
+    lessonId:"day2_vocab_2026-05-03",
+    en:"reduce friction in the customer journey",
+    jp:"顧客ジャーニーの摩擦（=面倒）を減らす（UX/CXの最重要概念）",
+    ex:"Mobile ordering reduces friction in the customer journey — no waiting in line, no asking a busy cashier.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day2_vocab_2026-05-03",
+    en:"perceived value",
+    jp:"知覚価値（顧客が感じる主観的価値、価格戦略の核）",
+    ex:"Our premium pricing depends on perceived value, not cost-plus calculations.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day2_vocab_2026-05-03",
+    en:"margins erode as inflation continues",
+    jp:"インフレが続けば利益率がじわじわ削られる（経営リスクの定型表現）",
+    ex:"If we don't push pricing, our margins will erode as inflation continues. Brand erosion is a slow death.",
+    cat:"industry"
+  },
+  // From Day 2 Writing — Kazuki's chosen template
+  {
+    lessonId:"day2_writing_2026-05-03",
+    en:"I'd like to propose a 4-week pilot in our Tokyo flagship to test premium tiers.",
+    jp:"東京旗艦店で4週間のパイロット運用を提案します（具体的なネクストステップ提示の最強テンプレ）",
+    ex:"I'd like to propose a 4-week pilot in our Tokyo flagship to test premium tiers. Let me know if you'd like to discuss.",
+    cat:"meeting"
+  },
+  {
+    lessonId:"day2_writing_2026-05-03",
+    en:"I'd like to propose a [X-week] pilot in [location] to test [hypothesis].",
+    jp:"[期間]のパイロット運用を[場所]で行い[仮説]を検証する提案 — 提案テンプレート",
+    ex:"I'd like to propose a 6-week pilot in three Asia stores to test the new loyalty program. I'd like to propose a 2-month pilot in Singapore to test plant-based menu options.",
+    cat:"meeting"
+  },
+  // From Day 3 Block 2 Reading (Loyalty Programs article)
+  {
+    lessonId:"day3_reading_2026-05-04",
+    en:"When operators see what members actually buy, not what they say they will buy, menu decisions become evidence-based.",
+    jp:"顧客の自己申告ではなく実際の購買データを見れば、メニュー判断は根拠に基づく — データ駆動経営の本質",
+    ex:"When we see what customers actually buy — not what they tell us in surveys — pricing decisions become evidence-based.",
+    cat:"meeting"
+  },
+  {
+    lessonId:"day3_reading_2026-05-04",
+    en:"X is no longer Y. It is Z.",
+    jp:"再フレーミングの王道テンプレ（古い見方を新しい見方に置き換える）",
+    ex:"Loyalty is no longer a marketing tool. It is core operating infrastructure. / Digital is no longer a channel. It is the foundation. / Sustainability is no longer a cost. It is a competitive moat.",
+    cat:"meeting"
+  },
+  {
+    lessonId:"day3_reading_2026-05-04",
+    en:"invest now or lose ground for years",
+    jp:"今投資するか、長年に渡り遅れを取るか — 強い行動喚起の決まり文句",
+    ex:"For strategy teams planning the next twelve months, the implication is clear: invest now or lose ground for years.",
+    cat:"meeting"
+  },
+  // Vocabulary from Day 3
+  {
+    lessonId:"day3_vocab_2026-05-04",
+    en:"sophisticated",
+    jp:"高度な・洗練された (テクノロジーやシステムの形容詞として頻出)",
+    ex:"Loyalty programs have evolved from simple punch cards into sophisticated growth engines. We need a sophisticated approach to customer segmentation.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day3_vocab_2026-05-04",
+    en:"relevance drives perceived value",
+    jp:"関連性が知覚価値を生む (マーケティングの最重要原則)",
+    ex:"Relevance drives perceived value, and perceived value drives AOV. Our marketing must improve relevance — generic offers no longer work.",
+    cat:"industry"
+  },
+  // Day 3 Reframing Drill — 5 strategic noun phrases
+  {
+    lessonId:"day3_drill_2026-05-04",
+    en:"co-creation moments with our local teams",
+    jp:"現地チームとの共創の場 (店舗訪問の意義を再定義する戦略フレーズ)",
+    ex:"Store visits are no longer inspections. They are co-creation moments with our local teams.",
+    cat:"meeting"
+  },
+  {
+    lessonId:"day3_drill_2026-05-04",
+    en:"a competitive differentiator",
+    jp:"競争上の差別化要因 (差別化を1単語で表す業界用語)",
+    ex:"Labor cost is no longer just a cost. It is a competitive differentiator. Our service quality is a key differentiator vs. competitors.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day3_drill_2026-05-04",
+    en:"a core business skill",
+    jp:"ビジネスの基本前提となるスキル (英語学習の動機付けにも使える)",
+    ex:"English is no longer a bonus skill. It is a core business skill in global F&B. Data fluency is becoming a core business skill.",
+    cat:"meeting"
+  },
+  {
+    lessonId:"day3_drill_2026-05-04",
+    en:"a C-suite priority",
+    jp:"経営層 (CEO/CFO/COO) の優先課題 (議論の格を上げる超強力ワード)",
+    ex:"Data analytics is no longer an IT skill. It is a C-suite priority. Sustainability has become a C-suite priority across the industry.",
+    cat:"meeting"
+  },
+  {
+    lessonId:"day3_drill_2026-05-04",
+    en:"showcases for our brand experience",
+    jp:"ブランド体験のショーケース (旗艦店・フランチャイズの戦略的位置付け)",
+    ex:"Franchise stores are no longer just sales channels. They are showcases for our brand experience.",
+    cat:"industry"
+  },
+  // From Day 4 Block 2 Reading (Retention Beats Recruitment article)
+  {
+    lessonId:"day4_reading_2026-05-05",
+    en:"Operators who treat their staff as interchangeable commodities lose the talent war before it even begins.",
+    jp:"従業員を代替可能な部品として扱う事業者は、人材獲得競争に始まる前から負けている — 人材戦略の警告フレーズ",
+    ex:"Operators who treat their staff as interchangeable commodities lose the talent war before it even begins. We've seen this play out in QSR.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day4_reading_2026-05-05",
+    en:"burn cash trying to refill the same buckets",
+    jp:"同じバケツを埋め直そうとして資金を燃やす — 無駄な努力の強烈な比喩",
+    ex:"Without retention investment, we'll just burn cash trying to refill the same buckets. This is exactly the trap our competitors have fallen into.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day4_reading_2026-05-05",
+    en:"compounding advantages",
+    jp:"複利で積み上がる優位性 (ブランド力・チーム力など、時間とともに加速する強み)",
+    ex:"Long-tenured employees drive compounding advantages — better operations, mentorship, and customer relationships that grow over years.",
+    cat:"industry"
+  },
+  // Vocabulary from Day 4
+  {
+    lessonId:"day4_vocab_2026-05-05",
+    en:"the gig economy",
+    jp:"ギグ経済 (Uber, 配達員, フリーランス中心の経済) — 飲食業界の人材流出先",
+    ex:"The food service industry competes with the gig economy for young workers. Gig workers want flexibility over stability.",
+    cat:"industry"
+  },
+  {
+    lessonId:"day4_vocab_2026-05-05",
+    en:"average tenure of [X] years",
+    jp:"平均在職期間 [X] 年 — 人材戦略・組織分析の必須指標",
+    ex:"Our average tenure is 3.2 years. A team with average tenure of three years outperforms a team averaging six months.",
+    cat:"industry"
+  }
+];
+
+// ============== STATE ==============
+const STORAGE_KEY = "phraseMaster_v3";
+const OLD_KEYS = ["phraseMaster_v2","phraseMaster_v1"];
+let state = loadState();
+
+function loadState(){
+  try{
+    let raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw){
+      for(const k of OLD_KEYS){
+        const old = localStorage.getItem(k);
+        if(old){ raw = old; break; }
+      }
+    }
+    if(raw) {
+      const s = JSON.parse(raw);
+      // Migrate old binary "mastered" → new 5-level "mastery" if needed
+      let mastery = s.mastery || {};
+      if(s.mastered && !s.mastery){
+        for(const key of Object.keys(s.mastered)){
+          mastery[key] = {
+            level: 5, // "Mastered" since previously flagged as learned
+            lastReviewedAt: s.mastered[key] || Date.now(),
+            nextReviewAt: Date.now() + 30 * 24*60*60*1000,
+            reviewCount: 1,
+            correctCount: 1
+          };
+        }
+      }
+      return {
+        mastered:s.mastered||{}, // kept for backward compat (read-only)
+        mastery: mastery,
+        log:s.log||[],
+        activeCat:s.activeCat||"all",
+        search:"",
+        hideJp:!!s.hideJp,
+        imageOnly:!!s.imageOnly,
+        voicePref:s.voicePref||"",
+        quizStats:s.quizStats||{played:0,correct:0,total:0},
+        lessonsApplied:s.lessonsApplied||{}
+      };
+    }
+  }catch(e){}
+  return { mastered:{}, mastery:{}, log:[], activeCat:"all", search:"", hideJp:false, imageOnly:false, voicePref:"", quizStats:{played:0,correct:0,total:0}, lessonsApplied:{} };
+}
+
+function seedLessonPhrases(){
+  // Auto-add lesson-sourced phrases to the user's log on first load.
+  // Only runs once per lessonId — won't re-add if user deletes them.
+  let added = 0;
+  for(const p of LESSON_PHRASES){
+    if(state.lessonsApplied[p.lessonId + "|" + p.en]) continue;
+    state.log.unshift({
+      en:p.en, jp:p.jp, ex:p.ex||"", cat:p.cat||"industry",
+      ts:Date.now(), source:"lesson", lessonId:p.lessonId
+    });
+    state.lessonsApplied[p.lessonId + "|" + p.en] = true;
+    added++;
+  }
+  if(added > 0) saveState();
+  return added;
+}
+function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+
+// ============== AUDIO (TTS) ==============
+let voices = [];
+function loadVoices(){
+  voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  populateVoiceSelect();
+}
+if('speechSynthesis' in window){
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+  loadVoices();
+}
+function populateVoiceSelect(){
+  const sel = document.getElementById("voiceSelect");
+  if(!sel) return;
+  const englishVoices = voices.filter(v=>v.lang && v.lang.startsWith("en"));
+  if(englishVoices.length === 0){
+    sel.innerHTML = `<option>音声未対応のブラウザです</option>`;
+    return;
+  }
+  const order = ["en-US","en-GB","en-AU","en-IN","en-CA","en"];
+  const sorted = englishVoices.sort((a,b)=>{
+    const ai = order.findIndex(p=>a.lang.startsWith(p));
+    const bi = order.findIndex(p=>b.lang.startsWith(p));
+    return (ai<0?99:ai) - (bi<0?99:bi);
+  });
+  sel.innerHTML = sorted.map(v=>{
+    const flag = v.lang.startsWith("en-US") ? "🇺🇸" :
+                 v.lang.startsWith("en-GB") ? "🇬🇧" :
+                 v.lang.startsWith("en-AU") ? "🇦🇺" :
+                 v.lang.startsWith("en-IN") ? "🇮🇳" :
+                 v.lang.startsWith("en-CA") ? "🇨🇦" : "🌍";
+    return `<option value="${escapeAttr(v.name)}">${flag} ${escapeHtml(v.name)} (${v.lang})</option>`;
+  }).join("");
+  if(state.voicePref && sorted.some(v=>v.name===state.voicePref)){
+    sel.value = state.voicePref;
+  }
+  sel.onchange = ()=>{
+    state.voicePref = sel.value;
+    saveState();
+  };
+}
+function getSelectedVoice(){
+  const sel = document.getElementById("voiceSelect");
+  if(!sel) return voices.find(v=>v.lang && v.lang.startsWith("en"));
+  return voices.find(v=>v.name === sel.value) || voices.find(v=>v.lang && v.lang.startsWith("en"));
+}
+function speak(text, rate=1.0){
+  if(!('speechSynthesis' in window) || !text) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const v = getSelectedVoice();
+  if(v){ u.voice = v; u.lang = v.lang; }
+  else u.lang = "en-US";
+  u.rate = rate;
+  u.pitch = 1.0;
+  u.volume = 1.0;
+  window.speechSynthesis.speak(u);
+}
+
+// ============== RENDER ==============
+function renderTabs(){
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = CATS.map(c=>{
+    const count = c.id==="all" ? PHRASES.length : PHRASES.filter(p=>p.cat===c.id).length;
+    const active = state.activeCat===c.id ? "active":"";
+    return `<div class="tab ${active}" onclick="setCat('${c.id}')">${c.label}<span class="count">${count}</span></div>`;
+  }).join("");
+}
+function setCat(c){ state.activeCat=c; saveState(); renderTabs(); renderPhrases(); }
+
+function renderVis(visArr){
+  if(!visArr || !visArr.length) return "";
+  return `<div class="vis-row">${visArr.map(v=>`
+    <div class="vis-chip ${escapeHtml(v.role)}">
+      <svg><use href="#i-${escapeHtml(v.icon)}"></use></svg>
+      <div class="vis-label">${escapeHtml(v.label)}</div>
+    </div>`).join("")}</div>`;
+}
+
+function renderPhrases(){
+  const list = document.getElementById("phraseList");
+  const q = (state.search||"").toLowerCase().trim();
+  let items = PHRASES.filter(p=>{
+    if(state.activeCat!=="all" && p.cat!==state.activeCat) return false;
+    if(q){
+      const hay = (p.en+" "+p.jp+" "+p.ex+" "+p.exJp).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  if(items.length===0){
+    list.innerHTML = `<div class="empty">該当するフレーズがありません</div>`;
+    return;
+  }
+  list.innerHTML = items.map((p)=>{
+    const key = p.en;
+    const m = getMastery(key);
+    const lvl = levelInfo(m.level);
+    const learned = m.level >= 5 ? "learned":"";
+    const safeEn = escapeAttr(p.en);
+    const dueSoon = m.nextReviewAt && m.nextReviewAt <= Date.now() && m.level > 0 && m.level < 5;
+    const nextLabel = m.level > 0 && m.level < 5 ? formatDaysUntil(m.nextReviewAt) : "";
+    return `
+      <div class="phrase ${learned} ${dueSoon?"due":""}" data-key="${escapeHtml(key)}" onclick="toggleExpand(this)">
+        <div class="visual">
+          ${renderVis(p.vis)}
+          <div class="image-only-tap">タップで答えを見る</div>
+        </div>
+        <div class="phrase-body">
+          <div class="phrase-head">
+            <div class="mastery-badge level-${m.level}" onclick="event.stopPropagation();toggleLearned('${escapeHtml(key)}')" title="タップで記憶レベルを進める (現在: ${lvl.label})">
+              <span class="lvl-icon">${lvl.icon}</span>
+              <span class="lvl-num">${m.level}</span>
+            </div>
+            <div class="phrase-text">
+              <div class="en-row">
+                <div class="phrase-en">${escapeHtml(p.en)}</div>
+                <button class="audio-mini" onclick="event.stopPropagation();speak('${safeEn}',1.0)" title="標準速度">🔊</button>
+                <button class="audio-mini slow" onclick="event.stopPropagation();speak('${safeEn}',0.7)" title="ゆっくり">🐢</button>
+              </div>
+              ${p.ipa ? `<div class="phrase-ipa">${escapeHtml(p.ipa)}</div>` : ""}
+              <div class="phrase-jp">${escapeHtml(p.jp)}</div>
+              ${m.level > 0 ? `<div class="mastery-meta"><span class="mastery-label" style="background:${lvl.bg};color:${lvl.color}">${lvl.icon} ${escapeHtml(lvl.label)}</span>${nextLabel ? ` <span class="next-review${dueSoon?' due':''}">📅 復習: ${escapeHtml(nextLabel)}</span>`:""}</div>` : ""}
+              <div class="phrase-detail">
+                <div class="example-label">Example</div>
+                <div class="example">${escapeHtml(p.ex)}</div>
+                <div class="example-jp">${escapeHtml(p.exJp)}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+function toggleExpand(el){ el.classList.toggle("expanded"); }
+
+function toggleLearned(key){
+  // Cycle through mastery levels: 0 → 1 → 2 → 3 → 4 → 5 → 0
+  const m = getMastery(key);
+  if(m.level >= 5){
+    // Reset back to 0
+    delete state.mastery[key];
+    delete state.mastered[key];
+  } else if(m.level === 0){
+    // Initial mark: jump to level 1 (新規)
+    state.mastery[key] = {
+      level: 1,
+      lastReviewedAt: Date.now(),
+      nextReviewAt: Date.now() + REVIEW_INTERVALS_DAYS[1] * DAY_MS,
+      reviewCount: 1,
+      correctCount: 1
+    };
+  } else {
+    // Advance one level
+    advanceMastery(key);
+  }
+  // Sync legacy mastered flag for backward compat (level 5 = mastered)
+  if(getMastery(key).level >= 5) state.mastered[key] = Date.now();
+  else delete state.mastered[key];
+  saveState();
+  renderPhrases();
+  renderProgress();
+}
+
+function renderProgress(){
+  const total = PHRASES.length;
+  const counts = getMasteryStats();
+  const mastered = counts[5];
+  const learning = counts[1] + counts[2] + counts[3] + counts[4];
+  // Weighted score: each level contributes proportionally (out of 100%)
+  const weighted = (counts[1]*0.2 + counts[2]*0.4 + counts[3]*0.6 + counts[4]*0.8 + counts[5]*1.0);
+  const pct = Math.round(weighted/total*100);
+  document.getElementById("counter").textContent = `${mastered} / ${total}`;
+  document.getElementById("progressFill").style.width = pct+"%";
+  document.getElementById("percent").textContent = pct+"%";
+
+  // Update mastery breakdown bar (if exists)
+  const breakdownEl = document.getElementById("masteryBreakdown");
+  if(breakdownEl){
+    const due = getDueForReview().length;
+    breakdownEl.innerHTML = `
+      <div class="brk-row">
+        ${[1,2,3,4,5].map(lv=>{
+          const c = counts[lv];
+          const li = MASTERY_LEVELS[lv];
+          return c>0 ? `<span class="brk-chip" style="background:${li.bg};color:${li.color}">${li.icon} ${c}</span>` : "";
+        }).filter(Boolean).join("")}
+        ${counts[0]>0 ? `<span class="brk-chip" style="background:#F0F0F0;color:#666">⚪ 未着手 ${counts[0]}</span>` : ""}
+      </div>
+      ${due > 0 ? `<button class="brk-due-btn" onclick="openReviewMode()">📅 今日の復習: ${due}件 ▶</button>` : `<div class="brk-due-empty">✅ 今日の復習なし</div>`}
+    `;
+  }
+}
+
+// ============== TOGGLES ==============
+function toggleHideJp(){
+  state.hideJp = !state.hideJp;
+  saveState();
+  applyDisplayModes();
+}
+function toggleImageOnly(){
+  state.imageOnly = !state.imageOnly;
+  saveState();
+  applyDisplayModes();
+}
+function applyDisplayModes(){
+  document.body.classList.toggle("hide-jp", state.hideJp);
+  document.body.classList.toggle("image-only", state.imageOnly);
+  const jpBtn = document.getElementById("hideJpBtn");
+  jpBtn.classList.toggle("active", state.hideJp);
+  jpBtn.textContent = state.hideJp ? "🇯🇵 日本語を表示" : "🇯🇵 日本語を隠す";
+  const imgBtn = document.getElementById("imageOnlyBtn");
+  imgBtn.classList.toggle("active", state.imageOnly);
+  imgBtn.textContent = state.imageOnly ? "🎨 文字も表示" : "🎨 絵だけ表示";
+}
+
+// ============== QUIZ ==============
+let quiz = null;
+function openQuiz(){
+  // First show mode picker
+  document.getElementById("quizOverlay").classList.add("open");
+  document.getElementById("quizTitle").textContent = "🎯 クイズ";
+  document.getElementById("quizProgress").textContent = "";
+  showQuizModePicker();
+}
+
+function showQuizModePicker(){
+  const body = document.getElementById("quizBody");
+  body.innerHTML = `
+    <div class="quiz-config">
+      <h2>🎯 クイズモードを選択</h2>
+      <p>レベルに応じて選んでください</p>
+      <div class="quiz-options">
+        <button class="q-opt" onclick="startQuizWithMode('image')">
+          <span><strong>🎴 Mode 1: 絵だけ</strong><br><small style="opacity:0.75">基本 — シルエットを見て思い出す</small></span>
+        </button>
+        <button class="q-opt" onclick="startQuizWithMode('scenario')">
+          <span><strong>🎬 Mode 2: シーン + 絵</strong><br><small style="opacity:0.75">中級 — 実生活シナリオから想起</small></span>
+        </button>
+        <button class="q-opt" onclick="startQuizWithMode('production')">
+          <span><strong>🎤 Mode 3: プロダクション</strong><br><small style="opacity:0.75">上級 — 音声 / タイピングで答える＋自動採点</small></span>
+        </button>
+      </div>
+      <button class="q-btn q-btn-bad" onclick="closeQuiz()" style="margin-top:18px;width:100%">キャンセル</button>
+    </div>`;
+}
+
+function startQuizWithMode(quizMode){
+  let deck = PHRASES.filter(p=>state.activeCat==="all" || p.cat===state.activeCat);
+  if(deck.length===0){ alert("クイズに使えるフレーズがありません"); return; }
+  for(let i=deck.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [deck[i],deck[j]]=[deck[j],deck[i]];
+  }
+  deck = deck.slice(0, Math.min(10, deck.length));
+  quiz = { deck, idx:0, results:[], showJp:!state.hideJp, mode:"front", isReview:false, quizMode };
+  const titleMap = {
+    image: "🎴 Mode 1: 絵だけ",
+    scenario: "🎬 Mode 2: シーン + 絵",
+    production: "🎤 Mode 3: プロダクション"
+  };
+  document.getElementById("quizTitle").textContent = titleMap[quizMode] || "🎯 Quiz";
+  renderQuiz();
+}
+function closeQuiz(){
+  document.getElementById("quizOverlay").classList.remove("open");
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  quiz = null;
+}
+function renderQuiz(){
+  if(!quiz) return;
+  const body = document.getElementById("quizBody");
+  const prog = document.getElementById("quizProgress");
+  if(quiz.idx >= quiz.deck.length){
+    const correct = quiz.results.filter(r=>r==="good").length;
+    const total = quiz.deck.length;
+    const pct = Math.round(correct/total*100);
+    state.quizStats.played += 1;
+    state.quizStats.correct += correct;
+    state.quizStats.total += total;
+    saveState();
+    prog.textContent = "完了 🎉";
+    body.innerHTML = `
+      <div class="quiz-result">
+        <h2>クイズ完了！</h2>
+        <div class="score">${correct} / ${total}</div>
+        <div class="quiz-result-detail">
+          正答率 ${pct}%${pct>=80?" — 素晴らしい！":pct>=60?" — もう少し！":" — 復習しましょう"}<br>
+          通算: ${state.quizStats.correct} / ${state.quizStats.total} 問正解（${state.quizStats.played} 回プレイ）
+        </div>
+        <button class="q-btn q-btn-reveal" onclick="openQuiz()">🔁 もう一回</button>
+        <button class="q-btn q-btn-bad" onclick="closeQuiz()">閉じる</button>
+      </div>`;
+    return;
+  }
+  prog.textContent = `${quiz.idx+1} / ${quiz.deck.length}`;
+  const p = quiz.deck[quiz.idx];
+  const safeEn = escapeAttr(p.en);
+  const scenario = getScenario(p.en);
+  const mode = quiz.quizMode || "image";
+
+  if(quiz.mode === "front"){
+    if(mode === "production"){
+      renderProductionFront(p, body, scenario, safeEn);
+    } else {
+      // image or scenario mode
+      const scenarioHtml = (mode === "scenario" && scenario)
+        ? `<div class="quiz-scenario">
+             <div class="quiz-scenario-label">📍 シーン</div>
+             <div class="quiz-scenario-text">${escapeHtml(scenario)}</div>
+           </div>`
+        : "";
+      const promptText = (mode === "scenario") ? "この場面で何と言う？" : "この絵が表すフレーズは？";
+      body.innerHTML = `
+        <div class="quiz-card">
+          ${scenarioHtml}
+          ${renderVis(p.vis)}
+          ${quiz.showJp ? `<div class="quiz-jp" style="margin-top:14px">${escapeHtml(p.jp)}</div>` : `<div class="quiz-jp" style="color:#999;font-style:italic;margin-top:14px">${promptText}</div>`}
+        </div>
+        <div class="quiz-actions">
+          <button class="q-btn q-btn-reveal" onclick="quizReveal()">👀 答えを見る</button>
+          <div style="text-align:center;font-size:12px;opacity:0.7;margin-top:6px">
+            <a style="color:#FFD7B5;cursor:pointer;text-decoration:underline" onclick="quizToggleJp()">${quiz.showJp?"日本語ヒントを隠す":"日本語ヒントを表示"}</a>
+          </div>
+        </div>`;
+    }
+  } else {
+    // back screen — same for all modes (with extra production results if applicable)
+    const scenarioHtml = (mode === "scenario" || mode === "production") && scenario
+      ? `<div class="quiz-scenario" style="margin-bottom:10px">
+           <div class="quiz-scenario-label">📍 シーン</div>
+           <div class="quiz-scenario-text">${escapeHtml(scenario)}</div>
+         </div>`
+      : "";
+    const productionResults = (mode === "production" && quiz.score !== undefined) ? `
+      <div class="prod-score-wrap">
+        <div class="prod-score-num">${quiz.score}<small>/100</small></div>
+        <div class="prod-score-label">${quiz.score>=90?'🌟 Excellent!':quiz.score>=75?'💪 Good!':quiz.score>=50?'📈 Keep practicing':'🌱 Try again'}</div>
+      </div>
+      <div class="prod-diff">
+        <div class="prod-diff-label">あなたの回答 vs ターゲット:</div>
+        <div class="prod-diff-text">${quiz.diffHtml || ""}</div>
+      </div>
+    ` : "";
+    body.innerHTML = `
+      <div class="quiz-card">
+        ${scenarioHtml}
+        ${renderVis(p.vis)}
+        <div class="quiz-en">${escapeHtml(p.en)}</div>
+        ${p.ipa ? `<div class="quiz-ipa">${escapeHtml(p.ipa)}</div>` : ""}
+        ${quiz.showJp ? `<div class="quiz-jp">${escapeHtml(p.jp)}</div>` : ""}
+        <div class="quiz-audio">
+          <button onclick="speak('${safeEn}',1.0)">🔊 標準</button>
+          <button onclick="speak('${safeEn}',0.65)">🐢 ゆっくり</button>
+        </div>
+        ${productionResults}
+        <div class="quiz-example">"${escapeHtml(p.ex)}"</div>
+        ${quiz.showJp ? `<div class="quiz-example-jp">${escapeHtml(p.exJp)}</div>` : ""}
+      </div>
+      <div class="quiz-actions">
+        <div class="q-btn-row">
+          <button class="q-btn q-btn-bad" onclick="quizMark('bad')">🔄 もう一度</button>
+          <button class="q-btn q-btn-good" onclick="quizMark('good')">✅ できた</button>
+        </div>
+      </div>`;
+  }
+}
+
+// ============== PRODUCTION MODE (Stage 2) ==============
+function renderProductionFront(p, body, scenario, safeEn){
+  const scenarioHtml = scenario
+    ? `<div class="quiz-scenario">
+         <div class="quiz-scenario-label">📍 シーン</div>
+         <div class="quiz-scenario-text">${escapeHtml(scenario)}</div>
+       </div>`
+    : "";
+
+  if(!quiz.inputMode){
+    // Initial: pick input method
+    body.innerHTML = `
+      <div class="quiz-card">
+        ${scenarioHtml}
+        ${renderVis(p.vis)}
+        <div style="margin-top:18px;font-size:14px;font-weight:600;color:var(--primary)">この場面で英語で言ってみてください 💪</div>
+      </div>
+      <div class="quiz-actions">
+        <div class="q-btn-row">
+          <button class="q-btn" style="background:#2E7E73;color:#fff" onclick="setQuizInput('text')">⌨️ タイピング</button>
+          <button class="q-btn" style="background:#C5563A;color:#fff" onclick="setQuizInput('voice')">🎤 音声で答える</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if(quiz.inputMode === "text"){
+    body.innerHTML = `
+      <div class="quiz-card">
+        ${scenarioHtml}
+        ${renderVis(p.vis)}
+        <textarea id="prodInput" class="prod-input" placeholder="ここに英語で入力..." rows="3"></textarea>
+      </div>
+      <div class="quiz-actions">
+        <button class="q-btn q-btn-reveal" onclick="submitProductionText()">✅ 採点する</button>
+        <button class="q-btn" style="background:rgba(255,255,255,0.15);color:#fff;font-size:12px;padding:8px" onclick="resetQuizInput()">入力方法を変える</button>
+      </div>`;
+    setTimeout(()=>{ const el=document.getElementById("prodInput"); if(el) el.focus(); }, 100);
+  } else if(quiz.inputMode === "voice"){
+    const isRecording = quiz.isQuizRecording;
+    body.innerHTML = `
+      <div class="quiz-card">
+        ${scenarioHtml}
+        ${renderVis(p.vis)}
+        <div class="prod-mic-wrap">
+          <button class="prod-mic ${isRecording?'recording':''}" onclick="toggleQuizRecording()">${isRecording?'⏹':'🎙'}</button>
+          <div class="prod-mic-status">${isRecording ? '🔴 録音中... タップで停止' : 'マイクをタップして録音開始'}</div>
+          <div class="prod-mic-result">${escapeHtml(quiz.voiceResult || '（聞き取り結果がここに表示されます）')}</div>
+        </div>
+      </div>
+      <div class="quiz-actions">
+        ${quiz.voiceResult ? `<button class="q-btn q-btn-reveal" onclick="submitProductionVoice()">✅ 採点する</button>` : ''}
+        <button class="q-btn" style="background:rgba(255,255,255,0.15);color:#fff;font-size:12px;padding:8px" onclick="resetQuizInput()">入力方法を変える</button>
+      </div>`;
+  }
+}
+
+function setQuizInput(mode){
+  quiz.inputMode = mode;
+  quiz.voiceResult = "";
+  quiz.isQuizRecording = false;
+  renderQuiz();
+}
+function resetQuizInput(){
+  if(quiz.quizRecognition){ try{ quiz.quizRecognition.abort(); }catch(e){} }
+  quiz.inputMode = null;
+  quiz.voiceResult = "";
+  quiz.isQuizRecording = false;
+  renderQuiz();
+}
+
+function submitProductionText(){
+  const el = document.getElementById("prodInput");
+  if(!el) return;
+  const input = el.value.trim();
+  if(!input){ alert("英語を入力してください"); return; }
+  scoreProduction(input);
+}
+
+function submitProductionVoice(){
+  if(!quiz.voiceResult || !quiz.voiceResult.trim()){
+    alert("音声がまだ取れていません。録音してから採点してください");
+    return;
+  }
+  scoreProduction(quiz.voiceResult);
+}
+
+function toggleQuizRecording(){
+  if(!quiz) return;
+  if(quiz.isQuizRecording){ stopQuizRecording(); }
+  else { startQuizRecording(); }
+}
+
+async function startQuizRecording(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ alert("このブラウザは音声認識に対応していません"); return; }
+  try{
+    // Request mic permission
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    stream.getTracks().forEach(t=>t.stop()); // we only need permission, recognition will use its own
+  }catch(err){
+    alert("マイクの利用許可が必要です: " + err.message);
+    return;
+  }
+  quiz.voiceResult = "";
+  quiz.isQuizRecording = true;
+  quiz.quizRecognition = new SR();
+  quiz.quizRecognition.lang = (getSelectedVoice() && getSelectedVoice().lang) || 'en-US';
+  quiz.quizRecognition.continuous = true;
+  quiz.quizRecognition.interimResults = true;
+  quiz.quizRecognition.maxAlternatives = 1;
+
+  quiz.quizRecognition.onresult = (e)=>{
+    let interim = "", finalT = "";
+    for(let i=e.resultIndex; i<e.results.length; i++){
+      const t = e.results[i][0].transcript;
+      if(e.results[i].isFinal) finalT += t;
+      else interim += t;
+    }
+    if(finalT) quiz.voiceResult += finalT;
+    const resultEl = document.querySelector(".prod-mic-result");
+    if(resultEl) resultEl.textContent = (quiz.voiceResult + interim).trim() || "聞き取り中...";
+  };
+  quiz.quizRecognition.onend = ()=>{
+    if(quiz && quiz.isQuizRecording){
+      // auto-restart for long phrases
+      setTimeout(()=>{
+        if(quiz && quiz.isQuizRecording){
+          try{ quiz.quizRecognition.start(); }catch(e){ console.warn("restart skip:", e.message); }
+        }
+      }, 200);
+    }
+  };
+  try{ quiz.quizRecognition.start(); renderQuiz(); }
+  catch(e){ quiz.isQuizRecording = false; alert("録音開始に失敗: " + e.message); }
+}
+
+function stopQuizRecording(){
+  if(!quiz) return;
+  quiz.isQuizRecording = false;
+  try{ quiz.quizRecognition && quiz.quizRecognition.stop(); }catch(e){}
+  renderQuiz();
+}
+
+function scoreProduction(userInput){
+  const target = quiz.deck[quiz.idx].en;
+  const tWords = quizNormalize(target).split(/\s+/).filter(Boolean);
+  const sWords = quizNormalize(userInput).split(/\s+/).filter(Boolean);
+  const diff = quizWordDiff(tWords, sWords);
+  const matched = diff.filter(d=>d.type==="match").length;
+  const score = tWords.length > 0 ? Math.round(matched/tWords.length*100) : 0;
+
+  quiz.userInput = userInput;
+  quiz.score = score;
+  quiz.diffHtml = diff.map(d=>{
+    if(d.type==="match") return `<span class="w-match">${escapeHtml(d.word)}</span> `;
+    if(d.type==="miss")  return `<span class="w-miss">${escapeHtml(d.word)}</span> `;
+    return `<span class="w-extra">[${escapeHtml(d.word)}]</span> `;
+  }).join("");
+  quiz.mode = "back";
+  renderQuiz();
+}
+
+function quizNormalize(s){
+  return (s||"").toLowerCase()
+    .replace(/[.,!?;:"'""''()—\-]/g," ")
+    .replace(/\s+/g," ").trim();
+}
+function quizWordDiff(target, said){
+  const m = target.length, n = said.length;
+  const dp = Array.from({length:m+1},()=>Array(n+1).fill(0));
+  for(let i=1;i<=m;i++){
+    for(let j=1;j<=n;j++){
+      if(target[i-1] === said[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+      else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  const result = [];
+  let i = m, j = n;
+  while(i>0 || j>0){
+    if(i>0 && j>0 && target[i-1] === said[j-1]){
+      result.unshift({type:"match",word:target[i-1]}); i--; j--;
+    } else if(j>0 && (i===0 || dp[i][j-1] >= dp[i-1][j])){
+      result.unshift({type:"extra",word:said[j-1]}); j--;
+    } else {
+      result.unshift({type:"miss",word:target[i-1]}); i--;
+    }
+  }
+  return result;
+}
+function quizReveal(){ quiz.mode = "back"; renderQuiz(); }
+function quizToggleJp(){ quiz.showJp = !quiz.showJp; renderQuiz(); }
+function quizMark(result){
+  quiz.results.push(result);
+  const p = quiz.deck[quiz.idx];
+  if(result === "good"){
+    advanceMastery(p.en);
+    if(getMastery(p.en).level >= 5) state.mastered[p.en] = Date.now();
+  } else {
+    regressMastery(p.en);
+    delete state.mastered[p.en];
+  }
+  saveState();
+  renderProgress();
+  // Reset production-mode state for next question
+  if(quiz.quizRecognition){ try{ quiz.quizRecognition.abort(); }catch(e){} }
+  quiz.inputMode = null;
+  quiz.voiceResult = "";
+  quiz.isQuizRecording = false;
+  quiz.userInput = "";
+  quiz.score = undefined;
+  quiz.diffHtml = "";
+  quiz.idx += 1;
+  quiz.mode = "front";
+  renderQuiz();
+}
+
+function openReviewMode(){
+  const due = getDueForReview();
+  if(due.length === 0){
+    alert("今日の復習対象はありません。素晴らしい！");
+    return;
+  }
+  // Shuffle due deck
+  const deck = [...due];
+  for(let i=deck.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [deck[i],deck[j]]=[deck[j],deck[i]];
+  }
+  // Default review mode: scenario (Mode 2) for richer practice
+  quiz = { deck: deck.slice(0, Math.min(15, deck.length)), idx:0, results:[], showJp:!state.hideJp, mode:"front", isReview:true, quizMode:"scenario" };
+  document.getElementById("quizOverlay").classList.add("open");
+  document.getElementById("quizTitle").textContent = "📅 今日の復習 (シーンモード)";
+  renderQuiz();
+}
+
+// ============== LOG ==============
+function addLog(){
+  const en = document.getElementById("logEn").value.trim();
+  const jp = document.getElementById("logJp").value.trim();
+  const ex = document.getElementById("logEx").value.trim();
+  const cat = document.getElementById("logCat").value;
+  if(!en){ alert("英語フレーズを入力してください"); return; }
+  state.log.unshift({ en, jp, ex, cat, ts:Date.now() });
+  saveState();
+  document.getElementById("logEn").value="";
+  document.getElementById("logJp").value="";
+  document.getElementById("logEx").value="";
+  renderLog();
+}
+function deleteLog(idx){
+  if(confirm("このログを削除しますか？")){
+    state.log.splice(idx,1);
+    saveState();
+    renderLog();
+  }
+}
+function renderLog(){
+  const el = document.getElementById("logList");
+  if(!state.log || state.log.length===0){
+    el.innerHTML = `<div class="empty">まだログがありません<br>上のフォームから追加しましょう 📝</div>`;
+    return;
+  }
+  el.innerHTML = state.log.map((l,idx)=>{
+    const date = new Date(l.ts);
+    const dateStr = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`;
+    const catLabel = (CATS.find(c=>c.id===l.cat)||{label:l.cat}).label;
+    const safeEn = escapeAttr(l.en);
+    const sourceTag = l.source === "lesson"
+      ? `<span class="tag" style="background:#FFE5B4;color:#8B5A00">🎓 レッスン</span>`
+      : "";
+    return `
+      <div class="log-entry"${l.source==="lesson" ? ' style="border-left:3px solid #D69100"' : ''}>
+        <div class="log-entry-head">
+          <div class="log-entry-en">${escapeHtml(l.en)}</div>
+          <button class="audio-mini" onclick="speak('${safeEn}',1.0)" style="width:28px;height:28px;font-size:12px">🔊</button>
+          ${sourceTag}
+          <span class="tag">${escapeHtml(catLabel)}</span>
+        </div>
+        ${l.jp?`<div class="log-entry-jp">${escapeHtml(l.jp)}</div>`:""}
+        ${l.ex?`<div class="log-entry-ex">${escapeHtml(l.ex)}</div>`:""}
+        <div class="log-entry-foot">
+          <span>${dateStr}</span>
+          <button class="delete-btn" onclick="deleteLog(${idx})">削除</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+// ============== UTIL ==============
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  }[c]));
+}
+function escapeAttr(s){ return String(s).replace(/'/g,"\\'").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
+
+function exportData(){
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `phrase_master_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function resetMastery(){
+  if(confirm("すべてのフレーズの記憶レベルをリセットします。よろしいですか？\n（My Phrase Logとクイズ統計は消えません）")){
+    state.mastered = {};
+    state.mastery = {};
+    saveState();
+    renderPhrases();
+    renderProgress();
+  }
+}
+
+// ============== INIT ==============
+document.getElementById("search").addEventListener("input", e=>{
+  state.search = e.target.value;
+  renderPhrases();
+});
+
+// Auto-add lesson-sourced phrases (Day 1 reading exercise)
+seedLessonPhrases();
+
+renderTabs();
+renderPhrases();
+renderProgress();
+renderLog();
+applyDisplayModes();
+setTimeout(loadVoices, 100);
+setTimeout(loadVoices, 500);
+</script>
+
+</body>
+</html>
