@@ -1,0 +1,131 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "lastUpdated": "2026-05-06",
+    "user": "Kazuki Onda",
+    "startDate": "2026-05-02"
+  },
+  "lessons": [
+    {
+      "day": 5,
+      "date": "2026-05-06",
+      "weekday": "Tuesday",
+      "topic": "Digital Transformation in F&B",
+      "topicSlug": "DigitalTransformation",
+      "reading": {
+        "title": "The AI Restaurant",
+        "subtitle": "How Smart Operators Are Using Data and Automation",
+        "wordCount": 285,
+        "level": "B1",
+        "paragraphs": [
+          {"type": "intro", "text": "The future of restaurant operations is data-driven, automated, and personalized at scale. Industry data shows that operators using AI-powered tools see 12-18% higher revenue per labor hour and 22% lower food waste compared to traditional peers."},
+          {"type": "transition", "text": "What is driving this transformation? Three forces are converging."},
+          {"type": "force", "boldStart": "First, AI is moving from back-office to front-of-house. ", "rest": "Demand forecasting, dynamic pricing, and personalized recommendations are no longer experimental. Leading chains run AI models that predict each location's daily order mix with 90%+ accuracy, allowing them to right-size prep and reduce waste before it happens."},
+          {"type": "force", "boldStart": "Second, automation is freeing up labor for higher-value work. ", "rest": "Self-order kiosks, robotic kitchens, and automated inventory systems handle repetitive tasks. This isn't about cutting jobs — it's about redirecting people to customer experience, training, and quality control. Smart operators see this as how their teams shift from order-takers to brand ambassadors."},
+          {"type": "force", "boldStart": "Third, data integration creates compounding insights. ", "rest": "When loyalty data, POS data, and operations data flow into a single dashboard, patterns emerge. A 5% drop in lunch traffic at three Tokyo stores becomes visible the same day, not three weeks later in a quarterly report. Speed of insight is now a competitive advantage."},
+          {"type": "implication", "text": "For strategy teams, the implication is clear: digital transformation is not a single project. It is a continuous capability that compounds over time."},
+          {"type": "closing", "text": "The operators who treat AI and data as core operating infrastructure will define the next decade of food service. The rest will run faster while standing still."}
+        ],
+        "tips": [
+          "段落構成は Day 2-4 と類似: 主張 → 3 forces → 戦略含意 → 結論",
+          "再登場フレーズ: \"the implication is clear\" \"compounding\"",
+          "新概念: revenue per labor hour, food waste reduction, demand forecasting, dashboard, brand ambassadors",
+          "結論部の比喩: \"run faster while standing still\" = 努力しても進まない"
+        ],
+        "keyPhrases": [
+          "Three forces are converging  =  3つの力が収束している",
+          "right-size prep  =  仕込みを適正量にする",
+          "freeing up labor for higher-value work  =  人手を高付加価値業務に解放",
+          "brand ambassadors  =  ブランドの伝道師",
+          "compounding insights  =  複利で蓄積するインサイト",
+          "continuous capability  =  継続的な能力",
+          "core operating infrastructure  =  運営の中核インフラ"
+        ],
+        "questions": [
+          {
+            "id": "Q1",
+            "label": "Q1. 主張の要約 (1文厳守)",
+            "prompt": "この記事の主張を 1文で まとめてください。"
+          },
+          {
+            "id": "Q2_1",
+            "label": "Q2. ① 1つ目の力",
+            "prompt": "AI/Digital を変革している1つ目の力を1〜2文で。"
+          },
+          {
+            "id": "Q2_2",
+            "label": "Q2. ② 2つ目の力",
+            "prompt": "2つ目の力を1〜2文で (and の罠注意)。"
+          },
+          {
+            "id": "Q2_3",
+            "label": "Q2. ③ 3つ目の力",
+            "prompt": "3つ目の力を1〜2文で。"
+          },
+          {
+            "id": "Q3_1",
+            "label": "Q3. 抽出フレーズ 1",
+            "prompt": "戦略担当として実務で使えそうな表現 (1)"
+          },
+          {
+            "id": "Q3_2",
+            "label": "Q3. 抽出フレーズ 2",
+            "prompt": "実務で使えそうな表現 (2)"
+          },
+          {
+            "id": "Q3_3",
+            "label": "Q3. 抽出フレーズ 3",
+            "prompt": "実務で使えそうな表現 (3)"
+          },
+          {
+            "id": "vocab",
+            "label": "📝 不明な単語メモ",
+            "prompt": "わからなかった単語と推測の意味"
+          }
+        ]
+      },
+      "writing": {
+        "scenario": "John から「Asia 地域での AI/Digital Transformation 投資の優先度について意見が欲しい」というリクエストがありました。Day 5 Reading で読んだ「The AI Restaurant」の論理を使って、Japan の AI 戦略提案メールを5〜7文で書きます。",
+        "to": "John Smith <john.smith@globalfoodco.com> (Global HQ, London)",
+        "from": "Kazuki Onda <kazuki.onda@globalfoodco.com>",
+        "subjectHint": "[FILL IN] — Japan AI / Digital Transformation Strategy",
+        "requirements": [
+          "5〜7文で書く",
+          "再フレーミングテンプレ「X is no longer Y. It is Z.」を1回以上使う ⭐",
+          "Day 5 のフレーズ・概念から1つ以上組み込む",
+          "数字を最低2つ含める",
+          "具体的なアクションを提案"
+        ],
+        "todayPhrases": [
+          "Three forces are converging",
+          "compounding insights",
+          "core operating infrastructure",
+          "brand ambassadors",
+          "continuous capability",
+          "right-size prep / inventory",
+          "speed of insight"
+        ],
+        "pastPhrases": [
+          "I hope this email finds you well. (Day 1)",
+          "Following up on ~ (Day 1)",
+          "the implication is clear (Day 2-3)",
+          "I'm confident this approach will ~ (Day 2)",
+          "I'd like to propose a [X-month] pilot in [location] to test [hypothesis]. (Day 2)",
+          "Let me know if you'd like the detailed breakdown. (Day 2-3)"
+        ],
+        "structureHint": [
+          "文1: 挨拶 + 文脈 (Following up on your question about Asia AI investment...)",
+          "文2: 再フレーミング文 (Digital transformation is no longer X. It is Y.)",
+          "文3: Japan の現状データ (数字を2つ)",
+          "文4: 戦略的論点 (compounding / brand ambassadors 等)",
+          "文5: 具体提案 (I'd like to propose a [X-month] pilot...)",
+          "文6: 締め (Let me know...)"
+        ],
+        "answerFields": [
+          {"id": "subject", "label": "Subject 行", "rows": 1, "placeholder": "[FILL IN] - ..."},
+          {"id": "body", "label": "本文 (5〜7文)", "rows": 14, "placeholder": "Hi John,\n\n..."}
+        ]
+      }
+    }
+  ]
+}

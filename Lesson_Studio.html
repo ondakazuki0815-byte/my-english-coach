@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lesson Studio">
+<meta name="theme-color" content="#1F3A5F">
+<title>Lesson Studio — My English Coach</title>
+<style>
+:root{
+  --primary:#1F3A5F;
+  --accent:#C5563A;
+  --accent-soft:#E8826B;
+  --sand:#F4E9DD;
+  --bg:#FAF8F4;
+  --card:#FFFFFF;
+  --text:#2A2A2A;
+  --muted:#6B6B6B;
+  --border:#E5DFD3;
+  --info:#3567A8;
+  --success:#3A7D44;
+  --warning:#D69100;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  font-size:16px;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+
+.header{
+  background:linear-gradient(135deg,var(--primary) 0%,#2C5081 100%);
+  color:#fff;padding:14px 16px 12px;
+  padding-top:calc(14px + env(safe-area-inset-top));
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+.header-row{display:flex;justify-content:space-between;align-items:flex-end;gap:8px}
+.title{font-size:18px;font-weight:700}
+.subtitle{font-size:12px;opacity:0.85;margin-top:2px}
+.home-link{
+  background:rgba(255,255,255,0.15);color:#fff;
+  border:none;padding:6px 12px;border-radius:99px;
+  font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;
+  text-decoration:none;display:inline-block;
+}
+.home-link:active{transform:scale(0.96)}
+
+.day-selector{
+  display:flex;gap:6px;overflow-x:auto;padding:10px 12px;
+  background:#fff;border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:40;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.day-selector::-webkit-scrollbar{display:none}
+.day-btn{
+  flex-shrink:0;padding:8px 14px;border-radius:99px;
+  font-size:12.5px;font-weight:700;cursor:pointer;
+  background:#F2EEE6;color:var(--muted);border:1px solid var(--border);
+  white-space:nowrap;font-family:inherit;
+}
+.day-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.day-btn .topic{font-weight:400;font-size:11px;opacity:0.8;display:block;margin-top:1px}
+
+.tabs{
+  display:flex;gap:4px;padding:8px 12px;background:var(--bg);
+  border-bottom:1px solid var(--border);
+}
+.tab{
+  flex:1;padding:11px 14px;text-align:center;
+  background:#F2EEE6;color:var(--muted);border:1px solid var(--border);
+  border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;
+  font-family:inherit;transition:all 0.15s;
+}
+.tab.active{background:var(--card);color:var(--primary);border-color:var(--accent);box-shadow:var(--shadow)}
+
+.container{max-width:760px;margin:0 auto;padding:14px}
+
+/* Reading view */
+.article{
+  background:var(--card);border-radius:14px;padding:18px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  margin-bottom:14px;
+}
+.article-title{
+  font-size:22px;font-weight:800;color:var(--primary);
+  margin:0 0 4px;text-align:center;
+  border-top:2px solid var(--accent);padding-top:14px;
+}
+.article-subtitle{
+  font-size:14px;font-style:italic;color:var(--muted);
+  text-align:center;margin:0 0 16px;padding-bottom:14px;
+  border-bottom:2px solid var(--accent);
+}
+.article p{margin:12px 0;line-height:1.7;font-size:15px}
+.article p strong{color:var(--primary)}
+
+.tips-card{
+  background:#FFF8EC;border:1px dashed #D9C9A0;
+  border-radius:12px;padding:14px;margin-bottom:14px;
+}
+.tips-card h3{
+  font-size:13px;font-weight:700;color:var(--accent);
+  margin:0 0 8px;text-transform:uppercase;letter-spacing:0.4px;
+}
+.tips-card ul{margin:0;padding:0 0 0 18px;font-size:13px;color:#5a4a3a}
+.tips-card li{margin-bottom:4px;line-height:1.5}
+
+/* Question / Answer fields */
+.question{
+  background:var(--card);border-radius:12px;padding:14px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  margin-bottom:10px;
+}
+.q-label{
+  font-size:13px;font-weight:700;color:var(--primary);
+  margin:0 0 4px;
+}
+.q-prompt{
+  font-size:13px;color:var(--muted);margin:0 0 10px;line-height:1.5;
+}
+.q-input{
+  width:100%;padding:10px 12px;border-radius:8px;
+  border:1px solid var(--border);background:#fff;
+  font-family:inherit;font-size:14px;line-height:1.5;
+  resize:vertical;min-height:60px;
+  -webkit-appearance:none;appearance:none;
+  color:var(--text);
+}
+.q-input:focus{outline:none;border-color:var(--accent)}
+.q-saved{
+  font-size:11px;color:var(--success);margin-top:4px;display:none;
+}
+.q-input.saved + .q-saved{display:block}
+
+/* Writing view */
+.scenario-card{
+  background:var(--card);border-radius:14px;padding:18px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  margin-bottom:14px;
+}
+.scenario-card h3{
+  font-size:14px;font-weight:700;color:var(--accent);margin:0 0 8px;
+  text-transform:uppercase;letter-spacing:0.4px;
+}
+.scenario-card p{margin:0 0 12px;line-height:1.6;font-size:14px}
+.scenario-card .meta{font-size:12.5px;color:var(--muted)}
+.scenario-card .meta strong{color:var(--primary)}
+
+.req-list{
+  background:#FFF8EC;border:1px dashed #D9C9A0;border-radius:10px;
+  padding:12px 14px;margin-bottom:12px;
+}
+.req-list h4{font-size:12px;color:var(--accent);font-weight:700;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.3px}
+.req-list ul{margin:0;padding:0 0 0 18px;font-size:13px}
+.req-list li{margin-bottom:3px;line-height:1.5}
+
+.phrase-bank{
+  background:#F0F7F1;border:1px dashed #B5D4BA;border-radius:10px;
+  padding:12px 14px;margin-bottom:12px;font-size:13px;
+}
+.phrase-bank h4{font-size:12px;color:var(--success);font-weight:700;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.3px}
+.phrase-bank .pgrp{margin-bottom:8px}
+.phrase-bank .ptitle{font-weight:700;color:var(--primary);font-size:11.5px;margin-bottom:3px}
+.phrase-bank ul{margin:0;padding:0 0 0 18px}
+.phrase-bank li{margin-bottom:3px;line-height:1.5;color:#3a5a3a}
+
+/* Action bar (sticky bottom) */
+.action-bar{
+  position:sticky;bottom:0;background:var(--card);
+  border-top:1px solid var(--border);padding:10px 12px;
+  display:flex;gap:8px;
+  padding-bottom:calc(10px + env(safe-area-inset-bottom));
+  box-shadow:0 -2px 8px rgba(0,0,0,0.05);z-index:30;
+}
+.btn{
+  flex:1;padding:12px 14px;border-radius:10px;border:none;
+  font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
+  transition:transform 0.1s;
+}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-secondary{background:#F2EEE6;color:var(--text)}
+.btn-info{background:var(--info);color:#fff}
+.btn-success{background:var(--success);color:#fff}
+
+/* Modal for copy */
+.modal{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);
+  z-index:200;align-items:center;justify-content:center;padding:20px;
+}
+.modal.show{display:flex}
+.modal-content{
+  background:var(--card);border-radius:14px;padding:18px;
+  max-width:500px;width:100%;max-height:80vh;overflow-y:auto;
+}
+.modal-content h3{margin:0 0 8px;color:var(--primary);font-size:16px}
+.modal-content p{font-size:13px;color:var(--muted);margin:0 0 10px}
+.modal-textarea{
+  width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);
+  font-family:'Menlo','Monaco',monospace;font-size:12px;
+  min-height:200px;resize:vertical;
+}
+.modal-actions{display:flex;gap:8px;margin-top:12px}
+
+/* Toast notification */
+.toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  background:var(--primary);color:#fff;padding:10px 18px;border-radius:99px;
+  font-size:13px;font-weight:600;z-index:300;
+  opacity:0;pointer-events:none;transition:opacity 0.2s;
+}
+.toast.show{opacity:1}
+
+@media(min-width:720px){
+  .container{padding:20px}
+  .article-title{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-row">
+    <div>
+      <div class="title">📚 Lesson Studio</div>
+      <div class="subtitle">Daily Reading + Writing</div>
+    </div>
+    <a class="home-link" href="index.html">🏠 Home</a>
+  </div>
+</header>
+
+<div class="day-selector" id="daySelector"></div>
+<div class="tabs">
+  <button class="tab active" id="tabReading" onclick="setTab('reading')">📖 Reading</button>
+  <button class="tab" id="tabWriting" onclick="setTab('writing')">✍️ Writing</button>
+</div>
+
+<div class="container">
+  <div id="content"></div>
+</div>
+
+<div class="action-bar">
+  <button class="btn btn-secondary" onclick="resetCurrent()">🔄 リセット</button>
+  <button class="btn btn-info" onclick="exportAnswers()">📤 答えをコピー</button>
+</div>
+
+<!-- Modal: Export -->
+<div class="modal" id="exportModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-content">
+    <h3>📤 コーチへ送信用テキスト</h3>
+    <p>下のテキストをコピーして、Claude チャットに貼り付けてください。</p>
+    <textarea class="modal-textarea" id="exportText" readonly></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-success" onclick="copyToClipboard()">📋 クリップボードにコピー</button>
+      <button class="btn btn-secondary" onclick="closeModal()">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============== STATE ==============
+const STORAGE_KEY = "lessonStudio_v1";
+let lessons = null;
+let currentDay = null;
+let currentTab = "reading";
+let answers = loadAnswers();
+
+function loadAnswers(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return {};
+}
+function saveAnswers(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(answers)); }catch(e){}
+}
+function getAnswerKey(day, qid){ return `day${day}_${currentTab}_${qid}`; }
+
+// ============== INIT ==============
+async function init(){
+  try{
+    const res = await fetch("lessons.json");
+    if(!res.ok) throw new Error("lessons.json not found");
+    const data = await res.json();
+    lessons = data.lessons;
+    if(!lessons.length){
+      document.getElementById("content").innerHTML = `<p style="text-align:center;padding:40px;color:#888">レッスンデータがまだありません。</p>`;
+      return;
+    }
+    // Default to today's lesson if available, otherwise the latest
+    const today = new Date().toISOString().slice(0,10);
+    const todayLesson = lessons.find(l => l.date === today);
+    currentDay = todayLesson ? todayLesson.day : lessons[lessons.length-1].day;
+    renderDaySelector();
+    renderContent();
+  }catch(err){
+    console.error(err);
+    document.getElementById("content").innerHTML = `<div class="article"><p style="color:var(--accent)">⚠️ レッスンデータの読み込みに失敗しました: ${escapeHtml(err.message)}</p><p>ブラウザのコンソールを確認してください。</p></div>`;
+  }
+}
+
+function renderDaySelector(){
+  const sel = document.getElementById("daySelector");
+  sel.innerHTML = lessons.map(l => `
+    <button class="day-btn ${l.day===currentDay?'active':''}" onclick="setDay(${l.day})">
+      Day ${l.day}
+      <span class="topic">${escapeHtml(l.topic||'')}</span>
+    </button>
+  `).join("");
+}
+
+function setDay(day){
+  currentDay = day;
+  renderDaySelector();
+  renderContent();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function setTab(tab){
+  currentTab = tab;
+  document.getElementById("tabReading").classList.toggle("active", tab==="reading");
+  document.getElementById("tabWriting").classList.toggle("active", tab==="writing");
+  renderContent();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function getCurrentLesson(){
+  return lessons.find(l => l.day === currentDay);
+}
+
+// ============== RENDER CONTENT ==============
+function renderContent(){
+  const lesson = getCurrentLesson();
+  if(!lesson) return;
+  const el = document.getElementById("content");
+  if(currentTab === "reading"){
+    el.innerHTML = renderReading(lesson);
+  } else {
+    el.innerHTML = renderWriting(lesson);
+  }
+  bindAnswerInputs();
+}
+
+function renderReading(lesson){
+  const r = lesson.reading;
+  if(!r){
+    return `<div class="article"><p style="color:var(--muted);text-align:center;padding:30px">この日の Reading 課題はまだ準備されていません。</p></div>`;
+  }
+  let html = `<div class="article">`;
+  if(r.title) html += `<div class="article-title">${escapeHtml(r.title)}</div>`;
+  if(r.subtitle) html += `<div class="article-subtitle">${escapeHtml(r.subtitle)}</div>`;
+  if(r.paragraphs){
+    r.paragraphs.forEach(p => {
+      if(p.boldStart){
+        html += `<p><strong>${escapeHtml(p.boldStart)}</strong>${escapeHtml(p.rest||'')}</p>`;
+      } else if(p.text){
+        html += `<p>${escapeHtml(p.text)}</p>`;
+      }
+    });
+  }
+  html += `</div>`;
+
+  if(r.tips && r.tips.length){
+    html += `<div class="tips-card"><h3>💡 読解のヒント</h3><ul>${r.tips.map(t=>`<li>${escapeHtml(t)}</li>`).join("")}</ul></div>`;
+  }
+  if(r.keyPhrases && r.keyPhrases.length){
+    html += `<div class="tips-card"><h3>📚 キーフレーズ予習</h3><ul>${r.keyPhrases.map(t=>`<li>${escapeHtml(t)}</li>`).join("")}</ul></div>`;
+  }
+
+  if(r.questions){
+    r.questions.forEach(q => {
+      const key = getAnswerKey(lesson.day, q.id);
+      const val = answers[key] || "";
+      html += `
+        <div class="question">
+          <div class="q-label">${escapeHtml(q.label)}</div>
+          ${q.prompt ? `<div class="q-prompt">${escapeHtml(q.prompt)}</div>` : ""}
+          <textarea class="q-input" data-key="${escapeAttr(key)}" rows="${q.id.startsWith('Q3')?2:3}">${escapeHtml(val)}</textarea>
+          <div class="q-saved">✓ 自動保存済み</div>
+        </div>`;
+    });
+  }
+  return html;
+}
+
+function renderWriting(lesson){
+  const w = lesson.writing;
+  if(!w){
+    return `<div class="article"><p style="color:var(--muted);text-align:center;padding:30px">この日の Writing 課題はまだ準備されていません。</p></div>`;
+  }
+  let html = `
+    <div class="scenario-card">
+      <h3>📩 シナリオ</h3>
+      <p>${escapeHtml(w.scenario||'')}</p>
+      <div class="meta">
+        <strong>From:</strong> ${escapeHtml(w.from||'')}<br>
+        <strong>To:</strong> ${escapeHtml(w.to||'')}<br>
+        <strong>Subject:</strong> <em>${escapeHtml(w.subjectHint||'[FILL IN]')}</em>
+      </div>
+    </div>`;
+
+  if(w.requirements && w.requirements.length){
+    html += `<div class="req-list"><h4>✅ 必須要素</h4><ul>${w.requirements.map(r=>`<li>${escapeHtml(r)}</li>`).join("")}</ul></div>`;
+  }
+
+  if(w.todayPhrases || w.pastPhrases){
+    html += `<div class="phrase-bank"><h4>🎯 使えるフレーズ</h4>`;
+    if(w.todayPhrases && w.todayPhrases.length){
+      html += `<div class="pgrp"><div class="ptitle">📚 今日のフレーズ</div><ul>${w.todayPhrases.map(p=>`<li>${escapeHtml(p)}</li>`).join("")}</ul></div>`;
+    }
+    if(w.pastPhrases && w.pastPhrases.length){
+      html += `<div class="pgrp"><div class="ptitle">📚 過去レッスンから</div><ul>${w.pastPhrases.map(p=>`<li>${escapeHtml(p)}</li>`).join("")}</ul></div>`;
+    }
+    html += `</div>`;
+  }
+
+  if(w.structureHint && w.structureHint.length){
+    html += `<div class="tips-card"><h3>🏗 構成のヒント</h3><ul>${w.structureHint.map(s=>`<li>${escapeHtml(s)}</li>`).join("")}</ul></div>`;
+  }
+
+  if(w.answerFields){
+    w.answerFields.forEach(f => {
+      const key = getAnswerKey(lesson.day, f.id);
+      const val = answers[key] || "";
+      html += `
+        <div class="question">
+          <div class="q-label">✏️ ${escapeHtml(f.label)}</div>
+          <textarea class="q-input" data-key="${escapeAttr(key)}" rows="${f.rows||3}" placeholder="${escapeHtml(f.placeholder||'')}">${escapeHtml(val)}</textarea>
+          <div class="q-saved">✓ 自動保存済み</div>
+        </div>`;
+    });
+  }
+  return html;
+}
+
+// ============== ANSWER PERSISTENCE ==============
+function bindAnswerInputs(){
+  document.querySelectorAll(".q-input").forEach(input => {
+    input.addEventListener("input", e => {
+      const key = e.target.dataset.key;
+      answers[key] = e.target.value;
+      saveAnswers();
+      // Show saved indicator briefly
+      e.target.classList.add("saved");
+      clearTimeout(e.target._saveTimer);
+      e.target._saveTimer = setTimeout(()=>{
+        e.target.classList.remove("saved");
+      }, 1500);
+    });
+  });
+}
+
+// ============== EXPORT ==============
+function exportAnswers(){
+  const lesson = getCurrentLesson();
+  if(!lesson){ alert("レッスンが選択されていません"); return; }
+  let txt = `===== Day ${lesson.day} (${lesson.date}) — ${lesson.topic} =====\n\n`;
+
+  if(currentTab === "reading"){
+    txt += `📖 READING ANSWERS\n\n`;
+    if(lesson.reading && lesson.reading.questions){
+      lesson.reading.questions.forEach(q => {
+        const key = getAnswerKey(lesson.day, q.id);
+        const v = answers[key] || "(空欄)";
+        txt += `${q.label}\n${v}\n\n`;
+      });
+    }
+  } else {
+    txt += `✍️ WRITING ANSWERS\n\n`;
+    if(lesson.writing && lesson.writing.answerFields){
+      lesson.writing.answerFields.forEach(f => {
+        const key = getAnswerKey(lesson.day, f.id);
+        const v = answers[key] || "(空欄)";
+        txt += `[${f.label}]\n${v}\n\n`;
+      });
+    }
+  }
+  txt += `\n--- Submitted from Lesson Studio ---`;
+
+  document.getElementById("exportText").value = txt;
+  document.getElementById("exportModal").classList.add("show");
+}
+
+function copyToClipboard(){
+  const ta = document.getElementById("exportText");
+  ta.select();
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(ta.value).then(()=>{
+        showToast("✅ コピーしました");
+      }).catch(()=>{
+        document.execCommand("copy");
+        showToast("✅ コピーしました");
+      });
+    } else {
+      document.execCommand("copy");
+      showToast("✅ コピーしました");
+    }
+  }catch(e){
+    showToast("⚠️ 手動でコピーしてください");
+  }
+}
+
+function closeModal(){
+  document.getElementById("exportModal").classList.remove("show");
+}
+
+function resetCurrent(){
+  const lesson = getCurrentLesson();
+  if(!lesson) return;
+  if(!confirm(`Day ${lesson.day} の ${currentTab==='reading'?'Reading':'Writing'} の答えをリセットしますか？`)) return;
+  Object.keys(answers).forEach(k => {
+    if(k.startsWith(`day${lesson.day}_${currentTab}_`)) delete answers[k];
+  });
+  saveAnswers();
+  renderContent();
+  showToast("🔄 リセットしました");
+}
+
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2000);
+}
+
+// ============== UTIL ==============
+function escapeHtml(s){
+  return String(s||"").replace(/[&<>"']/g, c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  }[c]));
+}
+function escapeAttr(s){ return escapeHtml(s).replace(/"/g,"&quot;"); }
+
+// ============== START ==============
+init();
+</script>
+</body>
+</html>
