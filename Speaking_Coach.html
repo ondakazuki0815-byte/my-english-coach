@@ -1321,9 +1321,11 @@ function smartSplit(tokens, targetSet){
 }
 
 function diffWords(target, said){
-  // Use smart split on said tokens to handle concatenations
-  const targetSet = new Set(target);
-  said = smartSplit(said, targetSet);
+  // Use smart split on said tokens to handle concatenations (defensive)
+  try{
+    const targetSet = new Set(target);
+    said = smartSplit(said, targetSet);
+  }catch(e){ console.warn("[diff] smart-split skipped:", e.message); }
 
   const m = target.length, n = said.length;
   const dp = Array.from({length:m+1},()=>Array(n+1).fill(0));
@@ -1348,15 +1350,22 @@ function diffWords(target, said){
 }
 
 function analyzeAndShow(){
-  const tWords = tokenize(currentPhrase.en);
-  const sWords = tokenize(liveResult);
-  const diff = diffWords(tWords, sWords);
-
-  const matched = diff.filter(d=>d.type==="match").length;
-  const missed = diff.filter(d=>d.type==="miss").length;
-  const total = tWords.length;
-  const accuracy = total ? Math.round(matched/total*100) : 0;
-  const wpm = recordingDuration > 0 ? Math.round(sWords.length / recordingDuration * 60) : 0;
+  let tWords = [], sWords = [], diff = [], matched = 0, missed = 0, total = 0, accuracy = 0, wpm = 0;
+  try{
+    tWords = tokenize(currentPhrase.en || "");
+    sWords = tokenize(liveResult || "");
+    console.log("[Analyze]", { target: tWords.length + " words", said: sWords.length + " words", liveResult: (liveResult||"").slice(0,80) });
+    diff = diffWords(tWords, sWords);
+    matched = diff.filter(d=>d.type==="match").length;
+    missed = diff.filter(d=>d.type==="miss").length;
+    total = tWords.length;
+    accuracy = total ? Math.round(matched/total*100) : 0;
+    wpm = recordingDuration > 0 ? Math.round(sWords.length / recordingDuration * 60) : 0;
+  }catch(err){
+    console.error("[Analyze] ERROR:", err);
+    document.getElementById("recStatus").textContent = "⚠️ 解析エラー: " + err.message;
+    return;
+  }
 
   document.getElementById("scoreCircle").style.setProperty("--score", accuracy);
   document.getElementById("scoreNum").innerHTML = `${accuracy}<small>/100</small>`;
