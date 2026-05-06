@@ -239,9 +239,11 @@ body.image-only .vis-label{display:none}
 .brk-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
 .brk-chip{
   display:inline-flex;align-items:center;gap:3px;
-  padding:3px 8px;border-radius:99px;
+  padding:5px 10px;border-radius:99px;
   font-size:11px;font-weight:700;
+  transition:all 0.15s;user-select:none;
 }
+.brk-chip:active{transform:scale(0.94)}
 .brk-due-btn{
   width:100%;padding:8px 12px;border-radius:8px;border:none;
   background:linear-gradient(135deg,#FFD580 0%,#F5B850 100%);
@@ -591,7 +593,10 @@ body.hide-jp .example-jp{display:none}
       <div class="title">📘 Phrase Master</div>
       <div class="subtitle">音声 + 発音記号 + シルエット文法</div>
     </div>
-    <div style="font-size:13px;font-weight:700" id="counter">0 / 50</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <a href="index.html" style="background:rgba(255,255,255,0.15);color:#fff;border:none;padding:6px 12px;border-radius:99px;font-size:11px;font-weight:600;text-decoration:none;display:inline-block">🏠 Home</a>
+      <div style="font-size:13px;font-weight:700" id="counter">0 / 50</div>
+    </div>
   </div>
   <div class="progress-wrap">
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -1291,11 +1296,12 @@ function loadState(){
         imageOnly:!!s.imageOnly,
         voicePref:s.voicePref||"",
         quizStats:s.quizStats||{played:0,correct:0,total:0},
-        lessonsApplied:s.lessonsApplied||{}
+        lessonsApplied:s.lessonsApplied||{},
+        masteryFilter: (s.masteryFilter !== undefined) ? s.masteryFilter : null
       };
     }
   }catch(e){}
-  return { mastered:{}, mastery:{}, log:[], activeCat:"all", search:"", hideJp:false, imageOnly:false, voicePref:"", quizStats:{played:0,correct:0,total:0}, lessonsApplied:{} };
+  return { mastered:{}, mastery:{}, log:[], activeCat:"all", search:"", hideJp:false, imageOnly:false, voicePref:"", quizStats:{played:0,correct:0,total:0}, lessonsApplied:{}, masteryFilter:null };
 }
 
 function seedLessonPhrases(){
@@ -1401,6 +1407,10 @@ function renderPhrases(){
   const q = (state.search||"").toLowerCase().trim();
   let items = PHRASES.filter(p=>{
     if(state.activeCat!=="all" && p.cat!==state.activeCat) return false;
+    if(state.masteryFilter !== null && state.masteryFilter !== undefined){
+      const m = getMastery(p.en);
+      if(m.level !== state.masteryFilter) return false;
+    }
     if(q){
       const hay = (p.en+" "+p.jp+" "+p.ex+" "+p.exJp).toLowerCase();
       if(!hay.includes(q)) return false;
@@ -1497,18 +1507,31 @@ function renderProgress(){
   const breakdownEl = document.getElementById("masteryBreakdown");
   if(breakdownEl){
     const due = getDueForReview().length;
+    const activeF = state.masteryFilter;
+    const chip = (lv, count, info) => {
+      const isActive = activeF === lv;
+      const opacity = (activeF !== null && activeF !== lv) ? "opacity:0.45;" : "";
+      const ring = isActive ? "box-shadow:0 0 0 2px " + info.color + ";" : "";
+      return `<span class="brk-chip" style="background:${info.bg};color:${info.color};${opacity}${ring}cursor:pointer" onclick="setMasteryFilter(${lv})">${info.icon} ${count}${isActive?' ✕':''}</span>`;
+    };
     breakdownEl.innerHTML = `
       <div class="brk-row">
-        ${[1,2,3,4,5].map(lv=>{
-          const c = counts[lv];
-          const li = MASTERY_LEVELS[lv];
-          return c>0 ? `<span class="brk-chip" style="background:${li.bg};color:${li.color}">${li.icon} ${c}</span>` : "";
-        }).filter(Boolean).join("")}
-        ${counts[0]>0 ? `<span class="brk-chip" style="background:#F0F0F0;color:#666">⚪ 未着手 ${counts[0]}</span>` : ""}
+        ${[1,2,3,4,5].map(lv => counts[lv] > 0 ? chip(lv, counts[lv], MASTERY_LEVELS[lv]) : "").filter(Boolean).join("")}
+        ${counts[0] > 0 ? chip(0, counts[0], {bg:"#F0F0F0",color:"#666",icon:"⚪ 未着手"}) : ""}
+        ${activeF !== null ? `<span class="brk-chip" style="background:rgba(255,255,255,0.2);color:#fff;cursor:pointer" onclick="setMasteryFilter(null)">フィルター解除 ✕</span>` : ""}
       </div>
       ${due > 0 ? `<button class="brk-due-btn" onclick="openReviewMode()">📅 今日の復習: ${due}件 ▶</button>` : `<div class="brk-due-empty">✅ 今日の復習なし</div>`}
     `;
   }
+}
+
+function setMasteryFilter(level){
+  // Toggle off if clicking the same level
+  if(state.masteryFilter === level) state.masteryFilter = null;
+  else state.masteryFilter = level;
+  saveState();
+  renderPhrases();
+  renderProgress();
 }
 
 // ============== TOGGLES ==============
