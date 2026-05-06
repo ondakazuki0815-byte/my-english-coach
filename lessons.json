@@ -1,17 +1,280 @@
 {
   "_meta": {
-    "version": "1.0",
+    "version": "2.0",
     "lastUpdated": "2026-05-06",
     "user": "Kazuki Onda",
     "startDate": "2026-05-02"
   },
   "lessons": [
     {
+      "day": 1,
+      "date": "2026-05-02",
+      "weekday": "Saturday",
+      "topic": "Diagnostic + Self-Introduction",
+      "topicSlug": "Diagnostic",
+      "archived": true,
+      "summary": "5問のレベル診断 + 自己紹介スピーキング 92点 (Excellent)",
+      "reading": null,
+      "writing": null
+    },
+    {
+      "day": 2,
+      "date": "2026-05-03",
+      "weekday": "Sunday",
+      "topic": "Premiumization in F&B",
+      "topicSlug": "Premiumization",
+      "archived": true,
+      "reading": {
+        "title": "The Premiumization Wave",
+        "subtitle": "How Fast-Casual Chains Are Capturing Higher AOV",
+        "wordCount": 280,
+        "level": "B1",
+        "paragraphs": [
+          {"type": "intro", "text": "Fast-casual restaurant chains are quietly transforming their menus to capture consumers willing to pay more. Industry data shows that premium menu items now account for 25% of total revenue at leading chains, up from 15% just three years ago."},
+          {"type": "transition", "text": "What is driving this shift? Three factors are at play."},
+          {"type": "force", "boldStart": "First, consumer preferences are evolving. ", "rest": "Diners are seeking fewer but better experiences. They want quality, story, and ingredients they trust. A premium burger with grass-fed beef, for instance, can command 40% higher pricing than a standard option without significantly reducing volume."},
+          {"type": "force", "boldStart": "Second, digital ordering channels make upselling easier. ", "rest": "Mobile apps and self-order kiosks present add-ons and premium options at the right moment, without the friction of asking a busy cashier. Industry studies show that digital orders consistently generate 12-18% higher AOV than counter orders."},
+          {"type": "force", "boldStart": "Third, food cost inflation is forcing operators to push pricing. ", "rest": "Margins are tight, and raising prices on standard items is risky. But premium items justify their higher cost through perceived value, allowing operators to protect their bottom line."},
+          {"type": "implication", "text": "For strategy teams planning the next 18 months, the implication is clear: premiumization is no longer optional. Operators must rebuild their menu architecture to include three to five premium tiers, supported by digital channels that make trade-up easy."},
+          {"type": "closing", "text": "Those who move quickly will capture market share. Those who delay will see their AOV erode as inflation continues."}
+        ],
+        "tips": [
+          "段落構成: 主張 → Three factors → 戦略含意 → 結論",
+          "新概念: friction (摩擦・面倒), perceived value (知覚価値), erode (侵食)",
+          "ビジネスフレーズ: rebuild menu architecture, protect bottom line"
+        ],
+        "keyPhrases": [
+          "Three factors are at play  =  3つの要因がある",
+          "perceived value  =  知覚価値",
+          "rebuild menu architecture  =  メニュー構造を再構築",
+          "protect bottom line  =  純利益を守る",
+          "AOV erode  =  客単価が侵食"
+        ],
+        "questions": [
+          {"id": "Q1", "label": "Q1. 主張の要約 (1文)", "prompt": "この記事の主張を1文でまとめてください"},
+          {"id": "Q2_1", "label": "Q2. ① 1つ目の要因", "prompt": "プレミアム化の1つ目の要因"},
+          {"id": "Q2_2", "label": "Q2. ② 2つ目の要因", "prompt": "2つ目の要因 (and の罠注意)"},
+          {"id": "Q2_3", "label": "Q2. ③ 3つ目の要因", "prompt": "3つ目の要因"},
+          {"id": "Q3_1", "label": "Q3. 抽出フレーズ 1", "prompt": "実務で使える表現 (1)"},
+          {"id": "Q3_2", "label": "Q3. 抽出フレーズ 2", "prompt": "実務で使える表現 (2)"},
+          {"id": "Q3_3", "label": "Q3. 抽出フレーズ 3", "prompt": "実務で使える表現 (3)"},
+          {"id": "vocab", "label": "📝 不明な単語メモ", "prompt": "わからなかった単語"}
+        ]
+      },
+      "writing": {
+        "scenario": "プレミアム化トレンドを日本市場に応用する提案を、ロンドン本社の John に5〜7文の英語メールで送ります。",
+        "to": "John Smith <john.smith@globalfoodco.com> (Global HQ, London)",
+        "from": "Kazuki Onda <kazuki.onda@globalfoodco.com>",
+        "subjectHint": "[FILL IN] — Premiumization Opportunity in Japan",
+        "requirements": [
+          "5〜7文で書く",
+          "今日学んだフレーズ・語彙を最低3つ使う",
+          "具体的な数字を最低1つ含める",
+          "ネクストステップの提案を含める"
+        ],
+        "todayPhrases": [
+          "perceived value",
+          "rebuild menu architecture",
+          "protect bottom line",
+          "What is driving this shift?",
+          "the implication is clear"
+        ],
+        "pastPhrases": [
+          "I hope this email finds you well. (Day 1)",
+          "Following up on ~ (Day 1)",
+          "I'd be happy to ~ (Day 1)",
+          "Let me know if ~ (Day 1)"
+        ],
+        "structureHint": [
+          "文1: 挨拶",
+          "文2: データ共有",
+          "文3: なぜ日本でも有効か",
+          "文4: フレーズ活用 (perceived value など)",
+          "文5: 提案 + 締め"
+        ],
+        "answerFields": [
+          {"id": "subject", "label": "Subject 行", "rows": 1, "placeholder": "[FILL IN] - ..."},
+          {"id": "body", "label": "本文 (5〜7文)", "rows": 14, "placeholder": "Hi John,\n\n..."}
+        ]
+      }
+    },
+    {
+      "day": 3,
+      "date": "2026-05-04",
+      "weekday": "Monday",
+      "topic": "Loyalty Programs",
+      "topicSlug": "LoyaltyPrograms",
+      "archived": true,
+      "reading": {
+        "title": "Loyalty Programs:",
+        "subtitle": "The New Battleground for Restaurant AOV",
+        "wordCount": 260,
+        "level": "B1",
+        "paragraphs": [
+          {"type": "intro", "text": "Loyalty programs have evolved from simple punch cards into sophisticated growth engines. Industry data shows that members of well-designed programs visit 35% more often and spend 20% more per visit than non-members."},
+          {"type": "transition", "text": "What is driving this transformation? Three trends are converging."},
+          {"type": "force", "boldStart": "First, mobile-first design has changed everything. ", "rest": "Members no longer carry plastic cards or remember rewards. Push notifications deliver targeted offers at the right moment — often within thirty minutes of a typical lunch break."},
+          {"type": "force", "boldStart": "Second, personalization at scale is now possible. ", "rest": "AI tools analyze each member's past purchases and predict the next likely order. A coffee chain can suggest a pastry to morning regulars and a healthier wrap to afternoon visitors. Relevance drives perceived value, and perceived value drives AOV."},
+          {"type": "force", "boldStart": "Third, loyalty data is becoming the foundation for menu strategy. ", "rest": "When operators see what members actually buy — not what they say they will buy — menu decisions become evidence-based. Underperforming items get cut. Best sellers get scaled."},
+          {"type": "implication", "text": "For operators in mature markets, loyalty is no longer a marketing tool. It is core operating infrastructure."},
+          {"type": "closing", "text": "The early movers have already locked in members. Late movers face a steep uphill battle: customer acquisition costs are rising, and competitors with established programs enjoy structural advantages on retention and frequency. For strategy teams planning the next twelve months, the implication is clear: invest now or lose ground for years."}
+        ],
+        "tips": [
+          "Day 2 と類似構造: 主張 → 3トレンド → 戦略含意 → 結論",
+          "Day 2 で見た 'perceived value' 'the implication is clear' 再登場",
+          "新概念: locked in (確保した), uphill battle (険しい闘い), structural advantages (構造的優位)"
+        ],
+        "keyPhrases": [
+          "Three trends are converging  =  3つのトレンドが収束",
+          "evidence-based  =  根拠に基づく",
+          "locked in  =  確保した",
+          "uphill battle  =  険しい闘い",
+          "structural advantages  =  構造的優位",
+          "X is no longer Y. It is Z.  =  再フレーミングテンプレ"
+        ],
+        "questions": [
+          {"id": "Q1", "label": "Q1. 主張の要約 (1文厳守)", "prompt": "1文で主張をまとめる"},
+          {"id": "Q2_1", "label": "Q2. ① 1つ目のトレンド", "prompt": "ロイヤリティプログラムを変革する1つ目のトレンド"},
+          {"id": "Q2_2", "label": "Q2. ② 2つ目のトレンド", "prompt": "2つ目のトレンド"},
+          {"id": "Q2_3", "label": "Q2. ③ 3つ目のトレンド", "prompt": "3つ目のトレンド"},
+          {"id": "Q3_1", "label": "Q3. 抽出フレーズ 1", "prompt": "戦略担当として使える表現 (1)"},
+          {"id": "Q3_2", "label": "Q3. 抽出フレーズ 2", "prompt": "実務で使える表現 (2)"},
+          {"id": "Q3_3", "label": "Q3. 抽出フレーズ 3", "prompt": "実務で使える表現 (3)"},
+          {"id": "vocab", "label": "📝 不明な単語メモ", "prompt": "わからなかった単語"}
+        ]
+      },
+      "writing": {
+        "scenario": "ロイヤリティプログラムを日本市場で展開する戦略を、John に5〜7文の英語メールで提案します。再フレーミングテンプレ「X is no longer Y. It is Z.」を使うのがチャレンジ。",
+        "to": "John Smith <john.smith@globalfoodco.com> (Global HQ, London)",
+        "from": "Kazuki Onda <kazuki.onda@globalfoodco.com>",
+        "subjectHint": "[FILL IN] — Japan Loyalty Program Strategy",
+        "requirements": [
+          "5〜7文で書く",
+          "再フレーミングテンプレ「X is no longer Y. It is Z.」を1回以上使う ⭐",
+          "Day 3 ドリルの5フレーズから1つ以上組み込む",
+          "具体的な数字 (例: メンバー来店 +35%)",
+          "次の12ヶ月のアクション提案"
+        ],
+        "todayPhrases": [
+          "X is no longer Y. It is Z. ⭐",
+          "co-creation moments with our local teams",
+          "a competitive differentiator",
+          "a core business skill",
+          "a C-suite priority",
+          "showcases for our brand experience"
+        ],
+        "pastPhrases": [
+          "Three factors are at play / Three trends are converging",
+          "perceived value drives AOV",
+          "the implication is clear",
+          "I'd like to propose a [X-month] pilot in [location] (Day 2)",
+          "Let me know if you'd like the detailed breakdown"
+        ],
+        "structureHint": [
+          "文1: 挨拶 + Following up on...",
+          "文2: 再フレーミング (Loyalty is no longer X. It is Y.)",
+          "文3: Japan データ (数字)",
+          "文4: ドリルフレーズ活用",
+          "文5: 12ヶ月のアクション提案",
+          "文6: 締め"
+        ],
+        "answerFields": [
+          {"id": "subject", "label": "Subject 行", "rows": 1, "placeholder": "[FILL IN] - ..."},
+          {"id": "body", "label": "本文 (5〜7文)", "rows": 14, "placeholder": "Hi John,\n\n..."}
+        ]
+      }
+    },
+    {
+      "day": 4,
+      "date": "2026-05-05",
+      "weekday": "Tuesday",
+      "topic": "Staff Retention",
+      "topicSlug": "RetentionBeatsRecruitment",
+      "archived": true,
+      "reading": {
+        "title": "Why Retention Beats Recruitment",
+        "subtitle": "in Restaurants",
+        "wordCount": 280,
+        "level": "B1",
+        "paragraphs": [
+          {"type": "intro", "text": "The most expensive employee is the one you have to replace. Industry data shows that replacing a single front-line worker costs operators between three and five thousand dollars in recruitment, training, and lost productivity. For a chain of 100 stores with 20% annual turnover, that adds up to over six million dollars per year."},
+          {"type": "transition", "text": "What is driving this cost? Three forces are at play."},
+          {"type": "force", "boldStart": "First, training takes longer than people realize. ", "rest": "A new hire reaches full productivity only after eight to twelve weeks. During this period, service quality drops, customer complaints rise, and team morale suffers. The hidden cost of a 'fresh' team is paid by your existing customers."},
+          {"type": "force", "boldStart": "Second, recruitment is getting harder, not easier. ", "rest": "Younger workers have more choices and shorter attention spans. The food service industry competes with retail, delivery platforms, and the gig economy. Operators who treat their staff as interchangeable commodities lose the talent war before it even begins."},
+          {"type": "force", "boldStart": "Third, retention drives compounding advantages. ", "rest": "Long-tenured employees become better operators, mentor newcomers, and develop strong customer relationships. These benefits compound over years. A team with average tenure of three years outperforms a team averaging six months on every key metric — sales per labor hour, customer satisfaction, and shrinkage."},
+          {"type": "implication", "text": "For strategy teams, the implication is clear: invest in retention before you invest in growth. Without a stable team, expansion becomes expensive churn at scale."},
+          {"type": "closing", "text": "The leaders who understand this will dominate the next decade. The rest will burn cash trying to refill the same buckets."}
+        ],
+        "tips": [
+          "Day 2-3 と類似構造",
+          "新概念: tenure (勤続年数), compounding (複利化), shrinkage (棚卸減耗), churn (離脱), gig economy",
+          "結論部の比喩: refill the same buckets = 無駄なリクルート"
+        ],
+        "keyPhrases": [
+          "Three forces are at play  =  3つの力が働く",
+          "compounding advantages  =  複利優位",
+          "interchangeable commodities  =  代替可能な部品",
+          "lose the talent war  =  人材戦争で負ける",
+          "burn cash  =  資金を燃やす",
+          "average tenure of [X] years  =  平均在職年数"
+        ],
+        "questions": [
+          {"id": "Q1", "label": "Q1. 主張の要約 (1文厳守)", "prompt": "1文で主張をまとめる"},
+          {"id": "Q2_1", "label": "Q2. ① 1つ目の力", "prompt": "リテンションが重要な1つ目の力"},
+          {"id": "Q2_2", "label": "Q2. ② 2つ目の力", "prompt": "2つ目の力"},
+          {"id": "Q2_3", "label": "Q2. ③ 3つ目の力", "prompt": "3つ目の力"},
+          {"id": "Q3_1", "label": "Q3. 抽出フレーズ 1", "prompt": "実務で使える表現 (1)"},
+          {"id": "Q3_2", "label": "Q3. 抽出フレーズ 2", "prompt": "実務で使える表現 (2)"},
+          {"id": "Q3_3", "label": "Q3. 抽出フレーズ 3", "prompt": "実務で使える表現 (3)"},
+          {"id": "vocab", "label": "📝 不明な単語メモ", "prompt": "わからなかった単語"}
+        ]
+      },
+      "writing": {
+        "scenario": "John から「Asia 地域の労働コスト・離職率について現状を共有してほしい」というリクエスト。Day 4 Reading の論理を使って、Japan のリテンション戦略提案メールを5〜7文で書きます。",
+        "to": "John Smith <john.smith@globalfoodco.com> (Global HQ, London)",
+        "from": "Kazuki Onda <kazuki.onda@globalfoodco.com>",
+        "subjectHint": "[FILL IN] — Japan Retention Initiative",
+        "requirements": [
+          "5〜7文で書く",
+          "再フレーミングテンプレ「X is no longer Y. It is Z.」を1回以上使う",
+          "Day 4 のフレーズ・概念から1つ以上組み込む",
+          "数字を最低2つ含める",
+          "具体的なアクション提案"
+        ],
+        "todayPhrases": [
+          "compounding advantages",
+          "burn cash trying to refill the same buckets",
+          "lose the talent war before it even begins",
+          "interchangeable commodities",
+          "the gig economy",
+          "average tenure of [X] years",
+          "turnover rate"
+        ],
+        "pastPhrases": [
+          "I'd like to propose a [X-month] pilot in [location]",
+          "Let me know if you'd like the detailed breakdown",
+          "I'm confident this approach will scale across our Asian markets"
+        ],
+        "structureHint": [
+          "文1: 挨拶 + Following up...",
+          "文2: 再フレーミング (Retention is no longer X. It is Y.)",
+          "文3-4: Japan の現状データ (turnover, tenure)",
+          "文5: 戦略論点 + Day 4 フレーズ",
+          "文6: 提案 + 締め"
+        ],
+        "answerFields": [
+          {"id": "subject", "label": "Subject 行", "rows": 1, "placeholder": "[FILL IN] - ..."},
+          {"id": "body", "label": "本文 (5〜7文)", "rows": 14, "placeholder": "Hi John,\n\n..."}
+        ]
+      }
+    },
+    {
       "day": 5,
       "date": "2026-05-06",
-      "weekday": "Tuesday",
+      "weekday": "Wednesday",
       "topic": "Digital Transformation in F&B",
       "topicSlug": "DigitalTransformation",
+      "archived": false,
       "reading": {
         "title": "The AI Restaurant",
         "subtitle": "How Smart Operators Are Using Data and Automation",
@@ -27,65 +290,32 @@
           {"type": "closing", "text": "The operators who treat AI and data as core operating infrastructure will define the next decade of food service. The rest will run faster while standing still."}
         ],
         "tips": [
-          "段落構成は Day 2-4 と類似: 主張 → 3 forces → 戦略含意 → 結論",
-          "再登場フレーズ: \"the implication is clear\" \"compounding\"",
-          "新概念: revenue per labor hour, food waste reduction, demand forecasting, dashboard, brand ambassadors",
-          "結論部の比喩: \"run faster while standing still\" = 努力しても進まない"
+          "Day 2-4 と類似構造: 主張 → 3 forces → 戦略含意 → 結論",
+          "再登場フレーズ: 'the implication is clear' 'compounding'",
+          "新概念: revenue per labor hour, demand forecasting, brand ambassadors, speed of insight",
+          "結論部の比喩: 'run faster while standing still' = 努力しても進まない"
         ],
         "keyPhrases": [
-          "Three forces are converging  =  3つの力が収束している",
+          "Three forces are converging  =  3つの力が収束",
           "right-size prep  =  仕込みを適正量にする",
-          "freeing up labor for higher-value work  =  人手を高付加価値業務に解放",
+          "freeing up labor for higher-value work  =  人手を高付加価値業務へ",
           "brand ambassadors  =  ブランドの伝道師",
           "compounding insights  =  複利で蓄積するインサイト",
-          "continuous capability  =  継続的な能力",
           "core operating infrastructure  =  運営の中核インフラ"
         ],
         "questions": [
-          {
-            "id": "Q1",
-            "label": "Q1. 主張の要約 (1文厳守)",
-            "prompt": "この記事の主張を 1文で まとめてください。"
-          },
-          {
-            "id": "Q2_1",
-            "label": "Q2. ① 1つ目の力",
-            "prompt": "AI/Digital を変革している1つ目の力を1〜2文で。"
-          },
-          {
-            "id": "Q2_2",
-            "label": "Q2. ② 2つ目の力",
-            "prompt": "2つ目の力を1〜2文で (and の罠注意)。"
-          },
-          {
-            "id": "Q2_3",
-            "label": "Q2. ③ 3つ目の力",
-            "prompt": "3つ目の力を1〜2文で。"
-          },
-          {
-            "id": "Q3_1",
-            "label": "Q3. 抽出フレーズ 1",
-            "prompt": "戦略担当として実務で使えそうな表現 (1)"
-          },
-          {
-            "id": "Q3_2",
-            "label": "Q3. 抽出フレーズ 2",
-            "prompt": "実務で使えそうな表現 (2)"
-          },
-          {
-            "id": "Q3_3",
-            "label": "Q3. 抽出フレーズ 3",
-            "prompt": "実務で使えそうな表現 (3)"
-          },
-          {
-            "id": "vocab",
-            "label": "📝 不明な単語メモ",
-            "prompt": "わからなかった単語と推測の意味"
-          }
+          {"id": "Q1", "label": "Q1. 主張の要約 (1文厳守)", "prompt": "1文で主張をまとめる"},
+          {"id": "Q2_1", "label": "Q2. ① 1つ目の力", "prompt": "AI/Digital を変革する1つ目の力"},
+          {"id": "Q2_2", "label": "Q2. ② 2つ目の力", "prompt": "2つ目の力 (and の罠注意)"},
+          {"id": "Q2_3", "label": "Q2. ③ 3つ目の力", "prompt": "3つ目の力"},
+          {"id": "Q3_1", "label": "Q3. 抽出フレーズ 1", "prompt": "実務で使える表現 (1)"},
+          {"id": "Q3_2", "label": "Q3. 抽出フレーズ 2", "prompt": "実務で使える表現 (2)"},
+          {"id": "Q3_3", "label": "Q3. 抽出フレーズ 3", "prompt": "実務で使える表現 (3)"},
+          {"id": "vocab", "label": "📝 不明な単語メモ", "prompt": "わからなかった単語"}
         ]
       },
       "writing": {
-        "scenario": "John から「Asia 地域での AI/Digital Transformation 投資の優先度について意見が欲しい」というリクエストがありました。Day 5 Reading で読んだ「The AI Restaurant」の論理を使って、Japan の AI 戦略提案メールを5〜7文で書きます。",
+        "scenario": "John から「Asia 地域での AI/Digital Transformation 投資の優先度について意見が欲しい」というリクエスト。Day 5 Reading の論理を使って、Japan の AI 戦略提案メールを5〜7文で書きます。",
         "to": "John Smith <john.smith@globalfoodco.com> (Global HQ, London)",
         "from": "Kazuki Onda <kazuki.onda@globalfoodco.com>",
         "subjectHint": "[FILL IN] — Japan AI / Digital Transformation Strategy",
