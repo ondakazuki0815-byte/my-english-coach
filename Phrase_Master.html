@@ -1954,6 +1954,24 @@ function quizNormalize(s){
   t = t.replace(/-/g, " ").replace(/\s+/g, " ").trim();
   return t;
 }
+// Smart merge: try to join split words ("premium" + "ization" → "premiumization")
+function _pmSmartMerge(said, targetSet){
+  const result = [];
+  let i = 0;
+  while(i < said.length){
+    if(i + 1 < said.length){
+      const join2 = said[i] + said[i+1];
+      if(targetSet.has(join2)){ result.push(join2); i += 2; continue; }
+      if(i + 2 < said.length){
+        const join3 = said[i] + said[i+1] + said[i+2];
+        if(targetSet.has(join3)){ result.push(join3); i += 3; continue; }
+      }
+    }
+    result.push(said[i]); i++;
+  }
+  return result;
+}
+
 // Smart split: try to split concatenated words ("accuracysecond" → "accuracy" + "second")
 function _pmSmartSplit(tokens, targetSet){
   const result = [];
@@ -1984,6 +2002,7 @@ function _pmSmartSplit(tokens, targetSet){
 }
 function quizWordDiff(target, said){
   const targetSet = new Set(target);
+  said = _pmSmartMerge(said, targetSet);
   said = _pmSmartSplit(said, targetSet);
   const m = target.length, n = said.length;
   const dp = Array.from({length:m+1},()=>Array(n+1).fill(0));

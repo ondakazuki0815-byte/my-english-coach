@@ -1285,6 +1285,33 @@ function normalize(s){
 }
 function tokenize(s){ return normalize(s).split(/\s+/).filter(Boolean); }
 
+// Smart merge: try to join split words ("premium" + "ization" → "premiumization")
+function smartMerge(said, targetSet){
+  const result = [];
+  let i = 0;
+  while(i < said.length){
+    // Try joining 2 consecutive tokens
+    if(i + 1 < said.length){
+      const join2 = said[i] + said[i+1];
+      if(targetSet.has(join2)){
+        result.push(join2);
+        i += 2; continue;
+      }
+      // Try 3 tokens
+      if(i + 2 < said.length){
+        const join3 = said[i] + said[i+1] + said[i+2];
+        if(targetSet.has(join3)){
+          result.push(join3);
+          i += 3; continue;
+        }
+      }
+    }
+    result.push(said[i]);
+    i++;
+  }
+  return result;
+}
+
 // Smart split: try to split concatenated words ("accuracysecond" → "accuracy" + "second")
 function smartSplit(tokens, targetSet){
   const result = [];
@@ -1321,11 +1348,12 @@ function smartSplit(tokens, targetSet){
 }
 
 function diffWords(target, said){
-  // Use smart split on said tokens to handle concatenations (defensive)
+  // Apply smart-merge first (join split words), then smart-split (split joined words)
   try{
     const targetSet = new Set(target);
+    said = smartMerge(said, targetSet);
     said = smartSplit(said, targetSet);
-  }catch(e){ console.warn("[diff] smart-split skipped:", e.message); }
+  }catch(e){ console.warn("[diff] smart normalization skipped:", e.message); }
 
   const m = target.length, n = said.length;
   const dp = Array.from({length:m+1},()=>Array(n+1).fill(0));
