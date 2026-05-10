@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Question Master">
+<meta name="theme-color" content="#1F3A5F">
+<title>Question Master — My English Coach</title>
+<style>
+:root{
+  --primary:#1F3A5F; --accent:#C5563A; --accent-soft:#E8826B;
+  --sand:#F4E9DD; --bg:#FAF8F4; --card:#FFFFFF;
+  --text:#2A2A2A; --muted:#6B6B6B; --border:#E5DFD3;
+  --good:#2E7E73; --warn:#A07000; --bad:#A03A2A;
+  --info:#3567A8;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+.container{max-width:600px;margin:0 auto;padding:18px 16px 60px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.home-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:99px;text-decoration:none;color:var(--primary);font-weight:600;font-size:13px;box-shadow:var(--shadow)}
+.title{margin:0;font-size:20px;color:var(--primary);font-weight:700}
+.title small{color:var(--muted);font-weight:500;font-size:12px;margin-left:6px}
+.tabs{display:flex;gap:6px;background:var(--card);padding:5px;border-radius:12px;margin-bottom:14px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.tab{flex:1;padding:10px 6px;text-align:center;border:0;background:transparent;border-radius:8px;font-weight:600;font-size:12px;color:var(--muted);cursor:pointer}
+.tab.active{background:var(--primary);color:#fff}
+
+.intro{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow);font-size:13px;line-height:1.6;color:var(--text)}
+.intro strong{color:var(--accent)}
+
+/* Patterns mode */
+.pattern-section{margin-bottom:18px}
+.pattern-section h3{font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin:0 0 10px;font-weight:700;display:flex;align-items:center;gap:8px}
+.pattern-section h3::before{content:"";width:18px;height:2px;background:var(--accent)}
+.pattern-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;box-shadow:var(--shadow)}
+.pattern-template{font-size:14.5px;font-weight:700;color:var(--primary);margin:0 0 4px;font-family:Georgia,serif;font-style:italic}
+.pattern-meaning{font-size:12px;color:var(--muted);margin:0 0 8px}
+.pattern-ex{padding:8px 10px;background:var(--sand);border-radius:8px;font-size:12.5px;line-height:1.5;border-left:3px solid var(--accent)}
+.pattern-ex .en{display:block;color:var(--text)}
+.pattern-ex .ja{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+
+/* Drill mode */
+.drill-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 20px;box-shadow:var(--shadow);margin-bottom:14px}
+.drill-progress{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600}
+.drill-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:18px}
+.drill-bar-fill{height:100%;background:var(--accent);transition:width 0.3s}
+.drill-scenario{padding:14px 16px;background:linear-gradient(135deg,#FFF8EC 0%,#FAF6EE 100%);border-radius:10px;margin-bottom:14px;border-left:4px solid var(--accent)}
+.drill-scenario .label{font-size:10px;color:var(--accent);text-transform:uppercase;font-weight:700;letter-spacing:0.5px;margin-bottom:4px}
+.drill-scenario .text{font-size:14px;color:var(--text);line-height:1.5;margin:0}
+.drill-task{font-size:14px;color:var(--primary);font-weight:700;margin:0 0 12px;line-height:1.5}
+.drill-input{width:100%;padding:14px;border:2px solid var(--border);border-radius:10px;font-size:15px;font-family:inherit;resize:vertical;min-height:80px;color:var(--text);background:var(--card)}
+.drill-input:focus{outline:0;border-color:var(--accent)}
+.drill-actions{display:flex;gap:8px;margin-top:12px}
+.drill-btn{flex:1;padding:12px;border:0;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer}
+.drill-btn.primary{background:var(--primary);color:#fff}
+.drill-btn.secondary{background:var(--card);color:var(--primary);border:1px solid var(--border)}
+.drill-reveal{margin-top:14px;padding:14px;background:#E8F4E8;border-radius:10px;display:none;border:1px solid #C0E0BC}
+.drill-reveal.show{display:block}
+.drill-reveal h4{font-size:11px;color:var(--good);text-transform:uppercase;letter-spacing:0.5px;margin:0 0 8px;font-weight:700}
+.drill-answer{padding:8px 12px;background:#fff;border-radius:8px;margin-bottom:6px;font-size:14px;line-height:1.5;color:var(--text);border-left:3px solid var(--good)}
+.drill-answer .ja{display:block;color:var(--muted);font-size:11.5px;margin-top:3px}
+.drill-tip{margin-top:8px;font-size:12px;color:var(--muted);line-height:1.5}
+.drill-self-eval{display:flex;gap:6px;margin-top:14px;display:none}
+.drill-self-eval.show{display:flex}
+.eval-btn{flex:1;padding:10px 6px;border:1px solid var(--border);background:var(--card);border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;color:var(--muted);text-align:center}
+.eval-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Speed mode */
+.speed-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 20px;box-shadow:var(--shadow);margin-bottom:14px;text-align:center}
+.speed-timer{font-size:48px;font-weight:800;color:var(--accent);margin:0;font-family:Georgia,serif}
+.speed-timer.warn{color:var(--warn)}
+.speed-timer.danger{color:var(--bad)}
+.speed-prompt{font-size:18px;color:var(--primary);font-weight:700;margin:14px 0;line-height:1.4}
+.speed-jp{font-size:13px;color:var(--muted);margin:0 0 14px}
+.speed-input{width:100%;padding:14px;border:2px solid var(--border);border-radius:10px;font-size:16px;font-family:inherit;text-align:center;color:var(--text)}
+.speed-input:focus{outline:0;border-color:var(--accent)}
+.speed-stats{display:flex;justify-content:space-around;margin-top:18px;padding:14px;background:var(--sand);border-radius:10px}
+.speed-stat .num{font-size:22px;font-weight:800;color:var(--primary)}
+.speed-stat .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.speed-feedback{margin-top:14px;padding:10px;border-radius:8px;font-size:13px;display:none}
+.speed-feedback.show{display:block}
+.speed-feedback.ok{background:#E8F4E8;color:var(--good)}
+.speed-feedback.ng{background:#FBE0DA;color:var(--bad)}
+
+.start-btn{display:block;width:100%;padding:16px;background:var(--accent);color:#fff;border:0;border-radius:12px;font-weight:700;font-size:16px;cursor:pointer;box-shadow:var(--shadow);margin-bottom:14px}
+.restart-btn{padding:12px 24px;background:var(--primary);color:#fff;border:0;border-radius:99px;font-weight:700;font-size:14px;cursor:pointer;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="topbar">
+    <a class="home-btn" href="index.html">← Home</a>
+    <h1 class="title">❓ Question Master <small>瞬時に作る</small></h1>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-mode="patterns" onclick="switchMode('patterns')">📚 Patterns</button>
+    <button class="tab" data-mode="drill" onclick="switchMode('drill')">🎯 Drill</button>
+    <button class="tab" data-mode="speed" onclick="switchMode('speed')">⚡ Speed</button>
+  </div>
+
+  <div class="intro">
+    💡 <strong>3つのモード</strong>: <strong>Patterns</strong> でパターンを学ぶ → <strong>Drill</strong> でシチュエーションから質問を作る → <strong>Speed</strong> で瞬発力を鍛える。
+  </div>
+
+  <!-- Patterns Mode -->
+  <div id="patterns-view"></div>
+
+  <!-- Drill Mode -->
+  <div id="drill-view" style="display:none">
+    <div id="drill-container"></div>
+  </div>
+
+  <!-- Speed Mode -->
+  <div id="speed-view" style="display:none">
+    <div id="speed-container"></div>
+  </div>
+
+</div>
+
+<script>
+// ===== PATTERN DATA =====
+const PATTERNS = [
+  {
+    section: "📊 5W1H 基本",
+    items: [
+      {tpl:"What is/are ___?", mean:"何ですか？", ex:{en:"What's the bottom line?", ja:"結論は何ですか？"}},
+      {tpl:"Who is/are ___?", mean:"誰ですか？", ex:{en:"Who's leading the project?", ja:"プロジェクトのリーダーは誰？"}},
+      {tpl:"When does/will ___?", mean:"いつですか？", ex:{en:"When does the campaign launch?", ja:"いつキャンペーンが始まる？"}},
+      {tpl:"Where is/are ___?", mean:"どこですか？", ex:{en:"Where can I find the report?", ja:"レポートはどこにありますか？"}},
+      {tpl:"Why did/does ___?", mean:"なぜですか？", ex:{en:"Why did sales drop in Q2?", ja:"なぜQ2に売上が落ちた？"}},
+      {tpl:"How do/does ___?", mean:"どうやって？", ex:{en:"How do we measure success?", ja:"どうやって成功を測る？"}},
+      {tpl:"How much/many ___?", mean:"どれくらい？", ex:{en:"How much budget do we have?", ja:"予算はどれくらい？"}},
+      {tpl:"How long ___?", mean:"どれくらいの期間？", ex:{en:"How long will the rollout take?", ja:"展開にどれくらいかかる？"}},
+    ]
+  },
+  {
+    section: "🎩 丁寧な質問（会議・上司・取引先）",
+    items: [
+      {tpl:"Could you tell me about ___?", mean:"〜について教えていただけますか？", ex:{en:"Could you tell me about your role on this project?", ja:"このプロジェクトでの役割を教えていただけますか？"}},
+      {tpl:"Could you walk me through ___?", mean:"〜を順を追って説明してもらえますか？", ex:{en:"Could you walk me through the numbers?", ja:"数字を順を追って説明してもらえますか？"}},
+      {tpl:"Could you clarify what you mean by ___?", mean:"〜の意味を明確にしていただけますか？", ex:{en:"Could you clarify what you mean by 'soon'?", ja:"「すぐに」とはどういう意味でしょうか？"}},
+      {tpl:"Would you mind ___ing?", mean:"〜していただけますか？", ex:{en:"Would you mind sharing the deck?", ja:"デッキを共有していただけますか？"}},
+      {tpl:"May I ask ___?", mean:"〜を伺ってもよろしいですか？", ex:{en:"May I ask why we chose this vendor?", ja:"このベンダーを選んだ理由を伺ってもよろしいですか？"}},
+      {tpl:"I was wondering if ___?", mean:"〜かなと思ったのですが？", ex:{en:"I was wondering if we could push back the deadline.", ja:"締切を延ばせないかなと思ったのですが。"}},
+    ]
+  },
+  {
+    section: "🔄 確認・反応（その場で使う）",
+    items: [
+      {tpl:"Does that make sense?", mean:"理解できましたか？", ex:{en:"We'll move to phase 2 next week. Does that make sense?", ja:"来週フェーズ2に進みます。よろしいですか？"}},
+      {tpl:"What's your take on ___?", mean:"〜についてどう思う？", ex:{en:"What's your take on the new pricing?", ja:"新価格についてどう思う？"}},
+      {tpl:"How does that sound?", mean:"どう思いますか？（提案後）", ex:{en:"Let's meet Wednesday at 3. How does that sound?", ja:"水曜3時に会いましょう。どうですか？"}},
+      {tpl:"Are we on the same page?", mean:"認識合ってますか？", ex:{en:"Quality first, then speed — are we on the same page?", ja:"品質優先、次にスピード — 認識合ってますか？"}},
+      {tpl:"Just to confirm, ___?", mean:"確認ですが、〜ですよね？", ex:{en:"Just to confirm, you'll send the contract by Friday?", ja:"確認ですが、金曜までに契約書を送りますね？"}},
+      {tpl:"Did I get that right?", mean:"理解は合ってますか？", ex:{en:"So the launch is delayed to June — did I get that right?", ja:"立ち上げは6月に延期、理解は合ってますか？"}},
+    ]
+  },
+  {
+    section: "📈 ビジネスデータの質問",
+    items: [
+      {tpl:"What's driving ___?", mean:"〜の要因は何ですか？", ex:{en:"What's driving the growth in Asia?", ja:"アジアの成長要因は何ですか？"}},
+      {tpl:"How does ___ compare to ___?", mean:"〜と〜の比較は？", ex:{en:"How does Q3 compare to Q2?", ja:"Q3とQ2の比較は？"}},
+      {tpl:"What's the impact of ___?", mean:"〜の影響は？", ex:{en:"What's the impact of the price increase?", ja:"値上げの影響は？"}},
+      {tpl:"What are the key risks of ___?", mean:"〜の主要リスクは？", ex:{en:"What are the key risks of entering this market?", ja:"この市場参入の主要リスクは？"}},
+      {tpl:"Could you give me a ballpark figure for ___?", mean:"〜のおおよその数字を教えてもらえますか？", ex:{en:"Could you give me a ballpark figure for ROI?", ja:"ROIのおおよその数字を教えてもらえますか？"}},
+      {tpl:"What assumptions are we making about ___?", mean:"〜についてどんな前提を置いていますか？", ex:{en:"What assumptions are we making about consumer behavior?", ja:"消費者行動についてどんな前提を置いていますか？"}},
+    ]
+  },
+  {
+    section: "🤝 フォローアップ・深掘り",
+    items: [
+      {tpl:"Could you elaborate on ___?", mean:"〜について詳しく教えてください", ex:{en:"Could you elaborate on the timeline?", ja:"スケジュールを詳しく教えてください。"}},
+      {tpl:"What about ___?", mean:"〜はどうですか？", ex:{en:"That covers Japan. What about Korea?", ja:"日本はカバーしました。韓国はどうですか？"}},
+      {tpl:"And what happens if ___?", mean:"もし〜だったらどうなりますか？", ex:{en:"And what happens if the supplier delays?", ja:"もしサプライヤーが遅れたらどうなりますか？"}},
+      {tpl:"Why do you think ___?", mean:"なぜ〜だと思いますか？", ex:{en:"Why do you think customers churned?", ja:"なぜ顧客が離れたと思う？"}},
+      {tpl:"Could you give me an example of ___?", mean:"〜の例を教えてもらえますか？", ex:{en:"Could you give me an example of that pain point?", ja:"その悩みの具体例を教えてもらえますか？"}},
+      {tpl:"What would you recommend ___?", mean:"〜について何を勧めますか？", ex:{en:"What would you recommend we do first?", ja:"最初に何をすべきだと勧めますか？"}},
+    ]
+  },
+  {
+    section: "⏸ 時間稼ぎ・考えるためのフレーズ",
+    items: [
+      {tpl:"That's a good question — let me think.", mean:"いい質問です — 考えさせてください。", ex:{en:"That's a good question — let me think for a moment.", ja:"いい質問です — 少し考えさせてください。"}},
+      {tpl:"Let me get back to you on that.", mean:"その件は後ほどお返事します。", ex:{en:"I don't have the data yet — let me get back to you on that.", ja:"まだデータがないので、後ほどお返事します。"}},
+      {tpl:"Could you give me a moment?", mean:"少し時間をいただけますか？", ex:{en:"Could you give me a moment to check?", ja:"確認するので少し時間をいただけますか？"}},
+      {tpl:"That's a great point. Let me address that.", mean:"いい指摘です。お答えします。", ex:{en:"That's a great point. Let me address that next.", ja:"いい指摘です。次にお答えします。"}},
+    ]
+  },
+];
+
+// ===== DRILL DATA (situation → produce a question) =====
+const DRILLS = [
+  {sit:"Q3 のレポートを Sarah からもらった。詳細を聞きたい。", task:"Sarah に詳細を尋ねる質問を作ろう。",
+    answers:[
+      {en:"Could you walk me through the Q3 numbers?", ja:"Q3の数字を順を追って説明してもらえますか？"},
+      {en:"Sarah, could you elaborate on the Q3 results?", ja:"Q3の結果について詳しく教えてもらえますか？"},
+      {en:"What's driving the change in Q3?", ja:"Q3の変化の要因は何ですか？"},
+    ],
+    tip:"💡 詳細を聞く: walk through / elaborate on / break down"},
+  {sit:"London HQ から「来週ロンドンに来てください」とメールが来た。日程の選択肢を知りたい。", task:"日程の柔軟性を確認する質問を作ろう。",
+    answers:[
+      {en:"Could you let me know which days work best?", ja:"どの日が一番都合がいいか教えてもらえますか？"},
+      {en:"Are you flexible on the date?", ja:"日程は柔軟ですか？"},
+      {en:"What dates do you have in mind?", ja:"どの日程を考えていますか？"},
+    ],
+    tip:"💡 'in mind' で「念頭にある」を表現できる"},
+  {sit:"会議で John が「we need to pivot」と言った。意味が曖昧。", task:"意味を確認する質問を作ろう。",
+    answers:[
+      {en:"Could you clarify what you mean by 'pivot'?", ja:"「pivot」の意味を明確にしてもらえますか？"},
+      {en:"What do you mean by pivot exactly?", ja:"具体的にpivotとは？"},
+      {en:"Could you give me an example?", ja:"例を教えてもらえますか？"},
+    ],
+    tip:"💡 'clarify' / 'what do you mean by' は会議の必須表現"},
+  {sit:"新しいベンダーの提案を受けた。リスクが心配。", task:"リスクを確認する質問を作ろう。",
+    answers:[
+      {en:"What are the key risks of working with this vendor?", ja:"このベンダーと組む主要リスクは何ですか？"},
+      {en:"What happens if they can't deliver on time?", ja:"納期に遅れたらどうなりますか？"},
+      {en:"How do you mitigate the supply chain risk?", ja:"サプライチェーンのリスクをどう軽減しますか？"},
+    ],
+    tip:"💡 'mitigate' = 軽減する（ビジネス必須動詞）"},
+  {sit:"上司が新戦略を発表した。実行に必要なリソースを聞きたい。", task:"リソースを確認する質問を作ろう。",
+    answers:[
+      {en:"How much budget do we have for this?", ja:"これにいくらの予算がありますか？"},
+      {en:"What resources will we need to execute this?", ja:"実行に何のリソースが必要ですか？"},
+      {en:"Who's leading the implementation?", ja:"誰が実行をリードしますか？"},
+    ],
+    tip:"💡 'execute' / 'implementation' はマネジメント語彙"},
+  {sit:"プレゼンの後、自分が話した内容が相手に伝わったか確認したい。", task:"理解確認の質問を作ろう。",
+    answers:[
+      {en:"Does that make sense?", ja:"理解できましたか？"},
+      {en:"Are we all on the same page?", ja:"認識合ってますか？"},
+      {en:"Any questions before we move on?", ja:"次に進む前に質問はありますか？"},
+    ],
+    tip:"💡 プレゼンの締めは必ずこの3つのどれかで"},
+  {sit:"競合他社が新製品を出した。社内の反応を知りたい。", task:"反応を聞く質問を作ろう。",
+    answers:[
+      {en:"What's your take on their new product?", ja:"彼らの新製品をどう思いますか？"},
+      {en:"How do you think this will impact us?", ja:"我々への影響をどう思いますか？"},
+      {en:"What's our response going to be?", ja:"我々の対応はどうしますか？"},
+    ],
+    tip:"💡 'What's your take on ~?' は意見を求める最頻出フレーズ"},
+  {sit:"プロジェクトのスコープが広がりそう。本当に必要か確認したい。", task:"スコープを確認する質問を作ろう。",
+    answers:[
+      {en:"Is this within our original scope?", ja:"これは元々のスコープ内ですか？"},
+      {en:"Why do we need to add this now?", ja:"なぜ今これを追加する必要があるのですか？"},
+      {en:"What's the impact on the timeline?", ja:"スケジュールへの影響は？"},
+    ],
+    tip:"💡 'scope creep'（スコープ膨張）は要注意ビジネス用語"},
+  {sit:"店舗訪問中、店長から「オペレーションが大変」と言われた。具体的な課題を知りたい。", task:"具体的な課題を聞く質問を作ろう。",
+    answers:[
+      {en:"Could you give me an example of the biggest pain point?", ja:"最大の悩みの具体例を教えてもらえますか？"},
+      {en:"What's the most challenging part of your day?", ja:"一日で一番大変な部分は？"},
+      {en:"Where do you see the bottleneck?", ja:"どこにボトルネックを感じますか？"},
+    ],
+    tip:"💡 'bottleneck' / 'pain point' で現場の課題を引き出せる"},
+  {sit:"取引先が遅延を伝えてきた。次のステップを確認したい。", task:"次のステップを確認する質問を作ろう。",
+    answers:[
+      {en:"What's the new timeline?", ja:"新しいスケジュールは？"},
+      {en:"How will this affect our launch?", ja:"我々の立ち上げへの影響は？"},
+      {en:"What can you do to make up for the delay?", ja:"遅延を取り戻すために何ができますか？"},
+    ],
+    tip:"💡 'make up for' = 埋め合わせる（遅延・ミスへの対応）"},
+  {sit:"新しいスタッフが入社。早く戦力にするために確認すべきこと。", task:"オンボーディングの質問を作ろう。",
+    answers:[
+      {en:"What do you need to get up to speed?", ja:"キャッチアップに何が必要ですか？"},
+      {en:"What's your background in F&B?", ja:"F&Bでのバックグラウンドは？"},
+      {en:"How can I best support you in the first 30 days?", ja:"最初の30日でどうサポートできますか？"},
+    ],
+    tip:"💡 'get up to speed' は新人受け入れの定番フレーズ"},
+  {sit:"会議で同僚が「I'll handle it」と言ったが、具体性がない。", task:"具体的な行動を聞く質問を作ろう。",
+    answers:[
+      {en:"What specifically will you do?", ja:"具体的に何をしますか？"},
+      {en:"By when can we expect an update?", ja:"いつまでにアップデートをもらえますか？"},
+      {en:"Who else needs to be involved?", ja:"他に誰を巻き込む必要がありますか？"},
+    ],
+    tip:"💡 'specifically' / 'by when' で曖昧さを解消"},
+  {sit:"クライアントが提案を「考えます」と言った。次のアクションが知りたい。", task:"次のアクションを確認する質問を作ろう。",
+    answers:[
+      {en:"What's the best next step?", ja:"次のベストなステップは？"},
+      {en:"When can I expect to hear back?", ja:"いつ頃お返事をいただけますか？"},
+      {en:"Is there anything I can clarify?", ja:"明確にできることはありますか？"},
+    ],
+    tip:"💡 商談クロージングの定番3パターン"},
+  {sit:"四半期予算が来た。減額されている。理由を聞きたい。", task:"理由を聞く質問を作ろう。",
+    answers:[
+      {en:"Could you help me understand the budget cut?", ja:"予算削減の背景を教えてもらえますか？"},
+      {en:"What's driving the reduction?", ja:"削減の要因は何ですか？"},
+      {en:"How should we prioritize given the new budget?", ja:"新予算でどう優先順位をつけるべきですか？"},
+    ],
+    tip:"💡 'help me understand' は対立せず理由を聞く時のクッション言葉"},
+  {sit:"上司が「next steps?」とだけ書いたメールを送ってきた。具体性がない。", task:"上司に確認する質問を作ろう。",
+    answers:[
+      {en:"Could you clarify which project you're referring to?", ja:"どのプロジェクトの件か明確にしてもらえますか？"},
+      {en:"Are you asking about the launch or the budget?", ja:"立ち上げの話ですか、予算の話ですか？"},
+      {en:"Could you give me a bit more context?", ja:"もう少し背景を教えてもらえますか？"},
+    ],
+    tip:"💡 'context' を求めるのが効率的（決めつけずに聞く）"},
+];
+
+// ===== SPEED DATA (Japanese → English question) =====
+const SPEED = [
+  {ja:"これの結論は何？", en:["what's the bottom line","what is the bottom line"]},
+  {ja:"これについてどう思う？", en:["what's your take on this","what is your take on this","what do you think about this"]},
+  {ja:"プロジェクトのリーダーは誰？", en:["who's leading the project","who is leading the project"]},
+  {ja:"いつ立ち上げる？", en:["when do we launch","when will we launch","when are we launching"]},
+  {ja:"予算はいくら？", en:["what's the budget","what is the budget","how much is the budget","how much budget do we have"]},
+  {ja:"認識合ってる？", en:["are we on the same page","are we all on the same page"]},
+  {ja:"理解できた？", en:["does that make sense","do you understand","is that clear"]},
+  {ja:"その意味を明確にしてもらえる？", en:["could you clarify","can you clarify","could you clarify what you mean"]},
+  {ja:"後で連絡してもいい？", en:["can i get back to you","can i circle back","let me get back to you"]},
+  {ja:"おおよその数字を教えて。", en:["give me a ballpark","what's a ballpark figure","could you give me a ballpark figure"]},
+  {ja:"次のステップは？", en:["what's the next step","what are the next steps","what's next"]},
+  {ja:"いつまでに必要？", en:["when do you need it","when do you need this by","by when"]},
+  {ja:"私のレポートを確認してもらえる？", en:["could you review my report","could you check my report","would you mind reviewing my report"]},
+  {ja:"これのリスクは？", en:["what are the risks","what's the risk","what are the key risks"]},
+  {ja:"少し時間をもらえる？", en:["could you give me a moment","can i have a moment","give me a second"]},
+];
+
+// ===== STATE =====
+let currentMode = 'patterns';
+let drillState = null;
+let speedState = null;
+
+// ===== PATTERNS =====
+function renderPatterns(){
+  const v = document.getElementById('patterns-view');
+  v.innerHTML = PATTERNS.map(s => `
+    <div class="pattern-section">
+      <h3>${s.section}</h3>
+      ${s.items.map(it => `
+        <div class="pattern-card">
+          <div class="pattern-template">${it.tpl}</div>
+          <div class="pattern-meaning">${it.mean}</div>
+          <div class="pattern-ex">
+            <span class="en">${it.ex.en}</span>
+            <span class="ja">${it.ex.ja}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+// ===== DRILL =====
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function startDrill(){
+  drillState = {questions: shuffle(DRILLS).slice(0,8), current:0, completed:0};
+  renderDrill();
+}
+
+function renderDrill(){
+  const c = document.getElementById('drill-container');
+  if(!drillState){
+    c.innerHTML = `<button class="start-btn" onclick="startDrill()">▶ ドリルを開始（8問）</button>
+    <div class="intro">📝 シチュエーションを読んで、自分なりの英語の質問文を考えてください。「答えを見る」を押すと参考解答が表示されます。</div>`;
+    return;
+  }
+  if(drillState.current >= drillState.questions.length){
+    c.innerHTML = `<div class="drill-card" style="text-align:center;padding:30px 20px">
+      <div style="font-size:48px">✨</div>
+      <h2 style="color:var(--primary);margin:10px 0">お疲れ様！</h2>
+      <p style="color:var(--muted)">${drillState.completed}問の質問パターンを練習しました</p>
+      <button class="restart-btn" onclick="startDrill()">もう一度</button>
+    </div>`;
+    return;
+  }
+  const q = drillState.questions[drillState.current];
+  const pct = Math.round(drillState.current / drillState.questions.length * 100);
+  c.innerHTML = `<div class="drill-card">
+    <div class="drill-progress"><span>Q${drillState.current+1} / ${drillState.questions.length}</span><span>シチュエーションドリル</span></div>
+    <div class="drill-bar"><div class="drill-bar-fill" style="width:${pct}%"></div></div>
+    <div class="drill-scenario">
+      <div class="label">📍 シチュエーション</div>
+      <p class="text">${q.sit}</p>
+    </div>
+    <p class="drill-task">🎯 ${q.task}</p>
+    <textarea class="drill-input" id="drill-input" placeholder="英語で質問文を書いてみよう..."></textarea>
+    <div class="drill-actions">
+      <button class="drill-btn primary" onclick="revealDrill()">答えを見る</button>
+      <button class="drill-btn secondary" onclick="skipDrill()">スキップ</button>
+    </div>
+    <div class="drill-reveal" id="drill-reveal">
+      <h4>✅ 参考解答</h4>
+      ${q.answers.map(a => `<div class="drill-answer">${a.en}<span class="ja">${a.ja}</span></div>`).join('')}
+      <p class="drill-tip">${q.tip}</p>
+      <div class="drill-self-eval show" id="drill-eval">
+        <button class="eval-btn" onclick="evalDrill('hard')">😅 難しかった</button>
+        <button class="eval-btn" onclick="evalDrill('ok')">👍 OK</button>
+        <button class="eval-btn" onclick="evalDrill('easy')">✨ 簡単</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function revealDrill(){
+  document.getElementById('drill-reveal').classList.add('show');
+}
+function skipDrill(){ drillState.current++; renderDrill(); }
+function evalDrill(){ drillState.completed++; drillState.current++; renderDrill(); }
+
+// ===== SPEED =====
+function startSpeed(){
+  speedState = {questions: shuffle(SPEED), current:0, correct:0, attempts:0, timer:null, timeLeft:15};
+  renderSpeed();
+}
+
+function renderSpeed(){
+  const c = document.getElementById('speed-container');
+  if(!speedState){
+    c.innerHTML = `<button class="start-btn" onclick="startSpeed()">⚡ Speed Drill を開始</button>
+    <div class="intro">⚡ <strong>15秒で英訳！</strong> 日本語が表示されたら、英語で質問を入力してください。Enter で送信。打ち間違えても部分一致で OK。</div>`;
+    return;
+  }
+  if(speedState.current >= speedState.questions.length){
+    const pct = Math.round(speedState.correct / speedState.attempts * 100) || 0;
+    c.innerHTML = `<div class="speed-card">
+      <div style="font-size:48px">⚡</div>
+      <h2 style="color:var(--primary)">完了！</h2>
+      <div class="speed-stats">
+        <div class="speed-stat"><div class="num">${speedState.correct}</div><div class="lbl">正解</div></div>
+        <div class="speed-stat"><div class="num">${speedState.attempts}</div><div class="lbl">挑戦</div></div>
+        <div class="speed-stat"><div class="num">${pct}%</div><div class="lbl">正答率</div></div>
+      </div>
+      <button class="restart-btn" onclick="startSpeed()">もう一度</button>
+    </div>`;
+    return;
+  }
+  const q = speedState.questions[speedState.current];
+  speedState.timeLeft = 15;
+  c.innerHTML = `<div class="speed-card">
+    <div class="speed-timer" id="timer">15</div>
+    <p class="speed-jp">Q${speedState.current+1} / ${speedState.questions.length}</p>
+    <p class="speed-prompt">${q.ja}</p>
+    <input type="text" class="speed-input" id="speed-input" placeholder="英語で質問を入力..." autocomplete="off" autocapitalize="off">
+    <div class="speed-feedback" id="speed-fb"></div>
+  </div>`;
+
+  const input = document.getElementById('speed-input');
+  input.focus();
+  input.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){ submitSpeed(); }
+  });
+
+  if(speedState.timer) clearInterval(speedState.timer);
+  speedState.timer = setInterval(() => {
+    speedState.timeLeft--;
+    const t = document.getElementById('timer');
+    if(t){
+      t.textContent = speedState.timeLeft;
+      t.className = 'speed-timer' + (speedState.timeLeft <= 3 ? ' danger' : speedState.timeLeft <= 7 ? ' warn' : '');
+    }
+    if(speedState.timeLeft <= 0){
+      submitSpeed(true);
+    }
+  }, 1000);
+}
+
+function normalize(s){
+  return s.toLowerCase().replace(/[.,!?'"`]/g,'').replace(/\s+/g,' ').trim();
+}
+
+function submitSpeed(timeout){
+  if(speedState.timer){clearInterval(speedState.timer); speedState.timer = null;}
+  const q = speedState.questions[speedState.current];
+  const inputEl = document.getElementById('speed-input');
+  const ans = inputEl ? normalize(inputEl.value) : '';
+  speedState.attempts++;
+  let ok = false;
+  if(ans){
+    for(const target of q.en){
+      const t = normalize(target);
+      if(ans === t || ans.includes(t) || t.includes(ans)){ ok = true; break; }
+    }
+  }
+  const fb = document.getElementById('speed-fb');
+  if(ok){
+    speedState.correct++;
+    fb.className = 'speed-feedback show ok';
+    fb.innerHTML = `✅ 正解！例: ${q.en[0]}?`;
+  } else {
+    fb.className = 'speed-feedback show ng';
+    fb.innerHTML = `${timeout ? '⏰ 時間切れ' : '❌'} 正解例: <strong>${q.en[0]}?</strong>`;
+  }
+  if(inputEl) inputEl.disabled = true;
+  setTimeout(() => {
+    speedState.current++;
+    renderSpeed();
+  }, 2000);
+}
+
+// ===== MODE SWITCH =====
+function switchMode(mode){
+  currentMode = mode;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  document.getElementById('patterns-view').style.display = mode === 'patterns' ? '' : 'none';
+  document.getElementById('drill-view').style.display = mode === 'drill' ? '' : 'none';
+  document.getElementById('speed-view').style.display = mode === 'speed' ? '' : 'none';
+  if(speedState && speedState.timer){clearInterval(speedState.timer); speedState.timer = null;}
+  if(mode === 'drill'){ drillState = null; renderDrill(); }
+  if(mode === 'speed'){ speedState = null; renderSpeed(); }
+}
+
+// ===== INIT =====
+renderPatterns();
+</script>
+</body>
+</html>

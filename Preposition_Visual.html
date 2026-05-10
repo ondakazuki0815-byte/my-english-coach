@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Prep & Adv Visual">
+<meta name="theme-color" content="#1F3A5F">
+<title>Preposition & Adverb Visual — My English Coach</title>
+<style>
+:root{
+  --primary:#1F3A5F; --accent:#C5563A; --accent-soft:#E8826B;
+  --sand:#F4E9DD; --bg:#FAF8F4; --card:#FFFFFF;
+  --text:#2A2A2A; --muted:#6B6B6B; --border:#E5DFD3;
+  --good:#2E7E73; --warn:#A07000; --bad:#A03A2A;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+.container{max-width:600px;margin:0 auto;padding:18px 16px 60px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.home-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:99px;text-decoration:none;color:var(--primary);font-weight:600;font-size:13px;box-shadow:var(--shadow)}
+.title{margin:0;font-size:18px;color:var(--primary);font-weight:700}
+.title small{color:var(--muted);font-weight:500;font-size:11px;margin-left:6px;display:block;margin-top:2px}
+
+.tabs{display:flex;gap:6px;background:var(--card);padding:5px;border-radius:12px;margin-bottom:10px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.tab{flex:1;padding:10px 8px;text-align:center;border:0;background:transparent;border-radius:8px;font-weight:600;font-size:13px;color:var(--muted);cursor:pointer;transition:all 0.15s}
+.tab.active{background:var(--primary);color:#fff}
+
+.subtabs{display:flex;gap:6px;margin-bottom:12px}
+.subtab{flex:1;padding:8px 10px;border:1px solid var(--border);background:var(--card);border-radius:99px;font-weight:600;font-size:12px;color:var(--muted);cursor:pointer;text-align:center}
+.subtab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.subtab .count{opacity:0.7;font-size:10px;margin-left:4px}
+
+.filter-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{padding:6px 12px;border-radius:99px;background:var(--card);border:1px solid var(--border);font-size:12px;color:var(--muted);cursor:pointer;font-weight:600}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(max-width:380px){.grid{grid-template-columns:1fr}}
+.card{
+  background:var(--card);border-radius:14px;padding:14px;
+  border:1px solid var(--border);box-shadow:var(--shadow);
+  cursor:pointer;transition:transform 0.1s;
+}
+.card:active{transform:scale(0.98)}
+.card .word{font-size:20px;font-weight:800;color:var(--primary);margin:0 0 6px;letter-spacing:-0.3px;display:flex;align-items:center;gap:6px}
+.card .word .pos-badge{font-size:9px;padding:2px 6px;border-radius:99px;background:var(--sand);color:var(--accent);font-weight:700;letter-spacing:0.3px;text-transform:uppercase}
+.card .core{font-size:11.5px;color:var(--muted);margin:0;line-height:1.4;min-height:32px}
+.card .svg-wrap{display:flex;justify-content:center;margin:8px 0}
+.card .svg-wrap svg{width:100%;max-width:140px;height:80px}
+.card .level{display:inline-block;font-size:10px;padding:2px 8px;border-radius:99px;background:var(--sand);color:var(--primary);font-weight:700;margin-top:4px}
+.card .level.beginner{background:#E8F4E8;color:var(--good)}
+.card .level.intermediate{background:#FFF1D4;color:var(--warn)}
+.card .level.advanced{background:#FBE0DA;color:var(--bad)}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:18px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;padding:24px 22px}
+.modal h2{margin:0 0 4px;font-size:32px;color:var(--primary);font-weight:800;letter-spacing:-0.5px;display:flex;align-items:center;gap:10px}
+.modal h2 .pos-badge{font-size:11px;padding:3px 10px;border-radius:99px;background:var(--sand);color:var(--accent);font-weight:700;letter-spacing:0.5px;text-transform:uppercase}
+.modal .modal-core{color:var(--muted);font-size:13px;margin:0 0 14px}
+.modal .modal-svg{display:flex;justify-content:center;background:var(--sand);border-radius:12px;padding:18px;margin:14px 0}
+.modal .modal-svg svg{width:100%;max-width:260px;height:160px}
+.modal .modal-section{margin:14px 0}
+.modal .modal-section h3{font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin:0 0 8px;font-weight:700}
+.modal .ex-list{list-style:none;padding:0;margin:0}
+.modal .ex-list li{padding:8px 12px;background:#FAF6EE;border-radius:8px;margin-bottom:6px;font-size:13.5px;line-height:1.5;border-left:3px solid var(--accent)}
+.modal .ex-list li .ja{display:block;color:var(--muted);font-size:11.5px;margin-top:4px}
+.modal .modal-close{display:block;width:100%;padding:12px;margin-top:18px;background:var(--primary);color:#fff;border:0;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer}
+.modal .confuse{padding:10px 12px;background:#FFF8EC;border-radius:8px;font-size:12.5px;color:#5C4A1F;line-height:1.5;border:1px solid #F0D89A}
+
+/* Quiz */
+.quiz-card{background:var(--card);border-radius:14px;padding:22px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:14px}
+.quiz-progress{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600}
+.quiz-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:18px}
+.quiz-bar-fill{height:100%;background:var(--accent);transition:width 0.3s}
+.quiz-sentence{font-size:16px;line-height:1.6;color:var(--text);margin:0 0 16px}
+.quiz-sentence .blank{display:inline-block;min-width:80px;border-bottom:2px dashed var(--accent);margin:0 4px;text-align:center;color:var(--accent);font-weight:700}
+.quiz-sentence .ja{display:block;font-size:12px;color:var(--muted);margin-top:6px}
+.quiz-options{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.quiz-opt{padding:14px;background:var(--card);border:2px solid var(--border);border-radius:10px;font-weight:700;font-size:15px;color:var(--primary);cursor:pointer}
+.quiz-opt:hover{border-color:var(--accent)}
+.quiz-opt.correct{background:#E8F4E8;border-color:var(--good);color:var(--good)}
+.quiz-opt.wrong{background:#FBE0DA;border-color:var(--bad);color:var(--bad)}
+.quiz-feedback{margin-top:14px;padding:12px;border-radius:8px;font-size:13px;line-height:1.5;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:#E8F4E8;color:var(--good);border:1px solid #C0E0BC}
+.quiz-feedback.ng{background:#FBE0DA;color:var(--bad);border:1px solid #F0CABE}
+.quiz-next{display:none;width:100%;padding:14px;margin-top:12px;background:var(--primary);color:#fff;border:0;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer}
+.quiz-next.show{display:block}
+.quiz-result{text-align:center;padding:30px 20px}
+.quiz-result h2{font-size:28px;color:var(--primary);margin:0 0 10px}
+.quiz-result .score{font-size:48px;font-weight:800;color:var(--accent);margin:8px 0}
+.quiz-result .restart{padding:12px 24px;background:var(--primary);color:#fff;border:0;border-radius:99px;font-weight:700;font-size:14px;cursor:pointer;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="topbar">
+    <a class="home-btn" href="index.html">← Home</a>
+    <h1 class="title">🧭 Preposition & Adverb<small>前置詞20 + 副詞23 をビジュアル化</small></h1>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-mode="browse" onclick="switchMode('browse')">📚 Browse</button>
+    <button class="tab" data-mode="quiz" onclick="switchMode('quiz')">🎯 Quiz</button>
+  </div>
+
+  <!-- Browse Mode -->
+  <div id="browse-view">
+    <div class="subtabs">
+      <button class="subtab active" data-pos="prep" onclick="switchPos('prep')">📍 Preposition <span class="count">(20)</span></button>
+      <button class="subtab" data-pos="adv" onclick="switchPos('adv')">⏰ Adverb <span class="count">(23)</span></button>
+    </div>
+    <div class="filter-bar" id="filter-bar"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- Quiz Mode -->
+  <div id="quiz-view" style="display:none">
+    <div class="subtabs">
+      <button class="subtab active" data-quiz="prep" onclick="switchQuizType('prep')">📍 Preposition</button>
+      <button class="subtab" data-quiz="adv" onclick="switchQuizType('adv')">⏰ Adverb</button>
+      <button class="subtab" data-quiz="mix" onclick="switchQuizType('mix')">🎲 Mixed</button>
+    </div>
+    <div id="quiz-container"></div>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+// ===== SVG ILLUSTRATIONS — PREPOSITIONS =====
+const SVG = {
+  in: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="50" y="25" width="100" height="80" fill="none" stroke="#1F3A5F" stroke-width="3" stroke-linejoin="round"/><circle cx="100" cy="65" r="14" fill="#C5563A"/><text x="100" y="115" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">inside the box</text></svg>`,
+  on: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="30" y1="80" x2="170" y2="80" stroke="#1F3A5F" stroke-width="3"/><circle cx="100" cy="64" r="14" fill="#C5563A"/><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">touching surface</text></svg>`,
+  at: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="30" y1="60" x2="170" y2="60" stroke="#1F3A5F" stroke-width="2" stroke-dasharray="4 3"/><line x1="100" y1="20" x2="100" y2="100" stroke="#1F3A5F" stroke-width="2" stroke-dasharray="4 3"/><circle cx="100" cy="60" r="8" fill="#C5563A"/><text x="100" y="115" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">specific point</text></svg>`,
+  to: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="40" cy="60" r="10" fill="#1F3A5F"/><line x1="55" y1="60" x2="145" y2="60" stroke="#C5563A" stroke-width="3" marker-end="url(#arr)"/><circle cx="160" cy="60" r="10" fill="none" stroke="#1F3A5F" stroke-width="2" stroke-dasharray="3 2"/><defs><marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0,0 10,5 0,10" fill="#C5563A"/></marker></defs><text x="100" y="100" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">toward target</text></svg>`,
+  from: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="40" cy="60" r="10" fill="#1F3A5F"/><line x1="55" y1="60" x2="145" y2="60" stroke="#C5563A" stroke-width="3" marker-end="url(#arr2)"/><circle cx="160" cy="60" r="10" fill="#C5563A"/><defs><marker id="arr2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0,0 10,5 0,10" fill="#C5563A"/></marker></defs><text x="100" y="100" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">starting point</text></svg>`,
+  for: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="60" y="35" width="60" height="50" fill="#F4E9DD" stroke="#1F3A5F" stroke-width="2" rx="3"/><line x1="90" y1="30" x2="90" y2="90" stroke="#C5563A" stroke-width="2"/><line x1="125" y1="60" x2="160" y2="60" stroke="#C5563A" stroke-width="3" marker-end="url(#arr3)"/><circle cx="170" cy="60" r="6" fill="#1F3A5F"/><defs><marker id="arr3" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0,0 10,5 0,10" fill="#C5563A"/></marker></defs><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">benefit / purpose</text></svg>`,
+  with: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="80" cy="60" r="16" fill="#1F3A5F"/><circle cx="120" cy="60" r="16" fill="#C5563A"/><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">together / using</text></svg>`,
+  by: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="80" cy="60" r="14" fill="#1F3A5F"/><circle cx="115" cy="60" r="8" fill="#C5563A"/><text x="100" y="100" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">next to / by means of</text></svg>`,
+  of: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="55" r="32" fill="none" stroke="#1F3A5F" stroke-width="2"/><path d="M100 55 L100 23 A32 32 0 0 1 128 71 Z" fill="#C5563A"/><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">part of whole</text></svg>`,
+  about: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="55" r="10" fill="#1F3A5F"/><circle cx="100" cy="55" r="28" fill="none" stroke="#C5563A" stroke-width="2" stroke-dasharray="3 3"/><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">around the topic</text></svg>`,
+  into: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="100" y="25" width="80" height="65" fill="none" stroke="#1F3A5F" stroke-width="3"/><line x1="20" y1="55" x2="120" y2="55" stroke="#C5563A" stroke-width="3" marker-end="url(#arr4)"/><defs><marker id="arr4" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0,0 10,5 0,10" fill="#C5563A"/></marker></defs><text x="100" y="110" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">moving inward</text></svg>`,
+  onto: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="80" x2="180" y2="80" stroke="#1F3A5F" stroke-width="3"/><path d="M40 30 Q90 20 130 75" stroke="#C5563A" stroke-width="3" fill="none" marker-end="url(#arr5)"/><defs><marker id="arr5" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0,0 10,5 0,10" fill="#C5563A"/></marker></defs><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">moving onto surface</text></svg>`,
+  through: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="60" y1="40" x2="140" y2="40" stroke="#1F3A5F" stroke-width="2"/><line x1="60" y1="80" x2="140" y2="80" stroke="#1F3A5F" stroke-width="2"/><line x1="20" y1="60" x2="180" y2="60" stroke="#C5563A" stroke-width="3" marker-end="url(#arr6)"/><defs><marker id="arr6" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0,0 10,5 0,10" fill="#C5563A"/></marker></defs><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">passing through</text></svg>`,
+  across: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="60" y="35" width="80" height="40" fill="#A0C4E0" opacity="0.4"/><line x1="60" y1="35" x2="60" y2="75" stroke="#1F3A5F" stroke-width="2"/><line x1="140" y1="35" x2="140" y2="75" stroke="#1F3A5F" stroke-width="2"/><path d="M30 55 Q100 30 170 55" stroke="#C5563A" stroke-width="3" fill="none" marker-end="url(#arr7)"/><defs><marker id="arr7" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0,0 10,5 0,10" fill="#C5563A"/></marker></defs><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">to the other side</text></svg>`,
+  over: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="40" y1="80" x2="160" y2="80" stroke="#1F3A5F" stroke-width="3"/><path d="M50 80 Q100 15 150 80" stroke="#C5563A" stroke-width="3" fill="none" marker-end="url(#arr8)"/><defs><marker id="arr8" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0,0 10,5 0,10" fill="#C5563A"/></marker></defs><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">above / arching</text></svg>`,
+  under: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="30" y1="50" x2="170" y2="50" stroke="#1F3A5F" stroke-width="3"/><circle cx="100" cy="75" r="14" fill="#C5563A"/><text x="100" y="110" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">below</text></svg>`,
+  between: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="35" y="40" width="35" height="40" fill="#1F3A5F" rx="3"/><rect x="130" y="40" width="35" height="40" fill="#1F3A5F" rx="3"/><circle cx="100" cy="60" r="12" fill="#C5563A"/><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">between two things</text></svg>`,
+  among: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="40" r="10" fill="#1F3A5F"/><circle cx="150" cy="40" r="10" fill="#1F3A5F"/><circle cx="40" cy="80" r="10" fill="#1F3A5F"/><circle cx="160" cy="80" r="10" fill="#1F3A5F"/><circle cx="100" cy="35" r="10" fill="#1F3A5F"/><circle cx="100" cy="60" r="14" fill="#C5563A"/><text x="100" y="110" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">among many</text></svg>`,
+  before: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="30" y1="60" x2="170" y2="60" stroke="#1F3A5F" stroke-width="2" marker-end="url(#arr9)"/><circle cx="70" cy="60" r="10" fill="#C5563A"/><circle cx="130" cy="60" r="10" fill="#1F3A5F"/><text x="70" y="40" text-anchor="middle" font-size="10" fill="#C5563A" font-weight="700">A</text><text x="130" y="40" text-anchor="middle" font-size="10" fill="#1F3A5F" font-weight="700">B</text><defs><marker id="arr9" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0,0 10,5 0,10" fill="#1F3A5F"/></marker></defs><text x="100" y="100" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">A before B (time)</text></svg>`,
+  after: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="30" y1="60" x2="170" y2="60" stroke="#1F3A5F" stroke-width="2" marker-end="url(#arr10)"/><circle cx="70" cy="60" r="10" fill="#1F3A5F"/><circle cx="130" cy="60" r="10" fill="#C5563A"/><text x="70" y="40" text-anchor="middle" font-size="10" fill="#1F3A5F" font-weight="700">A</text><text x="130" y="40" text-anchor="middle" font-size="10" fill="#C5563A" font-weight="700">B</text><defs><marker id="arr10" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0,0 10,5 0,10" fill="#1F3A5F"/></marker></defs><text x="100" y="100" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">B after A (time)</text></svg>`,
+};
+
+// ===== SVG ILLUSTRATIONS — ADVERBS =====
+const ASVG = {
+  here: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="60" r="22" fill="#C5563A"/><circle cx="100" cy="60" r="32" fill="none" stroke="#C5563A" stroke-width="2" stroke-dasharray="3 3"/><text x="100" y="65" text-anchor="middle" font-size="14" fill="#fff" font-weight="700" font-family="sans-serif">YOU</text><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">at this place (close)</text></svg>`,
+  there: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="35" cy="60" r="14" fill="#1F3A5F"/><line x1="55" y1="60" x2="140" y2="60" stroke="#6B6B6B" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrT)"/><circle cx="160" cy="60" r="18" fill="#C5563A"/><defs><marker id="arrT" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#6B6B6B"/></marker></defs><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">at that place (far)</text></svg>`,
+  forward: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="40" y1="60" x2="160" y2="60" stroke="#C5563A" stroke-width="4" marker-end="url(#arrF)"/><circle cx="40" cy="60" r="8" fill="#1F3A5F"/><defs><marker id="arrF" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><polygon points="0,0 12,6 0,12" fill="#C5563A"/></marker></defs><text x="100" y="100" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">moving ahead</text></svg>`,
+  back: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="160" y1="60" x2="40" y2="60" stroke="#C5563A" stroke-width="4" marker-end="url(#arrB)"/><circle cx="160" cy="60" r="8" fill="#1F3A5F"/><defs><marker id="arrB" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><polygon points="0,0 12,6 0,12" fill="#C5563A"/></marker></defs><text x="100" y="100" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">return / backward</text></svg>`,
+  away: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="60" r="10" fill="#1F3A5F"/><line x1="100" y1="55" x2="40" y2="20" stroke="#C5563A" stroke-width="3" marker-end="url(#arrA1)"/><line x1="100" y1="55" x2="160" y2="20" stroke="#C5563A" stroke-width="3" marker-end="url(#arrA1)"/><line x1="100" y1="65" x2="40" y2="100" stroke="#C5563A" stroke-width="3" marker-end="url(#arrA1)"/><line x1="100" y1="65" x2="160" y2="100" stroke="#C5563A" stroke-width="3" marker-end="url(#arrA1)"/><defs><marker id="arrA1" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0,0 10,5 0,10" fill="#C5563A"/></marker></defs><text x="100" y="115" text-anchor="middle" font-size="10" fill="#6B6B6B" font-family="sans-serif">moving away from here</text></svg>`,
+  now: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="55" r="36" fill="none" stroke="#1F3A5F" stroke-width="3"/><line x1="100" y1="55" x2="100" y2="25" stroke="#C5563A" stroke-width="3"/><line x1="100" y1="55" x2="125" y2="55" stroke="#C5563A" stroke-width="3"/><circle cx="100" cy="55" r="3" fill="#1F3A5F"/><text x="100" y="110" text-anchor="middle" font-size="13" fill="#C5563A" font-weight="700" font-family="sans-serif">NOW</text></svg>`,
+  then: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="60" x2="180" y2="60" stroke="#1F3A5F" stroke-width="2" marker-end="url(#arrTh)"/><circle cx="40" cy="60" r="6" fill="#6B6B6B"/><circle cx="100" cy="60" r="9" fill="#C5563A"/><circle cx="160" cy="60" r="6" fill="#6B6B6B"/><text x="100" y="40" text-anchor="middle" font-size="11" fill="#C5563A" font-weight="700" font-family="sans-serif">THEN</text><defs><marker id="arrTh" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#1F3A5F"/></marker></defs><text x="100" y="100" text-anchor="middle" font-size="10" fill="#6B6B6B" font-family="sans-serif">at that time (past or future)</text></svg>`,
+  soon: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="55" r="36" fill="none" stroke="#1F3A5F" stroke-width="3"/><line x1="100" y1="55" x2="100" y2="25" stroke="#1F3A5F" stroke-width="2"/><line x1="100" y1="55" x2="118" y2="42" stroke="#C5563A" stroke-width="3"/><path d="M118 42 Q130 35 132 25" stroke="#C5563A" stroke-width="2" fill="none" marker-end="url(#arrS)"/><defs><marker id="arrS" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#C5563A"/></marker></defs><text x="100" y="110" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">in a short time</text></svg>`,
+  already: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="60" x2="180" y2="60" stroke="#1F3A5F" stroke-width="2"/><circle cx="170" cy="60" r="6" fill="#1F3A5F"/><text x="170" y="80" text-anchor="middle" font-size="9" fill="#1F3A5F" font-weight="700">NOW</text><circle cx="80" cy="60" r="14" fill="#2E7E73"/><polyline points="73,60 78,65 88,53" stroke="#fff" stroke-width="3" fill="none"/><text x="80" y="40" text-anchor="middle" font-size="10" fill="#2E7E73" font-weight="700">DONE</text><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">completed before now</text></svg>`,
+  yet: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="60" x2="180" y2="60" stroke="#1F3A5F" stroke-width="2"/><circle cx="100" cy="60" r="6" fill="#1F3A5F"/><text x="100" y="80" text-anchor="middle" font-size="9" fill="#1F3A5F" font-weight="700">NOW</text><circle cx="155" cy="60" r="12" fill="none" stroke="#C5563A" stroke-width="2" stroke-dasharray="3 2"/><text x="155" y="65" text-anchor="middle" font-size="14" fill="#C5563A" font-weight="700">?</text><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">not done — but expected</text></svg>`,
+  still: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="60" x2="180" y2="60" stroke="#1F3A5F" stroke-width="2"/><rect x="50" y="50" width="80" height="20" fill="#C5563A" opacity="0.7"/><circle cx="130" cy="60" r="6" fill="#1F3A5F"/><text x="130" y="80" text-anchor="middle" font-size="9" fill="#1F3A5F" font-weight="700">NOW</text><text x="90" y="42" text-anchor="middle" font-size="10" fill="#C5563A" font-weight="700">CONTINUING</text><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">continuing up to now</text></svg>`,
+  always: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><g>${[0,1,2,3,4,5,6].map(i => `<rect x="${20+i*22}" y="35" width="18" height="50" fill="#C5563A" rx="2"/>`).join('')}</g><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">100% — every time</text></svg>`,
+  usually: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><g>${[0,1,2,3,4,5,6].map(i => `<rect x="${20+i*22}" y="35" width="18" height="50" fill="${i===6?'#E5DFD3':'#C5563A'}" rx="2"/>`).join('')}</g><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">~80-90% — most of time</text></svg>`,
+  sometimes: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><g>${[0,1,2,3,4,5,6].map(i => `<rect x="${20+i*22}" y="35" width="18" height="50" fill="${[0,2,4].includes(i)?'#C5563A':'#E5DFD3'}" rx="2"/>`).join('')}</g><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">~30-50% — occasionally</text></svg>`,
+  rarely: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><g>${[0,1,2,3,4,5,6].map(i => `<rect x="${20+i*22}" y="35" width="18" height="50" fill="${i===3?'#C5563A':'#E5DFD3'}" rx="2"/>`).join('')}</g><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">~5-10% — almost never</text></svg>`,
+  never: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><g>${[0,1,2,3,4,5,6].map(i => `<rect x="${20+i*22}" y="35" width="18" height="50" fill="#E5DFD3" rx="2"/>`).join('')}</g><line x1="20" y1="35" x2="180" y2="85" stroke="#C5563A" stroke-width="4"/><line x1="180" y1="35" x2="20" y2="85" stroke="#C5563A" stroke-width="4"/><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">0% — not at all</text></svg>`,
+  very: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="50" width="160" height="22" fill="#E5DFD3" rx="3"/><rect x="20" y="50" width="155" height="22" fill="#C5563A" rx="3"/><text x="100" y="65" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">VERY</text><text x="100" y="100" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">strong intensity (~95%)</text></svg>`,
+  quite: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="50" width="160" height="22" fill="#E5DFD3" rx="3"/><rect x="20" y="50" width="120" height="22" fill="#C5563A" rx="3"/><text x="80" y="65" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">QUITE</text><text x="100" y="100" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">fairly / pretty (~70%)</text></svg>`,
+  almost: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="50" width="160" height="22" fill="#E5DFD3" rx="3"/><rect x="20" y="50" width="148" height="22" fill="#C5563A" rx="3"/><line x1="180" y1="40" x2="180" y2="82" stroke="#1F3A5F" stroke-width="3" stroke-dasharray="3 2"/><text x="90" y="65" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">ALMOST</text><text x="100" y="100" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">nearly (~95-99%, not yet 100%)</text></svg>`,
+  enough: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="50" width="160" height="22" fill="#E5DFD3" rx="3"/><rect x="20" y="50" width="120" height="22" fill="#2E7E73" rx="3"/><line x1="120" y1="35" x2="120" y2="85" stroke="#1F3A5F" stroke-width="3"/><text x="120" y="32" text-anchor="middle" font-size="10" fill="#1F3A5F" font-weight="700">NEEDED</text><text x="100" y="100" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">sufficient (meets the line)</text></svg>`,
+  actually: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><text x="50" y="40" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">Expected</text><circle cx="50" cy="65" r="14" fill="#6B6B6B" opacity="0.5"/><line x1="80" y1="65" x2="120" y2="65" stroke="#1F3A5F" stroke-width="2" stroke-dasharray="3 2" marker-end="url(#arrAct)"/><text x="150" y="40" text-anchor="middle" font-size="11" fill="#C5563A" font-weight="700" font-family="sans-serif">REALITY</text><circle cx="150" cy="65" r="14" fill="#C5563A"/><defs><marker id="arrAct" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#1F3A5F"/></marker></defs><text x="100" y="105" text-anchor="middle" font-size="10" fill="#6B6B6B" font-family="sans-serif">in fact / contrary to expectation</text></svg>`,
+  basically: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><g><circle cx="55" cy="50" r="8" fill="#6B6B6B"/><circle cx="40" cy="65" r="6" fill="#6B6B6B"/><circle cx="65" cy="65" r="7" fill="#6B6B6B"/><circle cx="50" cy="80" r="6" fill="#6B6B6B"/><circle cx="70" cy="80" r="5" fill="#6B6B6B"/></g><line x1="90" y1="65" x2="120" y2="65" stroke="#1F3A5F" stroke-width="2" marker-end="url(#arrBs)"/><circle cx="155" cy="65" r="20" fill="#C5563A"/><defs><marker id="arrBs" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#1F3A5F"/></marker></defs><text x="100" y="110" text-anchor="middle" font-size="10" fill="#6B6B6B" font-family="sans-serif">simplifying to the core</text></svg>`,
+  frankly: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><circle cx="55" cy="60" r="18" fill="#1F3A5F"/><path d="M75 55 L78 58 L75 62 L82 60 L75 55 Z" fill="#1F3A5F"/><line x1="85" y1="60" x2="160" y2="60" stroke="#C5563A" stroke-width="4" marker-end="url(#arrFr)"/><defs><marker id="arrFr" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><polygon points="0,0 12,6 0,12" fill="#C5563A"/></marker></defs><text x="100" y="105" text-anchor="middle" font-size="11" fill="#6B6B6B" font-family="sans-serif">straight talk — no filter</text></svg>`,
+};
+
+// ===== DATA: PREPOSITIONS =====
+const PREPOSITIONS = [
+  {word:"in", cat:"place", level:"beginner", core:"中に / 内側に（容器・空間の内部）",
+    examples:[{en:"The CEO is in the meeting room.", ja:"CEOは会議室の中にいます。"},{en:"We launched the brand in Japan.", ja:"日本でブランドを立ち上げた（市場の中で）。"},{en:"I'll see you in May.", ja:"5月に会いましょう（月という枠の中）。"}],
+    confuse:"⚠️ 月・年・季節 → in (in May, in 2026, in spring) / 曜日 → on (on Monday) / 時刻 → at (at 9 AM)"},
+  {word:"on", cat:"place", level:"beginner", core:"〜の上に（接触している面）/ 〜について",
+    examples:[{en:"The report is on my desk.", ja:"レポートは机の上にあります。"},{en:"Let me get back to you on this.", ja:"これについては後ほど返信します。"},{en:"Sales were up on Monday.", ja:"月曜日は売上が伸びました。"}],
+    confuse:"⚠️ 表面接触のイメージ。「on the wall（壁にかかっている）」も on でOK。"},
+  {word:"at", cat:"place", level:"beginner", core:"〜で（特定の点・場所）/ 〜時に",
+    examples:[{en:"I'll meet you at the office.", ja:"オフィスで会いましょう。"},{en:"The store opens at 10 AM.", ja:"店は10時に開きます。"},{en:"He's good at negotiations.", ja:"彼は交渉が得意です。"}],
+    confuse:"⚠️ in vs at: 「in the office（オフィスの中で作業中）」「at the office（オフィスという場所にいる）」"},
+  {word:"between", cat:"place", level:"intermediate", core:"〜と〜の間に（2つのもの）",
+    examples:[{en:"The deal is between us and the supplier.", ja:"この契約は我々とサプライヤーの間のものです。"},{en:"Sales declined between Q1 and Q2.", ja:"Q1からQ2の間で売上が落ちた。"},{en:"Choose between LED and standard lighting.", ja:"LEDと標準照明の間で選ぶ。"}],
+    confuse:"⚠️ between = 2つ（または明確に区別される複数）/ among = 多数の中"},
+  {word:"among", cat:"place", level:"intermediate", core:"〜の中で（多数のグループ）",
+    examples:[{en:"He's popular among Gen Z customers.", ja:"彼はZ世代の顧客に人気です。"},{en:"Quality is among our top priorities.", ja:"品質は我々の最優先事項の一つです。"},{en:"Among Asian markets, Japan grew fastest.", ja:"アジア市場の中で、日本が最も急成長した。"}],
+    confuse:"⚠️ 3つ以上のグループの中、または不特定多数の中で使う。"},
+  {word:"under", cat:"place", level:"beginner", core:"〜の下に / 〜のもとで（影響下）",
+    examples:[{en:"The file is under the report.", ja:"そのファイルはレポートの下にあります。"},{en:"The project is under review.", ja:"そのプロジェクトはレビュー中です。"},{en:"Sales are under target this month.", ja:"今月は売上が目標を下回っている。"}],
+    confuse:"⚠️ 物理的な下 → under / 具体的な数字より少ない → under (under 100k)"},
+  {word:"to", cat:"motion", level:"beginner", core:"〜へ（方向・到達点）",
+    examples:[{en:"I'm flying to London next week.", ja:"来週ロンドンへ飛びます。"},{en:"Send the proposal to John.", ja:"提案をJohnに送って。"},{en:"From 5% to 12%.", ja:"5%から12%へ。"}],
+    confuse:"⚠️ to vs for: I gave it to him（彼に渡した・到達）/ I bought it for him（彼のために買った・利益）"},
+  {word:"from", cat:"motion", level:"beginner", core:"〜から（起点）",
+    examples:[{en:"This email is from London HQ.", ja:"このメールはロンドン本社からです。"},{en:"Revenue grew from $5M to $8M.", ja:"売上は500万から800万に成長した。"},{en:"Insights from our customer interviews.", ja:"顧客インタビューから得られた知見。"}],
+    confuse:"⚠️ ペアで覚える: from A to B（AからBへ）"},
+  {word:"into", cat:"motion", level:"intermediate", core:"〜の中へ（中に入る動き）",
+    examples:[{en:"We're expanding into Asia.", ja:"アジアに進出しています。"},{en:"Translate insights into action.", ja:"知見を行動に変換する。"},{en:"Look into the issue.", ja:"その問題を調査する（中に視線を入れる）。"}],
+    confuse:"⚠️ in は「中にある状態」/ into は「中に入る動き」"},
+  {word:"onto", cat:"motion", level:"intermediate", core:"〜の上に（表面に乗る動き）",
+    examples:[{en:"Move the data onto the dashboard.", ja:"データをダッシュボードに載せる。"},{en:"He's onto something big.", ja:"彼は何か大きなことに気づいている。"},{en:"Hold onto your hat.", ja:"帽子を握っていて（しっかり捕まる）。"}],
+    confuse:"⚠️ on（接触状態）vs onto（接触する動き）"},
+  {word:"through", cat:"motion", level:"intermediate", core:"〜を通って / 〜を通じて",
+    examples:[{en:"We're going through a transformation.", ja:"我々は変革のさなかにある。"},{en:"Reach customers through Instagram.", ja:"Instagramを通じて顧客に届く。"},{en:"I read through the whole report.", ja:"レポートを最初から最後まで読んだ。"}],
+    confuse:"⚠️ through = 内部を通り抜ける / across = 表面を横切る"},
+  {word:"across", cat:"motion", level:"intermediate", core:"〜を横切って / 〜全体に",
+    examples:[{en:"Sales grew across all regions.", ja:"全地域で売上が成長した。"},{en:"Walk across the street.", ja:"通りを横切って歩く。"},{en:"Consistent branding across channels.", ja:"全チャネルで一貫したブランディング。"}],
+    confuse:"⚠️ ビジネスでは「全体に」の意味が頻出。across the board = 全面的に"},
+  {word:"over", cat:"motion", level:"intermediate", core:"〜の上に（離れて）/ 〜超えて",
+    examples:[{en:"Sales over 1 billion yen.", ja:"売上10億円超。"},{en:"Let's discuss this over lunch.", ja:"昼食を取りながら話しましょう。"},{en:"Over the past 3 years.", ja:"過去3年間にわたって。"}],
+    confuse:"⚠️ on（接触）vs over（接触せず上）/ more than と同じ意味で頻出（over 50%）"},
+  {word:"for", cat:"other", level:"beginner", core:"〜のために / 〜の間（期間）",
+    examples:[{en:"This is for the leadership team.", ja:"これはリーダーシップチーム向けです。"},{en:"I've been here for 5 years.", ja:"ここに5年間います。"},{en:"Thanks for the update.", ja:"アップデートありがとうございます。"}],
+    confuse:"⚠️ for + 期間（for 3 hours）/ since + 起点（since 2020）"},
+  {word:"with", cat:"other", level:"beginner", core:"〜と一緒に / 〜を使って",
+    examples:[{en:"I'll discuss this with the team.", ja:"チームと話し合います。"},{en:"We solved it with new technology.", ja:"新技術を使って解決した。"},{en:"Customers with high loyalty.", ja:"ロイヤリティが高い顧客（特徴を伴う）。"}],
+    confuse:"⚠️ 「〜とともに」「〜を持って」「〜を伴って」3つの意味"},
+  {word:"by", cat:"other", level:"intermediate", core:"〜のそばに / 〜によって / 〜までに",
+    examples:[{en:"Submit by Friday.", ja:"金曜までに提出。"},{en:"The proposal was approved by the board.", ja:"提案は取締役会によって承認された。"},{en:"I came by train.", ja:"電車で来た（手段）。"}],
+    confuse:"⚠️ by Friday（金曜までに）/ until Friday（金曜まで継続）— 全然違う！"},
+  {word:"of", cat:"other", level:"beginner", core:"〜の（所属・部分）",
+    examples:[{en:"The CEO of our company.", ja:"我々の会社のCEO。"},{en:"A piece of the pie.", ja:"パイの一切れ（市場シェア）。"},{en:"Aware of the risk.", ja:"そのリスクを認識している。"}],
+    confuse:"⚠️ 'of' は所属・部分・属性を結ぶ最も基本的な接続詞"},
+  {word:"about", cat:"other", level:"beginner", core:"〜について / 〜の周りに / およそ",
+    examples:[{en:"What's this email about?", ja:"このメールは何についてですか？"},{en:"It cost about $10,000.", ja:"およそ1万ドルかかった。"},{en:"I'm about to send it.", ja:"今送ろうとしているところ（行為直前）。"}],
+    confuse:"⚠️ be about to V = まさに〜しようとする（直前）"},
+  {word:"before", cat:"time", level:"beginner", core:"〜の前に（時間・順序）",
+    examples:[{en:"Send it before noon.", ja:"正午前に送って。"},{en:"Before I forget — please confirm.", ja:"忘れる前に — 確認してください。"},{en:"Quality comes before speed.", ja:"品質はスピードより優先される。"}],
+    confuse:"⚠️ before = 〜より前 / by = 〜までに（締切）"},
+  {word:"after", cat:"time", level:"beginner", core:"〜の後に（時間・順序）",
+    examples:[{en:"Let's catch up after the meeting.", ja:"会議の後で話しましょう。"},{en:"After reviewing the data, I think...", ja:"データを確認した後、私の考えは…"},{en:"Day after day.", ja:"来る日も来る日も。"}],
+    confuse:"⚠️ after Ving（〜した後で）= 動名詞をとる"},
+];
+
+// ===== DATA: ADVERBS =====
+const ADVERBS = [
+  // PLACE/DIRECTION
+  {word:"here", cat:"place", level:"beginner", core:"ここに（話者の近く）",
+    examples:[{en:"I'll be here all day.", ja:"一日中ここにいます。"},{en:"Sign here, please.", ja:"ここにサインしてください。"},{en:"Here's the report.", ja:"これがレポートです（さあどうぞ）。"}],
+    confuse:"💡 'Here you go.' = はい、どうぞ（物を渡す時の定番）"},
+  {word:"there", cat:"place", level:"beginner", core:"そこに / あそこに（離れた場所）",
+    examples:[{en:"I went there yesterday.", ja:"昨日そこに行った。"},{en:"There are 3 options.", ja:"3つの選択肢があります。"},{en:"You'll find it there.", ja:"そこに見つかるよ。"}],
+    confuse:"💡 'there is/are' = 〜がある（最頻出構文）"},
+  {word:"forward", cat:"place", level:"intermediate", core:"前に / 前進して",
+    examples:[{en:"Let's move forward with the plan.", ja:"その計画で前進しよう。"},{en:"Looking forward to hearing from you.", ja:"ご連絡をお待ちしています。"},{en:"I'm forwarding this email.", ja:"このメールを転送します。"}],
+    confuse:"💡 'move forward' = 物事を進める / 'going forward' = 今後は"},
+  {word:"back", cat:"place", level:"beginner", core:"後ろに / 戻って",
+    examples:[{en:"I'll get back to you soon.", ja:"すぐに折り返します。"},{en:"Step back and look at the big picture.", ja:"一歩引いて全体像を見よう。"},{en:"We're back to where we started.", ja:"出発点に戻ってしまった。"}],
+    confuse:"💡 'get back to + 人' = 折り返す / 'go back to + 物' = 戻る"},
+  {word:"away", cat:"place", level:"intermediate", core:"離れて / 不在で",
+    examples:[{en:"I'll be away next week.", ja:"来週は不在です。"},{en:"Take it away.", ja:"持って行って。"},{en:"The store is 5 minutes away.", ja:"店は5分離れたところにある。"}],
+    confuse:"💡 'right away' = すぐに / 'far away' = 遠く離れて"},
+
+  // TIME
+  {word:"now", cat:"time", level:"beginner", core:"今 / 現在",
+    examples:[{en:"I need it now.", ja:"今すぐ必要です。"},{en:"Right now we're focused on Q3.", ja:"今のところQ3に集中している。"},{en:"For now, let's stick with the plan.", ja:"今のところは計画通りで行こう。"}],
+    confuse:"💡 'right now' = 今この瞬間 / 'for now' = 今のところ（暫定的）"},
+  {word:"then", cat:"time", level:"beginner", core:"その時に / それから",
+    examples:[{en:"I'll review it, then send it.", ja:"確認して、それから送ります。"},{en:"Back then, we had only 3 stores.", ja:"当時は3店舗しかなかった。"},{en:"Until then, please hold off.", ja:"それまでは保留にしてください。"}],
+    confuse:"💡 'by then' = その時までに / 'since then' = それ以来"},
+  {word:"soon", cat:"time", level:"beginner", core:"すぐに / 間もなく",
+    examples:[{en:"I'll get back to you soon.", ja:"すぐに連絡します。"},{en:"The launch is coming up soon.", ja:"立ち上げが近い。"},{en:"As soon as possible.", ja:"できるだけ早く（ASAP）。"}],
+    confuse:"💡 'as soon as ~' = 〜したらすぐに / 'sooner or later' = 遅かれ早かれ"},
+  {word:"already", cat:"time", level:"intermediate", core:"すでに（予想より早く完了）",
+    examples:[{en:"I've already sent it.", ja:"もう送りました。"},{en:"They're already in the meeting.", ja:"彼らはすでに会議中です。"},{en:"Have you already approved this?", ja:"これすでに承認した？"}],
+    confuse:"⚠️ 肯定文・疑問文（驚き）で使う。否定文では使わない（→ yet）"},
+  {word:"yet", cat:"time", level:"intermediate", core:"まだ（〜していない）/ もう〜した？",
+    examples:[{en:"I haven't sent it yet.", ja:"まだ送っていません。"},{en:"Have you finished yet?", ja:"もう終わった？"},{en:"The data isn't available yet.", ja:"データはまだ入手できていない。"}],
+    confuse:"⚠️ yet = 否定文・疑問文（期待される事の未完了）/ already = 肯定文（既に完了）"},
+  {word:"still", cat:"time", level:"intermediate", core:"まだ / 依然として（継続）",
+    examples:[{en:"We're still waiting for approval.", ja:"まだ承認待ちです。"},{en:"He's still in the meeting.", ja:"彼はまだ会議中です。"},{en:"It's still a great option.", ja:"それでもなお素晴らしい選択肢だ。"}],
+    confuse:"⚠️ still = 状態が続く / yet = まだ起きていない（似て非なるもの）"},
+
+  // FREQUENCY
+  {word:"always", cat:"frequency", level:"beginner", core:"いつも（100%）",
+    examples:[{en:"I always start with the data.", ja:"常にデータから始めます。"},{en:"She's always on time.", ja:"彼女はいつも時間通り。"},{en:"Quality always comes first.", ja:"品質が常に最優先。"}],
+    confuse:"💡 be動詞・助動詞の後 / 一般動詞の前に置く"},
+  {word:"usually", cat:"frequency", level:"beginner", core:"普段は / たいてい（80-90%）",
+    examples:[{en:"I usually work from home on Fridays.", ja:"金曜は普段在宅勤務です。"},{en:"Meetings usually run 30 minutes.", ja:"会議は通常30分。"},{en:"It's usually a no-brainer.", ja:"普段は考えるまでもない。"}],
+    confuse:"💡 'normally' とほぼ同義。'as usual' = いつも通り"},
+  {word:"sometimes", cat:"frequency", level:"beginner", core:"時々（30-50%）",
+    examples:[{en:"Sometimes the simplest solution wins.", ja:"時にはシンプルな解決策が勝つ。"},{en:"I sometimes work late.", ja:"時々遅くまで働きます。"},{en:"Sometimes we need to push back.", ja:"時には押し戻す必要がある。"}],
+    confuse:"💡 文頭・文中・文末すべてOKな珍しい頻度副詞"},
+  {word:"rarely", cat:"frequency", level:"intermediate", core:"めったに〜ない（5-10%）",
+    examples:[{en:"We rarely miss deadlines.", ja:"締切を逃すことはめったにない。"},{en:"He rarely speaks in meetings.", ja:"彼は会議でほとんど発言しない。"},{en:"Rarely have I seen such a strong proposal.", ja:"これほど強い提案はめったに見たことがない。"}],
+    confuse:"⚠️ 否定の意味を含むので、二重否定になる don't を使わない: ✕ I don't rarely / ○ I rarely"},
+  {word:"never", cat:"frequency", level:"beginner", core:"決して〜ない（0%）",
+    examples:[{en:"I never compromise on quality.", ja:"品質では決して妥協しない。"},{en:"Never say never.", ja:"絶対と言うな（可能性は常にある）。"},{en:"It's never been done before.", ja:"今までやったことがない。"}],
+    confuse:"⚠️ 'never' 自体に否定の意味があるので don't は不要"},
+
+  // DEGREE
+  {word:"very", cat:"degree", level:"beginner", core:"とても / 非常に（強い強調）",
+    examples:[{en:"This is very important.", ja:"これは非常に重要です。"},{en:"The team is very skilled.", ja:"チームは非常にスキルがある。"},{en:"Very well, let's proceed.", ja:"よろしい、進めましょう。"}],
+    confuse:"⚠️ 強い形容詞（excellent, perfect, fantastic）には使わない: ✕ very perfect / ○ absolutely perfect"},
+  {word:"quite", cat:"degree", level:"intermediate", core:"かなり / なかなか（中程度〜強）",
+    examples:[{en:"That's quite impressive.", ja:"それはかなり印象的だ。"},{en:"Quite a few people attended.", ja:"かなりの人数が参加した。"},{en:"I'm quite sure about it.", ja:"かなり確信している。"}],
+    confuse:"⚠️ 米英で意味が違う場合あり: 米 'quite good' = とても良い / 英 'quite good' = まあまあ良い"},
+  {word:"almost", cat:"degree", level:"intermediate", core:"ほとんど / 〜寸前（100%まであと少し）",
+    examples:[{en:"We're almost done.", ja:"もうほとんど終わっています。"},{en:"Almost half of customers chose option A.", ja:"ほぼ半数の顧客がオプションAを選んだ。"},{en:"I almost forgot.", ja:"危うく忘れるところだった。"}],
+    confuse:"💡 'nearly' とほぼ同義 / 100%には届いていないニュアンス"},
+  {word:"enough", cat:"degree", level:"intermediate", core:"十分に / 必要な量だけ",
+    examples:[{en:"We have enough budget.", ja:"十分な予算がある。"},{en:"This is good enough.", ja:"これで十分だ。"},{en:"Strangely enough, sales went up.", ja:"奇妙なことに、売上は上がった。"}],
+    confuse:"⚠️ 形容詞の後に置く: ✕ enough good / ○ good enough"},
+
+  // COMMENT (sentence adverbs)
+  {word:"actually", cat:"comment", level:"intermediate", core:"実は（予想と違う事実を伝える）",
+    examples:[{en:"Actually, sales went up.", ja:"実は、売上は上がりました。"},{en:"It's actually quite simple.", ja:"実はとても簡単です。"},{en:"I actually agree with you.", ja:"実はあなたに同意します。"}],
+    confuse:"⚠️ 'actually' ≠ 「現在」(currently)。日本語の「現実に」とは少しズレる。"},
+  {word:"basically", cat:"comment", level:"intermediate", core:"基本的に / つまり要するに（簡略化）",
+    examples:[{en:"Basically, we need to cut costs.", ja:"要するに、コスト削減が必要だ。"},{en:"It's basically the same as last year.", ja:"基本的に去年と同じだ。"},{en:"Basically, yes.", ja:"基本的にはイエス。"}],
+    confuse:"💡 'in essence' / 'in short' とほぼ同義の説明導入"},
+  {word:"frankly", cat:"comment", level:"advanced", core:"率直に言うと（本音モード）",
+    examples:[{en:"Frankly, I disagree.", ja:"率直に言うと、反対です。"},{en:"Frankly speaking, the proposal needs work.", ja:"率直に言って、提案は要改善です。"},{en:"To be frank, I'm not sure.", ja:"正直、よく分からない。"}],
+    confuse:"💡 'to be honest' / 'honestly' とほぼ同義。本音を言う前のクッション。"},
+];
+
+// ===== STATE =====
+let currentMode = 'browse';
+let currentPos = 'prep';   // 'prep' or 'adv'
+let currentCat = 'all';
+let quizState = null;
+let quizType = 'prep';
+
+// ===== HELPERS =====
+function currentData(){ return currentPos === 'prep' ? PREPOSITIONS : ADVERBS; }
+function currentSvg(){ return currentPos === 'prep' ? SVG : ASVG; }
+
+const PREP_CATS = [
+  {id:'all', label:'All'},
+  {id:'place', label:'📍 Place'},
+  {id:'motion', label:'➡️ Motion'},
+  {id:'time', label:'⏰ Time'},
+  {id:'other', label:'🔗 Other'},
+];
+const ADV_CATS = [
+  {id:'all', label:'All'},
+  {id:'place', label:'📍 Place'},
+  {id:'time', label:'⏰ Time'},
+  {id:'frequency', label:'🔁 Frequency'},
+  {id:'degree', label:'📊 Degree'},
+  {id:'comment', label:'💬 Comment'},
+];
+
+// ===== BROWSE =====
+function renderFilterBar(){
+  const fb = document.getElementById('filter-bar');
+  const cats = currentPos === 'prep' ? PREP_CATS : ADV_CATS;
+  fb.innerHTML = cats.map(c => `<span class="chip ${currentCat===c.id?'active':''}" data-cat="${c.id}" onclick="filterCat('${c.id}')">${c.label}</span>`).join('');
+}
+
+function renderGrid(){
+  const grid = document.getElementById('grid');
+  const data = currentData();
+  const svgs = currentSvg();
+  const filtered = currentCat === 'all' ? data : data.filter(d => d.cat === currentCat);
+  const posLabel = currentPos === 'prep' ? 'PREP' : 'ADV';
+  grid.innerHTML = filtered.map((d, i) => {
+    const idx = data.indexOf(d);
+    return `<div class="card" onclick="openModal(${idx})">
+      <div class="word">${d.word}<span class="pos-badge">${posLabel}</span></div>
+      <div class="svg-wrap">${svgs[d.word] || ''}</div>
+      <p class="core">${d.core}</p>
+      <span class="level ${d.level}">${d.level}</span>
+    </div>`;
+  }).join('');
+}
+
+function switchPos(pos){
+  currentPos = pos;
+  currentCat = 'all';
+  document.querySelectorAll('.subtab[data-pos]').forEach(s => s.classList.toggle('active', s.dataset.pos === pos));
+  renderFilterBar();
+  renderGrid();
+}
+
+function filterCat(cat){
+  currentCat = cat;
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.cat === cat));
+  renderGrid();
+}
+
+function openModal(idx){
+  const data = currentData();
+  const svgs = currentSvg();
+  const d = data[idx];
+  const posLabel = currentPos === 'prep' ? 'Preposition' : 'Adverb';
+  document.getElementById('modal-content').innerHTML = `
+    <h2>${d.word}<span class="pos-badge">${posLabel}</span></h2>
+    <p class="modal-core">${d.core}</p>
+    <div class="modal-svg">${svgs[d.word] || ''}</div>
+    <div class="modal-section">
+      <h3>📌 例文（ビジネス）</h3>
+      <ul class="ex-list">
+        ${d.examples.map(e => `<li>${e.en}<span class="ja">${e.ja}</span></li>`).join('')}
+      </ul>
+    </div>
+    <div class="modal-section">
+      <h3>💡 注意ポイント</h3>
+      <div class="confuse">${d.confuse}</div>
+    </div>
+    <button class="modal-close" onclick="closeModal()">閉じる</button>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+
+// ===== QUIZ DATA =====
+const QUIZ_PREP = [
+  {sentence:"The CEO is ___ the meeting room.", ja:"CEOは会議室にいます。", answer:"in", options:["in","on","at","by"]},
+  {sentence:"Submit the report ___ Friday.", ja:"金曜までに提出。", answer:"by", options:["by","until","at","on"]},
+  {sentence:"We're expanding ___ Asia.", ja:"アジアに進出している。", answer:"into", options:["in","into","at","through"]},
+  {sentence:"This email is ___ London HQ.", ja:"このメールはロンドン本社から。", answer:"from", options:["from","by","of","at"]},
+  {sentence:"Sales grew ___ all regions.", ja:"全地域で売上成長。", answer:"across", options:["over","across","through","among"]},
+  {sentence:"He's good ___ negotiations.", ja:"彼は交渉が得意。", answer:"at", options:["in","at","on","with"]},
+  {sentence:"I've been here ___ 5 years.", ja:"ここに5年間います。", answer:"for", options:["since","for","in","at"]},
+  {sentence:"The deal is ___ us and the supplier.", ja:"我々とサプライヤーの間の契約。", answer:"between", options:["among","between","with","of"]},
+  {sentence:"Let's discuss ___ lunch.", ja:"昼食を取りながら話そう。", answer:"over", options:["on","over","at","during"]},
+  {sentence:"He's popular ___ Gen Z customers.", ja:"Z世代の顧客に人気。", answer:"among", options:["between","among","with","at"]},
+  {sentence:"The store opens ___ 10 AM.", ja:"店は10時に開く。", answer:"at", options:["in","on","at","by"]},
+  {sentence:"Reach customers ___ Instagram.", ja:"Instagramを通じて顧客に届く。", answer:"through", options:["across","through","over","by"]},
+  {sentence:"The proposal was approved ___ the board.", ja:"取締役会によって承認された。", answer:"by", options:["from","by","with","of"]},
+  {sentence:"I'll see you ___ May.", ja:"5月に会いましょう。", answer:"in", options:["on","at","in","by"]},
+  {sentence:"Translate insights ___ action.", ja:"知見を行動に変換する。", answer:"into", options:["in","onto","into","to"]},
+];
+
+const QUIZ_ADV = [
+  {sentence:"I haven't sent it ___.", ja:"まだ送っていません。", answer:"yet", options:["yet","already","still","now"]},
+  {sentence:"I've ___ finished the report.", ja:"もうレポートを終えました。", answer:"already", options:["yet","already","still","now"]},
+  {sentence:"We're ___ waiting for approval.", ja:"まだ承認待ちです。", answer:"still", options:["yet","already","still","soon"]},
+  {sentence:"I ___ start with the data.", ja:"常にデータから始めます。", answer:"always", options:["always","sometimes","rarely","never"]},
+  {sentence:"We ___ miss deadlines.", ja:"締切を逃すことはめったにない。", answer:"rarely", options:["always","usually","rarely","never"]},
+  {sentence:"___, sales went up despite the headwind.", ja:"実は逆風にも関わらず売上は上がった。", answer:"actually", options:["actually","basically","frankly","usually"]},
+  {sentence:"___, we need to cut costs.", ja:"要するに、コスト削減が必要だ。", answer:"basically", options:["actually","basically","frankly","quite"]},
+  {sentence:"This is ___ done.", ja:"もうほとんど終わっています。", answer:"almost", options:["very","quite","almost","enough"]},
+  {sentence:"That's ___ impressive.", ja:"それはかなり印象的だ。", answer:"quite", options:["very","quite","almost","enough"]},
+  {sentence:"Let's move ___ with the plan.", ja:"その計画で前進しよう。", answer:"forward", options:["forward","back","away","there"]},
+  {sentence:"I'll get ___ to you soon.", ja:"すぐに折り返します。", answer:"back", options:["back","away","forward","here"]},
+  {sentence:"I'll be ___ next week.", ja:"来週は不在です。", answer:"away", options:["here","there","away","back"]},
+  {sentence:"We have ___ budget for this.", ja:"これに十分な予算がある。", answer:"enough", options:["very","quite","enough","almost"]},
+  {sentence:"___, I disagree with that.", ja:"率直に言うと、反対です。", answer:"frankly", options:["actually","basically","frankly","usually"]},
+  {sentence:"I ___ work from home on Fridays.", ja:"金曜は普段在宅勤務です。", answer:"usually", options:["always","usually","rarely","never"]},
+];
+
+// ===== QUIZ =====
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function startQuiz(){
+  let pool;
+  if(quizType === 'prep') pool = QUIZ_PREP;
+  else if(quizType === 'adv') pool = QUIZ_ADV;
+  else pool = shuffle([...QUIZ_PREP, ...QUIZ_ADV]).slice(0, 14);
+  quizState = {
+    questions: shuffle(pool).slice(0, 10),
+    current: 0,
+    correct: 0,
+  };
+  renderQuiz();
+}
+
+function switchQuizType(type){
+  quizType = type;
+  document.querySelectorAll('.subtab[data-quiz]').forEach(s => s.classList.toggle('active', s.dataset.quiz === type));
+  startQuiz();
+}
+
+function renderQuiz(){
+  const c = document.getElementById('quiz-container');
+  if(quizState.current >= quizState.questions.length){
+    const pct = Math.round(quizState.correct / quizState.questions.length * 100);
+    let badge = '🎯', msg = 'まあまあ！';
+    if(pct >= 90){badge='🏆'; msg='完璧！マスターだ';}
+    else if(pct >= 70){badge='✨'; msg='よくできた！';}
+    else if(pct >= 50){badge='👍'; msg='もう一歩！';}
+    else {badge='📚'; msg='繰り返し練習しよう';}
+    c.innerHTML = `<div class="quiz-card quiz-result">
+      <div style="font-size:48px">${badge}</div>
+      <h2>${msg}</h2>
+      <div class="score">${quizState.correct}/${quizState.questions.length}</div>
+      <div style="color:var(--muted);font-size:13px">正答率 ${pct}%</div>
+      <button class="restart" onclick="startQuiz()">もう一度</button>
+    </div>`;
+    return;
+  }
+  const q = quizState.questions[quizState.current];
+  const pct = Math.round(quizState.current / quizState.questions.length * 100);
+  c.innerHTML = `<div class="quiz-card">
+    <div class="quiz-progress"><span>Q${quizState.current+1} / ${quizState.questions.length}</span><span>${quizState.correct} 正解</span></div>
+    <div class="quiz-bar"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
+    <p class="quiz-sentence">${q.sentence.replace('___','<span class="blank">___</span>')}<span class="ja">${q.ja}</span></p>
+    <div class="quiz-options">
+      ${q.options.map(o => `<button class="quiz-opt" onclick="answerQuiz('${o}')">${o}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="qfb"></div>
+    <button class="quiz-next" id="qnext" onclick="nextQuiz()">次へ →</button>
+  </div>`;
+}
+
+function answerQuiz(choice){
+  const q = quizState.questions[quizState.current];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o => {
+    o.disabled = true;
+    if(o.textContent === q.answer) o.classList.add('correct');
+    else if(o.textContent === choice) o.classList.add('wrong');
+  });
+  const fb = document.getElementById('qfb');
+  if(choice === q.answer){
+    quizState.correct++;
+    fb.className = 'quiz-feedback show ok';
+    fb.innerHTML = `✅ 正解！<br>${q.sentence.replace('___', '<strong>'+q.answer+'</strong>')}`;
+  } else {
+    fb.className = 'quiz-feedback show ng';
+    fb.innerHTML = `❌ 正解は <strong>${q.answer}</strong><br>${q.sentence.replace('___', '<strong>'+q.answer+'</strong>')}`;
+  }
+  document.getElementById('qnext').classList.add('show');
+}
+
+function nextQuiz(){
+  quizState.current++;
+  renderQuiz();
+}
+
+// ===== MODE SWITCH =====
+function switchMode(mode){
+  currentMode = mode;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  document.getElementById('browse-view').style.display = mode === 'browse' ? '' : 'none';
+  document.getElementById('quiz-view').style.display = mode === 'quiz' ? '' : 'none';
+  if(mode === 'quiz') startQuiz();
+}
+
+// ===== INIT =====
+renderFilterBar();
+renderGrid();
+</script>
+</body>
+</html>

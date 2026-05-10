@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Phrasal Verb Master">
+<meta name="theme-color" content="#1F3A5F">
+<title>Phrasal Verb Master — My English Coach</title>
+<style>
+:root{
+  --primary:#1F3A5F; --accent:#C5563A; --accent-soft:#E8826B;
+  --sand:#F4E9DD; --bg:#FAF8F4; --card:#FFFFFF;
+  --text:#2A2A2A; --muted:#6B6B6B; --border:#E5DFD3;
+  --good:#2E7E73; --warn:#A07000; --bad:#A03A2A;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+.container{max-width:600px;margin:0 auto;padding:18px 16px 60px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.home-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:99px;text-decoration:none;color:var(--primary);font-weight:600;font-size:13px;box-shadow:var(--shadow)}
+.title{margin:0;font-size:20px;color:var(--primary);font-weight:700}
+.title small{color:var(--muted);font-weight:500;font-size:12px;margin-left:6px}
+.tabs{display:flex;gap:6px;background:var(--card);padding:5px;border-radius:12px;margin-bottom:14px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.tab{flex:1;padding:10px 8px;text-align:center;border:0;background:transparent;border-radius:8px;font-weight:600;font-size:13px;color:var(--muted);cursor:pointer}
+.tab.active{background:var(--primary);color:#fff}
+.stats-bar{display:flex;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.stat{text-align:center;flex:1}
+.stat .num{font-size:18px;font-weight:800;color:var(--primary)}
+.stat .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+.filter-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{padding:6px 12px;border-radius:99px;background:var(--card);border:1px solid var(--border);font-size:12px;color:var(--muted);cursor:pointer;font-weight:600}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pv-list{display:flex;flex-direction:column;gap:8px}
+.pv-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:14px;cursor:pointer;box-shadow:var(--shadow);
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+}
+.pv-card:active{transform:scale(0.99)}
+.pv-info{flex:1;min-width:0}
+.pv-rank{display:inline-block;width:26px;height:26px;border-radius:6px;background:var(--sand);color:var(--primary);font-weight:800;font-size:11px;text-align:center;line-height:26px;margin-right:8px}
+.pv-en{font-size:15px;font-weight:700;color:var(--primary);margin:0 0 3px;display:flex;align-items:center;flex-wrap:wrap}
+.pv-en .text{display:inline}
+.pv-en .verb-part{color:var(--primary)}
+.pv-en .particle-part{color:var(--accent);font-style:italic}
+.pv-ja{font-size:12px;color:var(--muted);margin:0;line-height:1.4}
+.mastery-dots{display:flex;gap:3px;flex-shrink:0}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border)}
+.dot.filled{background:var(--accent)}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:18px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;padding:24px 22px}
+.modal h2{margin:0 0 4px;font-size:24px;color:var(--primary);font-weight:800;line-height:1.3}
+.modal h2 .verb{color:var(--primary)}
+.modal h2 .particle{color:var(--accent);font-style:italic}
+.modal-meaning{padding:12px 14px;background:var(--sand);border-radius:10px;margin:12px 0;font-size:13.5px;line-height:1.5;color:var(--text)}
+.modal-meaning strong{color:var(--accent)}
+.modal-section{margin:14px 0}
+.modal-section h3{font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin:0 0 8px;font-weight:700}
+.ex-list{list-style:none;padding:0;margin:0}
+.ex-list li{padding:10px 12px;background:#FAF6EE;border-radius:8px;margin-bottom:6px;font-size:13.5px;line-height:1.5;border-left:3px solid var(--accent)}
+.ex-list li .ja{display:block;color:var(--muted);font-size:11.5px;margin-top:4px}
+.modal-tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.tag{display:inline-block;padding:3px 10px;border-radius:99px;background:var(--sand);color:var(--primary);font-size:11px;font-weight:700}
+.tag.sep{background:#E0F0E8;color:var(--good)}
+.tag.insep{background:#FFF1D4;color:var(--warn)}
+.tag.intrans{background:#E8E8F4;color:var(--info,#3567A8)}
+.tag.formal{background:#E0E8F2;color:var(--primary)}
+.tag.casual{background:#FFF1D4;color:var(--warn)}
+.tag.both{background:#E8F4E8;color:var(--good)}
+.note-box{padding:10px 12px;background:#FFF8EC;border-radius:8px;font-size:12px;color:#5C4A1F;line-height:1.5;border:1px solid #F0D89A}
+.mastery-control{display:flex;gap:6px;margin:14px 0;justify-content:space-between}
+.mast-btn{flex:1;padding:10px 4px;border:1px solid var(--border);background:var(--card);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);text-align:center}
+.mast-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.modal-close{display:block;width:100%;padding:12px;margin-top:12px;background:var(--primary);color:#fff;border:0;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer}
+
+/* Quiz */
+.quiz-card{background:var(--card);border-radius:14px;padding:22px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:14px}
+.quiz-progress{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600}
+.quiz-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:18px}
+.quiz-bar-fill{height:100%;background:var(--accent);transition:width 0.3s}
+.quiz-q{font-size:18px;line-height:1.5;color:var(--primary);margin:0 0 6px;font-weight:700}
+.quiz-q .verb-h{color:var(--primary)}
+.quiz-q .particle-h{color:var(--accent);font-style:italic}
+.quiz-context{font-size:12px;color:var(--muted);margin:0 0 16px;line-height:1.5}
+.quiz-options{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{padding:12px 14px;background:var(--card);border:2px solid var(--border);border-radius:10px;font-size:13.5px;color:var(--text);cursor:pointer;text-align:left;line-height:1.4}
+.quiz-opt:hover{border-color:var(--accent)}
+.quiz-opt.correct{background:#E8F4E8;border-color:var(--good);color:var(--good)}
+.quiz-opt.wrong{background:#FBE0DA;border-color:var(--bad);color:var(--bad)}
+.quiz-feedback{margin-top:14px;padding:12px;border-radius:8px;font-size:13px;line-height:1.5;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:#E8F4E8;color:var(--good);border:1px solid #C0E0BC}
+.quiz-feedback.ng{background:#FBE0DA;color:var(--bad);border:1px solid #F0CABE}
+.quiz-next{display:none;width:100%;padding:14px;margin-top:12px;background:var(--primary);color:#fff;border:0;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer}
+.quiz-next.show{display:block}
+.quiz-result{text-align:center;padding:30px 20px}
+.quiz-result h2{font-size:28px;color:var(--primary);margin:0 0 10px}
+.quiz-result .score{font-size:48px;font-weight:800;color:var(--accent);margin:8px 0}
+.restart{padding:12px 24px;background:var(--primary);color:#fff;border:0;border-radius:99px;font-weight:700;font-size:14px;cursor:pointer;margin-top:14px}
+
+/* Fill mode */
+.fill-card{background:var(--card);border-radius:14px;padding:22px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:14px}
+.fill-sentence{font-size:16px;line-height:1.7;color:var(--text);margin:0 0 12px}
+.fill-sentence .verb-blank{display:inline-block;min-width:60px;padding:0 8px;border:2px dashed var(--primary);border-radius:6px;color:var(--primary);font-weight:700;text-align:center;margin:0 2px}
+.fill-sentence .particle-blank{display:inline-block;min-width:60px;padding:0 8px;border:2px dashed var(--accent);border-radius:6px;color:var(--accent);font-weight:700;text-align:center;margin:0 2px;font-style:italic}
+.fill-sentence .ja{display:block;font-size:12px;color:var(--muted);margin-top:8px}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="topbar">
+    <a class="home-btn" href="index.html">← Home</a>
+    <h1 class="title">⚙️ Phrasal Verb Master <small>Top 50 句動詞</small></h1>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-mode="browse" onclick="switchMode('browse')">📚 Browse</button>
+    <button class="tab" data-mode="quiz" onclick="switchMode('quiz')">🎯 Meaning Quiz</button>
+    <button class="tab" data-mode="fill" onclick="switchMode('fill')">✏️ Fill-in</button>
+  </div>
+
+  <div id="browse-view">
+    <div class="stats-bar">
+      <div class="stat"><div class="num" id="stat-total">50</div><div class="lbl">Total</div></div>
+      <div class="stat"><div class="num" id="stat-known">0</div><div class="lbl">Known</div></div>
+      <div class="stat"><div class="num" id="stat-mastered">0</div><div class="lbl">Mastered</div></div>
+    </div>
+    <div class="filter-bar">
+      <span class="chip active" data-filter="all" onclick="filterPV('all')">All</span>
+      <span class="chip" data-filter="new" onclick="filterPV('new')">🆕 New</span>
+      <span class="chip" data-filter="learning" onclick="filterPV('learning')">📖 Learning</span>
+      <span class="chip" data-filter="mastered" onclick="filterPV('mastered')">✨ Mastered</span>
+      <span class="chip" data-filter="sep" onclick="filterPV('sep')">🔀 Separable</span>
+      <span class="chip" data-filter="insep" onclick="filterPV('insep')">🔗 Inseparable</span>
+    </div>
+    <div class="pv-list" id="list"></div>
+  </div>
+
+  <div id="quiz-view" style="display:none">
+    <div id="quiz-container"></div>
+  </div>
+
+  <div id="fill-view" style="display:none">
+    <div id="fill-container"></div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+// ===== DATA: Top 50 business phrasal verbs by frequency =====
+// type: "sep" = separable transitive (look it up) / "insep" = inseparable transitive (look into it) / "intrans" = intransitive (catch up)
+const PV = [
+  {rank:1, verb:"follow", particle:"up", ja:"フォローアップする・後で連絡する", type:"intrans", register:"both",
+    meaning:"To pursue something further; to check back on a previous matter.",
+    ex:[{en:"I'll follow up on the email tomorrow.", ja:"明日そのメールにフォローアップします。"},{en:"Just following up to see if you need anything.", ja:"何か必要かと思って後追い連絡しました。"}],
+    note:"⚠️ follow-up（名詞・形容詞）はハイフンつき。動詞は分離。"},
+  {rank:2, verb:"reach", particle:"out", ja:"連絡を取る", type:"intrans", register:"both",
+    meaning:"To contact someone, often to offer or seek help.",
+    ex:[{en:"Feel free to reach out anytime.", ja:"いつでも気軽に連絡してください。"},{en:"I reached out to John about the project.", ja:"プロジェクトについてJohnに連絡した。"}],
+    note:"💡 'reach out to + 人' の形で使うのが基本。"},
+  {rank:3, verb:"set", particle:"up", ja:"設定する・準備する・お膳立てする", type:"sep", register:"both",
+    meaning:"To arrange or prepare; to schedule (a meeting); to install.",
+    ex:[{en:"Let's set up a call for next week.", ja:"来週通話をセッティングしよう。"},{en:"I set the meeting up with marketing.", ja:"マーケティングと会議をセットした。"}],
+    note:"🔀 分離可: set it up (○) / set up it (✕)"},
+  {rank:4, verb:"look", particle:"into", ja:"調査する・調べる", type:"insep", register:"both",
+    meaning:"To investigate or examine.",
+    ex:[{en:"I'll look into the issue immediately.", ja:"すぐにその問題を調べます。"},{en:"We're looking into entering the Korean market.", ja:"韓国市場参入を検討している。"}],
+    note:"🔗 分離不可: look into it (○) / look it into (✕)"},
+  {rank:5, verb:"come up with", particle:"", ja:"思いつく・考え出す", type:"insep", register:"both",
+    meaning:"To produce or invent (an idea, plan, solution).",
+    ex:[{en:"Can you come up with a solution by Friday?", ja:"金曜までに解決策を考えられる？"},{en:"She came up with a brilliant proposal.", ja:"彼女は素晴らしい提案を思いついた。"}],
+    note:"🔗 3語句動詞。常に分離不可。"},
+  {rank:6, verb:"work", particle:"on", ja:"取り組む・作業する", type:"insep", register:"both",
+    meaning:"To be engaged in an activity or task.",
+    ex:[{en:"I'm working on the budget.", ja:"予算の作業をしている。"},{en:"Let's work on this together.", ja:"一緒に取り組みましょう。"}],
+    note:"💡 進行形でよく使う: I'm working on it = 取り組み中"},
+  {rank:7, verb:"figure", particle:"out", ja:"理解する・解決する", type:"sep", register:"both",
+    meaning:"To understand by thinking; to solve.",
+    ex:[{en:"Let me figure out the timeline.", ja:"スケジュールを考えてみる。"},{en:"We need to figure this out by EOD.", ja:"今日中にこれを解決する必要がある。"}],
+    note:"🔀 分離可: figure it out (○)"},
+  {rank:8, verb:"find", particle:"out", ja:"判明する・見つけ出す", type:"sep", register:"both",
+    meaning:"To discover information.",
+    ex:[{en:"I'll find out and let you know.", ja:"調べてお知らせします。"},{en:"How did you find that out?", ja:"どうやってそれを知ったの？"}],
+    note:"🔀 分離可。代名詞は必ず間に: find it out"},
+  {rank:9, verb:"deal", particle:"with", ja:"対処する・取り扱う", type:"insep", register:"both",
+    meaning:"To handle a problem, situation, or person.",
+    ex:[{en:"How do you deal with difficult clients?", ja:"難しいクライアントにどう対応する？"},{en:"I'll deal with it.", ja:"私が対処します。"}],
+    note:"🔗 分離不可。最頻出ビジネス句動詞の一つ。"},
+  {rank:10, verb:"point", particle:"out", ja:"指摘する", type:"sep", register:"formal",
+    meaning:"To direct attention to something; to mention.",
+    ex:[{en:"She pointed out a flaw in the analysis.", ja:"彼女は分析の欠陥を指摘した。"},{en:"As you pointed out, we need more data.", ja:"あなたが指摘したように、もっとデータが必要だ。"}],
+    note:"🔀 分離可。'point out that S+V' の形も頻出。"},
+  {rank:11, verb:"carry", particle:"out", ja:"実行する・遂行する", type:"sep", register:"formal",
+    meaning:"To complete or perform a task or plan.",
+    ex:[{en:"We carried out the survey last month.", ja:"先月アンケートを実施した。"},{en:"The plan was carried out successfully.", ja:"計画は成功裏に実行された。"}],
+    note:"🔀 分離可。フォーマル度高め（execute と同義）。"},
+  {rank:12, verb:"take", particle:"over", ja:"引き継ぐ・買収する", type:"sep", register:"both",
+    meaning:"To assume control or responsibility; to acquire.",
+    ex:[{en:"She'll take over the team next month.", ja:"彼女が来月チームを引き継ぐ。"},{en:"They took over the smaller company.", ja:"彼らは小さい会社を買収した。"}],
+    note:"🔀 分離可。takeover（名詞）は買収。"},
+  {rank:13, verb:"catch", particle:"up", ja:"追いつく・近況報告する", type:"intrans", register:"both",
+    meaning:"To reach the same level; to share recent news.",
+    ex:[{en:"Let's catch up over coffee.", ja:"コーヒーでも飲みながら話そう。"},{en:"I need to catch up on emails.", ja:"メールに追いつかないと。"}],
+    note:"💡 'catch up on + 物' / 'catch up with + 人' を区別"},
+  {rank:14, verb:"look forward to", particle:"", ja:"楽しみにする", type:"insep", register:"formal",
+    meaning:"To anticipate with pleasure.",
+    ex:[{en:"I look forward to hearing from you.", ja:"ご連絡をお待ちしております。"},{en:"Looking forward to our meeting next week.", ja:"来週の会議を楽しみにしています。"}],
+    note:"⚠️ to の後は必ず動名詞 (Ving)！'to hear' は ✕、'to hearing' が ○"},
+  {rank:15, verb:"break", particle:"down", ja:"分解する・内訳を出す・故障する", type:"sep", register:"both",
+    meaning:"To divide into parts; to analyze; to stop functioning.",
+    ex:[{en:"Could you break down the costs?", ja:"コストの内訳を出してもらえる？"},{en:"The system broke down last night.", ja:"システムが昨夜故障した。"}],
+    note:"🔀 'break it down' で分離可。breakdown（名詞）は内訳・故障。"},
+  {rank:16, verb:"roll", particle:"out", ja:"展開する・開始する", type:"sep", register:"both",
+    meaning:"To launch or introduce a new product, service, or initiative.",
+    ex:[{en:"We're rolling out the new system in June.", ja:"6月に新システムを展開する。"},{en:"They rolled it out across all stores.", ja:"全店舗で展開した。"}],
+    note:"🔀 分離可。rollout（名詞）は展開・本格始動。"},
+  {rank:17, verb:"scale", particle:"up", ja:"規模を拡大する", type:"sep", register:"formal",
+    meaning:"To increase the size or volume of operations.",
+    ex:[{en:"It's time to scale up production.", ja:"生産を拡大する時期だ。"},{en:"We can scale this up easily.", ja:"これは簡単に拡大できる。"}],
+    note:"🔀 反対: scale down（縮小）/ scale back（控える）"},
+  {rank:18, verb:"bring", particle:"up", ja:"話題に出す・持ち出す", type:"sep", register:"both",
+    meaning:"To mention or introduce a topic.",
+    ex:[{en:"He brought up an interesting point.", ja:"彼は興味深い点を持ち出した。"},{en:"Don't bring it up in the meeting.", ja:"会議でそれを持ち出さないで。"}],
+    note:"🔀 分離可。代名詞は必ず間に。"},
+  {rank:19, verb:"put", particle:"off", ja:"延期する", type:"sep", register:"both",
+    meaning:"To postpone or delay.",
+    ex:[{en:"We had to put off the launch.", ja:"立ち上げを延期せざるを得なかった。"},{en:"Don't put it off any longer.", ja:"これ以上延期しないで。"}],
+    note:"🔀 分離可。postpone と同義だが put off の方が口語的。"},
+  {rank:20, verb:"call", particle:"off", ja:"中止する・取り消す", type:"sep", register:"both",
+    meaning:"To cancel an event or plan.",
+    ex:[{en:"We had to call off the meeting.", ja:"会議を中止せざるを得なかった。"},{en:"They called the deal off.", ja:"その契約をキャンセルした。"}],
+    note:"🔀 分離可。cancel より緊急感がある。"},
+  {rank:21, verb:"wrap", particle:"up", ja:"まとめる・終える", type:"sep", register:"both",
+    meaning:"To finish or conclude.",
+    ex:[{en:"Let's wrap up the meeting.", ja:"会議を終わりにしよう。"},{en:"I need to wrap this up by 5.", ja:"5時までにこれを終わらせないと。"}],
+    note:"🔀 分離可。会議の終わりに最頻出。"},
+  {rank:22, verb:"sign", particle:"off", ja:"承認する・退出する", type:"intrans", register:"both",
+    meaning:"To formally approve; to log out or end communication.",
+    ex:[{en:"The director signed off on the budget.", ja:"部長が予算を承認した。"},{en:"I'm signing off for the day.", ja:"今日はもう退社します。"}],
+    note:"💡 'sign off on + 物' = 〜を承認する"},
+  {rank:23, verb:"push", particle:"back", ja:"反対する・延期を求める", type:"intrans", register:"both",
+    meaning:"To resist a decision; to delay something.",
+    ex:[{en:"I'd like to push back on that timeline.", ja:"そのスケジュールに反対したい。"},{en:"Can we push back the deadline?", ja:"締切を延ばせる？"}],
+    note:"💡 文脈で「反対」と「延期」の意味が変わる。"},
+  {rank:24, verb:"follow", particle:"through", ja:"最後までやり通す・実行に移す", type:"intrans", register:"formal",
+    meaning:"To complete what was started; to execute on a commitment.",
+    ex:[{en:"We need to follow through on our promises.", ja:"約束を最後まで守る必要がある。"},{en:"He always follows through.", ja:"彼は常にやり遂げる。"}],
+    note:"💡 'follow through on/with + 物' で使う。"},
+  {rank:25, verb:"iron", particle:"out", ja:"問題を解決する・調整する", type:"sep", register:"both",
+    meaning:"To resolve issues or smooth out details.",
+    ex:[{en:"Let's iron out the details next week.", ja:"来週詳細を詰めよう。"},{en:"We need to iron this out before launch.", ja:"立ち上げ前にこれを解決しないと。"}],
+    note:"🔀 分離可。アイロンで皺を伸ばすイメージ。"},
+  {rank:26, verb:"sort", particle:"out", ja:"整理する・解決する", type:"sep", register:"both",
+    meaning:"To organize; to resolve a problem.",
+    ex:[{en:"I'll sort it out by tomorrow.", ja:"明日までに片付けます。"},{en:"Let me sort out the schedule.", ja:"スケジュールを整理させて。"}],
+    note:"🔀 分離可。イギリス英語でより頻出。"},
+  {rank:27, verb:"stand", particle:"out", ja:"際立つ・目立つ", type:"intrans", register:"both",
+    meaning:"To be noticeably better or different.",
+    ex:[{en:"This proposal really stands out.", ja:"この提案は本当に際立っている。"},{en:"What makes us stand out from competitors?", ja:"何が我々を競合から差別化するか？"}],
+    note:"💡 名詞 standout = 傑出した人/物"},
+  {rank:28, verb:"take", particle:"on", ja:"引き受ける・採用する", type:"sep", register:"both",
+    meaning:"To accept responsibility; to hire.",
+    ex:[{en:"I'll take on this project.", ja:"このプロジェクトを引き受ける。"},{en:"We took on three new hires.", ja:"3人新規採用した。"}],
+    note:"🔀 分離可。'take on water' = 浸水するなど多義語。"},
+  {rank:29, verb:"step", particle:"down", ja:"辞任する・退任する", type:"intrans", register:"formal",
+    meaning:"To resign from a position.",
+    ex:[{en:"The CEO stepped down last week.", ja:"CEOが先週辞任した。"},{en:"She'll step down at year-end.", ja:"年末に退任する。"}],
+    note:"💡 'step down as + 役職' / 'step down from + 役職'"},
+  {rank:30, verb:"opt", particle:"in", ja:"参加する・選択する", type:"intrans", register:"formal",
+    meaning:"To choose to participate.",
+    ex:[{en:"Customers can opt in to receive emails.", ja:"顧客はメール受信を選択できる。"},{en:"I'd like to opt in to the program.", ja:"そのプログラムに参加したい。"}],
+    note:"💡 反対: opt out（離脱する）"},
+  {rank:31, verb:"roll", particle:"back", ja:"撤回する・元に戻す", type:"sep", register:"both",
+    meaning:"To reverse or undo a change.",
+    ex:[{en:"We had to roll back the price increase.", ja:"値上げを撤回せざるを得なかった。"},{en:"Let's roll it back to last week's version.", ja:"先週のバージョンに戻そう。"}],
+    note:"🔀 分離可。rollback（名詞）は撤回・後退。"},
+  {rank:32, verb:"lay", particle:"off", ja:"解雇する・一時帰休にする", type:"sep", register:"formal",
+    meaning:"To terminate employment, often due to business reasons.",
+    ex:[{en:"They laid off 200 employees.", ja:"200人を解雇した。"},{en:"I was laid off last quarter.", ja:"前四半期に解雇された。"}],
+    note:"⚠️ layoff（名詞）= 解雇。fire より企業側都合のニュアンス。"},
+  {rank:33, verb:"hand", particle:"in", ja:"提出する", type:"sep", register:"both",
+    meaning:"To submit something to someone in authority.",
+    ex:[{en:"Please hand in your reports by Friday.", ja:"金曜までにレポートを提出してください。"},{en:"He handed in his resignation.", ja:"彼は辞表を提出した。"}],
+    note:"🔀 分離可。submit よりやや口語的。"},
+  {rank:34, verb:"weigh", particle:"in", ja:"意見を述べる・参戦する", type:"intrans", register:"both",
+    meaning:"To contribute one's opinion to a discussion.",
+    ex:[{en:"Could you weigh in on this proposal?", ja:"この提案について意見をもらえる？"},{en:"Marketing weighed in with concerns.", ja:"マーケが懸念を述べた。"}],
+    note:"💡 'weigh in on + 議題' で使う。"},
+  {rank:35, verb:"zero in on", particle:"", ja:"焦点を絞る・特定する", type:"insep", register:"both",
+    meaning:"To focus attention on a specific target.",
+    ex:[{en:"Let's zero in on the Asia market.", ja:"アジア市場に焦点を絞ろう。"},{en:"We zeroed in on the root cause.", ja:"根本原因を特定した。"}],
+    note:"🔗 3語句動詞。狙撃のスコープを絞るイメージ。"},
+  {rank:36, verb:"tap", particle:"into", ja:"活用する・引き出す", type:"insep", register:"both",
+    meaning:"To make use of a resource or potential.",
+    ex:[{en:"We need to tap into the Gen Z market.", ja:"Z世代市場を活用する必要がある。"},{en:"He taps into his team's expertise.", ja:"彼はチームの専門性を活用する。"}],
+    note:"🔗 分離不可。木に蛇口を付けるイメージ。"},
+  {rank:37, verb:"drill", particle:"down", ja:"掘り下げる・詳細に分析する", type:"intrans", register:"formal",
+    meaning:"To examine something in detail.",
+    ex:[{en:"Let's drill down into the data.", ja:"データを掘り下げよう。"},{en:"We drilled down on the key drivers.", ja:"主要要因を詳細分析した。"}],
+    note:"💡 'drill down into/on + 物' で使う。"},
+  {rank:38, verb:"branch", particle:"out", ja:"事業を多角化する・拡大する", type:"intrans", register:"both",
+    meaning:"To expand into new areas.",
+    ex:[{en:"We're branching out into delivery.", ja:"デリバリーに事業拡大している。"},{en:"It's time to branch out.", ja:"多角化する時期だ。"}],
+    note:"💡 木が枝を伸ばすイメージ。"},
+  {rank:39, verb:"scale", particle:"back", ja:"縮小する・抑える", type:"sep", register:"formal",
+    meaning:"To reduce the size or scope.",
+    ex:[{en:"We scaled back marketing spend.", ja:"マーケ支出を抑えた。"},{en:"Let's scale this back for now.", ja:"今は縮小しよう。"}],
+    note:"🔀 反対: scale up（拡大）"},
+  {rank:40, verb:"hand", particle:"over", ja:"引き渡す", type:"sep", register:"both",
+    meaning:"To transfer responsibility or possession.",
+    ex:[{en:"I'll hand over the project to Sarah.", ja:"プロジェクトをSarahに引き渡す。"},{en:"Hand it over to me.", ja:"こちらに渡して。"}],
+    note:"🔀 分離可。handover（名詞）= 引き継ぎ。"},
+  {rank:41, verb:"check", particle:"in", ja:"進捗確認する・到着連絡する", type:"intrans", register:"both",
+    meaning:"To briefly contact for an update; to register arrival.",
+    ex:[{en:"Let me check in with the team.", ja:"チームに確認する。"},{en:"Just checking in to see how you're doing.", ja:"様子を伺うために連絡しました。"}],
+    note:"💡 'check in with + 人' / 'check in on + 状況' を区別"},
+  {rank:42, verb:"drop", particle:"off", ja:"減少する・降ろす", type:"intrans", register:"both",
+    meaning:"To decrease; to deliver or leave something/someone.",
+    ex:[{en:"Sales dropped off in Q3.", ja:"Q3に売上が減少した。"},{en:"I'll drop off the documents.", ja:"書類を届けます。"}],
+    note:"⚠️ 自動詞「減少」と他動詞「降ろす」で使い分け。"},
+  {rank:43, verb:"pick", particle:"up", ja:"拾う・回復する・身につける", type:"sep", register:"both",
+    meaning:"To collect; to recover; to acquire (a skill).",
+    ex:[{en:"Sales picked up in December.", ja:"12月に売上が回復した。"},{en:"I picked up some Korean on the trip.", ja:"出張で韓国語を少し覚えた。"}],
+    note:"🔀 分離可。最も多義な句動詞の一つ。"},
+  {rank:44, verb:"cut", particle:"back", ja:"削減する・切り詰める", type:"intrans", register:"both",
+    meaning:"To reduce spending or consumption.",
+    ex:[{en:"We need to cut back on travel.", ja:"出張を減らす必要がある。"},{en:"They cut back staff by 10%.", ja:"スタッフを10%削減した。"}],
+    note:"💡 'cut back on + 物' で「〜を減らす」"},
+  {rank:45, verb:"hold", particle:"off", ja:"保留にする・控える", type:"intrans", register:"both",
+    meaning:"To delay; to refrain from doing something.",
+    ex:[{en:"Let's hold off on a decision.", ja:"決定を保留しよう。"},{en:"I'd hold off until we have more data.", ja:"データが揃うまで控えるね。"}],
+    note:"💡 'hold off on + 物/Ving' で使う。"},
+  {rank:46, verb:"ramp", particle:"up", ja:"加速する・拡大する", type:"sep", register:"both",
+    meaning:"To increase intensity, level, or production.",
+    ex:[{en:"Let's ramp up our marketing efforts.", ja:"マーケティングを加速しよう。"},{en:"We're ramping up production for Q4.", ja:"Q4に向けて生産を拡大中。"}],
+    note:"🔀 分離可。Idiom Master にも収録。"},
+  {rank:47, verb:"kick", particle:"off", ja:"開始する・キックオフする", type:"intrans", register:"both",
+    meaning:"To start an event or project.",
+    ex:[{en:"Let's kick off the meeting.", ja:"会議を始めよう。"},{en:"The project kicks off next Monday.", ja:"プロジェクトは来週月曜開始。"}],
+    note:"💡 kickoff（名詞）= 開始・キックオフ会議"},
+  {rank:48, verb:"wind", particle:"down", ja:"縮小する・終える", type:"intrans", register:"both",
+    meaning:"To gradually reduce activity or come to an end.",
+    ex:[{en:"The campaign is winding down.", ja:"キャンペーンが終息に向かっている。"},{en:"I'm winding down for the day.", ja:"そろそろ仕事を切り上げます。"}],
+    note:"💡 wind /waɪnd/ と発音注意（風 wind /wɪnd/ ではない）"},
+  {rank:49, verb:"turn", particle:"down", ja:"断る・却下する", type:"sep", register:"both",
+    meaning:"To reject or refuse.",
+    ex:[{en:"They turned down our proposal.", ja:"提案は却下された。"},{en:"I had to turn the offer down.", ja:"その申し出は断らざるを得なかった。"}],
+    note:"🔀 分離可。reject よりやや柔らかい。"},
+  {rank:50, verb:"go", particle:"over", ja:"見直す・確認する", type:"insep", register:"both",
+    meaning:"To review or examine carefully.",
+    ex:[{en:"Let's go over the agenda.", ja:"議題を確認しよう。"},{en:"I went over the report twice.", ja:"レポートを2回見直した。"}],
+    note:"🔗 分離不可: go over it (○) / go it over (✕)"},
+];
+
+// ===== STATE =====
+let mastery = JSON.parse(localStorage.getItem('pv_mastery') || '{}');
+let currentFilter = 'all';
+let currentMode = 'browse';
+let quizState = null;
+let fillState = null;
+
+function saveMastery(){ localStorage.setItem('pv_mastery', JSON.stringify(mastery)); }
+function getLevel(rank){ return mastery[rank] || 0; }
+function setLevel(rank, level){ mastery[rank] = level; saveMastery(); updateStats(); }
+
+function fullEn(p){ return p.particle ? `${p.verb} ${p.particle}` : p.verb; }
+function styledEn(p){
+  if(!p.particle) return `<span class="verb-part">${p.verb}</span>`;
+  return `<span class="verb-part">${p.verb}</span> <span class="particle-part">${p.particle}</span>`;
+}
+
+// ===== BROWSE =====
+function updateStats(){
+  const known = Object.values(mastery).filter(v => v >= 1).length;
+  const mastered = Object.values(mastery).filter(v => v >= 3).length;
+  document.getElementById('stat-known').textContent = known;
+  document.getElementById('stat-mastered').textContent = mastered;
+}
+
+function renderList(){
+  const list = document.getElementById('list');
+  let filtered = PV;
+  if(currentFilter === 'new') filtered = PV.filter(i => getLevel(i.rank) === 0);
+  else if(currentFilter === 'learning') filtered = PV.filter(i => getLevel(i.rank) > 0 && getLevel(i.rank) < 3);
+  else if(currentFilter === 'mastered') filtered = PV.filter(i => getLevel(i.rank) >= 3);
+  else if(currentFilter === 'sep') filtered = PV.filter(i => i.type === 'sep');
+  else if(currentFilter === 'insep') filtered = PV.filter(i => i.type === 'insep');
+  if(filtered.length === 0){
+    list.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:13px">該当する句動詞はありません</div>`;
+    return;
+  }
+  list.innerHTML = filtered.map(i => {
+    const level = getLevel(i.rank);
+    const dots = [0,1,2,3].map(d => `<span class="dot ${d<level?'filled':''}"></span>`).join('');
+    return `<div class="pv-card" onclick="openModal(${i.rank})">
+      <div class="pv-info">
+        <div class="pv-en"><span class="pv-rank">${i.rank}</span>${styledEn(i)}</div>
+        <p class="pv-ja">${i.ja}</p>
+      </div>
+      <div class="mastery-dots">${dots}</div>
+    </div>`;
+  }).join('');
+}
+
+function filterPV(f){
+  currentFilter = f;
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.filter === f));
+  renderList();
+}
+
+function openModal(rank){
+  const i = PV.find(x => x.rank === rank);
+  const level = getLevel(rank);
+  const typeLabel = i.type === 'sep' ? '🔀 Separable（分離可）' : i.type === 'insep' ? '🔗 Inseparable（分離不可）' : '🔵 Intransitive（自動詞）';
+  const regLabel = i.register === 'formal' ? 'Formal' : i.register === 'casual' ? 'Casual' : 'Both';
+  document.getElementById('modal-content').innerHTML = `
+    <h2>${styledEn(i).replace(/verb-part/g,'verb').replace(/particle-part/g,'particle')}</h2>
+    <div class="modal-tags">
+      <span class="tag">#${i.rank}</span>
+      <span class="tag ${i.type}">${typeLabel}</span>
+      <span class="tag ${i.register}">${regLabel}</span>
+    </div>
+    <div class="modal-meaning"><strong>意味:</strong> ${i.ja}<br><span style="color:var(--muted);font-size:12px">${i.meaning}</span></div>
+    <div class="modal-section">
+      <h3>📌 例文（ビジネス）</h3>
+      <ul class="ex-list">
+        ${i.ex.map(e => `<li>${e.en}<span class="ja">${e.ja}</span></li>`).join('')}
+      </ul>
+    </div>
+    <div class="modal-section">
+      <h3>💡 注意ポイント</h3>
+      <div class="note-box">${i.note}</div>
+    </div>
+    <div class="modal-section">
+      <h3>📊 習得レベル</h3>
+      <div class="mastery-control">
+        <button class="mast-btn ${level===0?'active':''}" onclick="setLevelAndRefresh(${rank},0)">未学習</button>
+        <button class="mast-btn ${level===1?'active':''}" onclick="setLevelAndRefresh(${rank},1)">📖 学習中</button>
+        <button class="mast-btn ${level===2?'active':''}" onclick="setLevelAndRefresh(${rank},2)">👍 ほぼ覚えた</button>
+        <button class="mast-btn ${level===3?'active':''}" onclick="setLevelAndRefresh(${rank},3)">✨ マスター</button>
+      </div>
+    </div>
+    <button class="modal-close" onclick="closeModal()">閉じる</button>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+
+function setLevelAndRefresh(rank, level){
+  setLevel(rank, level);
+  openModal(rank);
+  renderList();
+}
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+
+// ===== QUIZ (Meaning Match) =====
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function startQuiz(){
+  quizState = {
+    questions: shuffle(PV).slice(0, 10),
+    current: 0,
+    correct: 0,
+  };
+  renderQuiz();
+}
+
+function renderQuiz(){
+  const c = document.getElementById('quiz-container');
+  if(quizState.current >= quizState.questions.length){
+    const pct = Math.round(quizState.correct / quizState.questions.length * 100);
+    let badge='🎯', msg='お疲れ様！';
+    if(pct >= 90){badge='🏆'; msg='完璧！句動詞マスター';}
+    else if(pct >= 70){badge='✨'; msg='よくできた！';}
+    else if(pct >= 50){badge='👍'; msg='もう一歩！';}
+    else {badge='📚'; msg='繰り返し練習しよう';}
+    c.innerHTML = `<div class="quiz-card quiz-result">
+      <div style="font-size:48px">${badge}</div>
+      <h2>${msg}</h2>
+      <div class="score">${quizState.correct}/${quizState.questions.length}</div>
+      <div style="color:var(--muted);font-size:13px">正答率 ${pct}%</div>
+      <button class="restart" onclick="startQuiz()">もう一度</button>
+    </div>`;
+    return;
+  }
+  const q = quizState.questions[quizState.current];
+  const wrong = shuffle(PV.filter(i => i.rank !== q.rank)).slice(0, 3);
+  const opts = shuffle([q, ...wrong]);
+  const pct = Math.round(quizState.current / quizState.questions.length * 100);
+  c.innerHTML = `<div class="quiz-card">
+    <div class="quiz-progress"><span>Q${quizState.current+1} / ${quizState.questions.length}</span><span>${quizState.correct} 正解</span></div>
+    <div class="quiz-bar"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
+    <p class="quiz-q">"${styledEn(q).replace(/verb-part/g,'verb-h').replace(/particle-part/g,'particle-h')}"</p>
+    <p class="quiz-context">この句動詞の意味は？</p>
+    <div class="quiz-options">
+      ${opts.map(o => `<button class="quiz-opt" onclick="answerQuiz(${o.rank})">${o.ja}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="qfb"></div>
+    <button class="quiz-next" id="qnext" onclick="nextQuiz()">次へ →</button>
+  </div>`;
+}
+
+function answerQuiz(chosenRank){
+  const q = quizState.questions[quizState.current];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o => {
+    o.disabled = true;
+    if(o.textContent === q.ja) o.classList.add('correct');
+    else if(o.getAttribute('onclick').includes(`(${chosenRank})`)) o.classList.add('wrong');
+  });
+  const fb = document.getElementById('qfb');
+  if(chosenRank === q.rank){
+    quizState.correct++;
+    fb.className = 'quiz-feedback show ok';
+    fb.innerHTML = `✅ 正解！<br><strong>${fullEn(q)}</strong> = ${q.ja}<br><em style="font-size:12px;color:var(--muted)">${q.ex[0].en}</em>`;
+    if(getLevel(q.rank) < 1) setLevel(q.rank, 1);
+  } else {
+    fb.className = 'quiz-feedback show ng';
+    fb.innerHTML = `❌ 正解は <strong>${q.ja}</strong><br><strong>${fullEn(q)}</strong>: ${q.meaning}<br><em style="font-size:12px;color:var(--muted)">${q.ex[0].en}</em>`;
+  }
+  document.getElementById('qnext').classList.add('show');
+}
+
+function nextQuiz(){
+  quizState.current++;
+  renderQuiz();
+}
+
+// ===== FILL-IN MODE =====
+function startFill(){
+  fillState = {
+    questions: shuffle(PV.filter(p => p.particle)).slice(0, 10),
+    current: 0,
+    correct: 0,
+  };
+  renderFill();
+}
+
+function renderFill(){
+  const c = document.getElementById('fill-container');
+  if(fillState.current >= fillState.questions.length){
+    const pct = Math.round(fillState.correct / fillState.questions.length * 100);
+    let badge='🎯', msg='お疲れ様！';
+    if(pct >= 90){badge='🏆'; msg='完璧！';}
+    else if(pct >= 70){badge='✨'; msg='よくできた！';}
+    else {badge='📚'; msg='繰り返し練習しよう';}
+    c.innerHTML = `<div class="quiz-card quiz-result">
+      <div style="font-size:48px">${badge}</div>
+      <h2>${msg}</h2>
+      <div class="score">${fillState.correct}/${fillState.questions.length}</div>
+      <div style="color:var(--muted);font-size:13px">正答率 ${pct}%</div>
+      <button class="restart" onclick="startFill()">もう一度</button>
+    </div>`;
+    return;
+  }
+  const q = fillState.questions[fillState.current];
+  // Get a particle distractor pool
+  const particlePool = ['up','down','out','in','on','off','over','through','into','with','for','back','at','to'];
+  const wrongParticles = shuffle(particlePool.filter(p => p !== q.particle)).slice(0, 3);
+  const particleOpts = shuffle([q.particle, ...wrongParticles]);
+
+  // Build sentence with verb shown, particle blanked
+  const sentence = q.ex[0].en.replace(new RegExp(`\\b${q.verb}(s|ed|ing)?\\b\\s+${q.particle}\\b`, 'i'), (match, suf) => {
+    return `<strong>${q.verb}${suf||''}</strong> <span class="particle-blank">?</span>`;
+  });
+
+  const pct = Math.round(fillState.current / fillState.questions.length * 100);
+  c.innerHTML = `<div class="fill-card">
+    <div class="quiz-progress"><span>Q${fillState.current+1} / ${fillState.questions.length}</span><span>${fillState.correct} 正解</span></div>
+    <div class="quiz-bar"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
+    <p class="fill-sentence">${sentence}<span class="ja">${q.ex[0].ja}</span></p>
+    <p style="font-size:12px;color:var(--muted);margin:0 0 10px">💡 動詞 <strong style="color:var(--primary)">${q.verb}</strong> と組み合わせる正しい前置詞・副詞は？</p>
+    <div class="quiz-options">
+      ${particleOpts.map(p => `<button class="quiz-opt" onclick="answerFill('${p}')">${p}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="ffb"></div>
+    <button class="quiz-next" id="fnext" onclick="nextFill()">次へ →</button>
+  </div>`;
+}
+
+function answerFill(chosen){
+  const q = fillState.questions[fillState.current];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o => {
+    o.disabled = true;
+    if(o.textContent === q.particle) o.classList.add('correct');
+    else if(o.textContent === chosen) o.classList.add('wrong');
+  });
+  const fb = document.getElementById('ffb');
+  if(chosen === q.particle){
+    fillState.correct++;
+    fb.className = 'quiz-feedback show ok';
+    fb.innerHTML = `✅ 正解！<br><strong>${fullEn(q)}</strong> = ${q.ja}`;
+    if(getLevel(q.rank) < 1) setLevel(q.rank, 1);
+  } else {
+    fb.className = 'quiz-feedback show ng';
+    fb.innerHTML = `❌ 正解は <strong>${q.particle}</strong><br><strong>${fullEn(q)}</strong> = ${q.ja}`;
+  }
+  document.getElementById('fnext').classList.add('show');
+}
+
+function nextFill(){
+  fillState.current++;
+  renderFill();
+}
+
+// ===== MODE SWITCH =====
+function switchMode(mode){
+  currentMode = mode;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  document.getElementById('browse-view').style.display = mode === 'browse' ? '' : 'none';
+  document.getElementById('quiz-view').style.display = mode === 'quiz' ? '' : 'none';
+  document.getElementById('fill-view').style.display = mode === 'fill' ? '' : 'none';
+  if(mode === 'quiz') startQuiz();
+  if(mode === 'fill') startFill();
+}
+
+// ===== INIT =====
+updateStats();
+renderList();
+</script>
+</body>
+</html>

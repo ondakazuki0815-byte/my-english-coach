@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Idiom Master">
+<meta name="theme-color" content="#1F3A5F">
+<title>Idiom Master — My English Coach</title>
+<style>
+:root{
+  --primary:#1F3A5F; --accent:#C5563A; --accent-soft:#E8826B;
+  --sand:#F4E9DD; --bg:#FAF8F4; --card:#FFFFFF;
+  --text:#2A2A2A; --muted:#6B6B6B; --border:#E5DFD3;
+  --good:#2E7E73; --warn:#A07000; --bad:#A03A2A;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+.container{max-width:600px;margin:0 auto;padding:18px 16px 60px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.home-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:99px;text-decoration:none;color:var(--primary);font-weight:600;font-size:13px;box-shadow:var(--shadow)}
+.title{margin:0;font-size:20px;color:var(--primary);font-weight:700}
+.title small{color:var(--muted);font-weight:500;font-size:12px;margin-left:6px}
+.tabs{display:flex;gap:6px;background:var(--card);padding:5px;border-radius:12px;margin-bottom:14px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.tab{flex:1;padding:10px 8px;text-align:center;border:0;background:transparent;border-radius:8px;font-weight:600;font-size:13px;color:var(--muted);cursor:pointer}
+.tab.active{background:var(--primary);color:#fff}
+.stats-bar{display:flex;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.stat{text-align:center;flex:1}
+.stat .num{font-size:18px;font-weight:800;color:var(--primary)}
+.stat .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+.filter-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{padding:6px 12px;border-radius:99px;background:var(--card);border:1px solid var(--border);font-size:12px;color:var(--muted);cursor:pointer;font-weight:600}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.idiom-list{display:flex;flex-direction:column;gap:8px}
+.idiom-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:14px;cursor:pointer;box-shadow:var(--shadow);
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+}
+.idiom-card:active{transform:scale(0.99)}
+.idiom-info{flex:1;min-width:0}
+.idiom-rank{display:inline-block;width:26px;height:26px;border-radius:6px;background:var(--sand);color:var(--primary);font-weight:800;font-size:11px;text-align:center;line-height:26px;margin-right:8px}
+.idiom-en{font-size:15px;font-weight:700;color:var(--primary);margin:0 0 3px;display:flex;align-items:center}
+.idiom-en .text{flex:1}
+.idiom-ja{font-size:12px;color:var(--muted);margin:0;line-height:1.4}
+.mastery-dots{display:flex;gap:3px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border)}
+.dot.filled{background:var(--accent)}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:18px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;padding:24px 22px}
+.modal h2{margin:0 0 4px;font-size:22px;color:var(--primary);font-weight:800;line-height:1.3}
+.modal-meaning{padding:12px 14px;background:var(--sand);border-radius:10px;margin:12px 0;font-size:13.5px;line-height:1.5;color:var(--text)}
+.modal-meaning strong{color:var(--accent)}
+.modal-section{margin:14px 0}
+.modal-section h3{font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin:0 0 8px;font-weight:700}
+.ex-list{list-style:none;padding:0;margin:0}
+.ex-list li{padding:10px 12px;background:#FAF6EE;border-radius:8px;margin-bottom:6px;font-size:13.5px;line-height:1.5;border-left:3px solid var(--accent)}
+.ex-list li .ja{display:block;color:var(--muted);font-size:11.5px;margin-top:4px}
+.modal-tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.tag{display:inline-block;padding:3px 10px;border-radius:99px;background:var(--sand);color:var(--primary);font-size:11px;font-weight:700}
+.tag.formal{background:#E0E8F2;color:var(--primary)}
+.tag.casual{background:#FFF1D4;color:var(--warn)}
+.tag.both{background:#E8F4E8;color:var(--good)}
+.mastery-control{display:flex;gap:6px;margin:14px 0;justify-content:space-between}
+.mast-btn{flex:1;padding:10px 4px;border:1px solid var(--border);background:var(--card);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);text-align:center}
+.mast-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.modal-close{display:block;width:100%;padding:12px;margin-top:12px;background:var(--primary);color:#fff;border:0;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer}
+
+/* Quiz */
+.quiz-card{background:var(--card);border-radius:14px;padding:22px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:14px}
+.quiz-progress{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600}
+.quiz-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:18px}
+.quiz-bar-fill{height:100%;background:var(--accent);transition:width 0.3s}
+.quiz-q{font-size:18px;line-height:1.5;color:var(--primary);margin:0 0 6px;font-weight:700}
+.quiz-context{font-size:12px;color:var(--muted);margin:0 0 16px;line-height:1.5}
+.quiz-options{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{padding:12px 14px;background:var(--card);border:2px solid var(--border);border-radius:10px;font-size:13.5px;color:var(--text);cursor:pointer;text-align:left;line-height:1.4}
+.quiz-opt:hover{border-color:var(--accent)}
+.quiz-opt.correct{background:#E8F4E8;border-color:var(--good);color:var(--good)}
+.quiz-opt.wrong{background:#FBE0DA;border-color:var(--bad);color:var(--bad)}
+.quiz-feedback{margin-top:14px;padding:12px;border-radius:8px;font-size:13px;line-height:1.5;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:#E8F4E8;color:var(--good);border:1px solid #C0E0BC}
+.quiz-feedback.ng{background:#FBE0DA;color:var(--bad);border:1px solid #F0CABE}
+.quiz-next{display:none;width:100%;padding:14px;margin-top:12px;background:var(--primary);color:#fff;border:0;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer}
+.quiz-next.show{display:block}
+.quiz-result{text-align:center;padding:30px 20px}
+.quiz-result h2{font-size:28px;color:var(--primary);margin:0 0 10px}
+.quiz-result .score{font-size:48px;font-weight:800;color:var(--accent);margin:8px 0}
+.restart{padding:12px 24px;background:var(--primary);color:#fff;border:0;border-radius:99px;font-weight:700;font-size:14px;cursor:pointer;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="topbar">
+    <a class="home-btn" href="index.html">← Home</a>
+    <h1 class="title">💼 Idiom Master <small>Top 50 by frequency</small></h1>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-mode="browse" onclick="switchMode('browse')">📚 Browse</button>
+    <button class="tab" data-mode="quiz" onclick="switchMode('quiz')">🎯 Quiz</button>
+  </div>
+
+  <div id="browse-view">
+    <div class="stats-bar">
+      <div class="stat"><div class="num" id="stat-total">50</div><div class="lbl">Total</div></div>
+      <div class="stat"><div class="num" id="stat-known">0</div><div class="lbl">Known</div></div>
+      <div class="stat"><div class="num" id="stat-mastered">0</div><div class="lbl">Mastered</div></div>
+    </div>
+    <div class="filter-bar">
+      <span class="chip active" data-filter="all" onclick="filterIdioms('all')">All</span>
+      <span class="chip" data-filter="new" onclick="filterIdioms('new')">🆕 New</span>
+      <span class="chip" data-filter="learning" onclick="filterIdioms('learning')">📖 Learning</span>
+      <span class="chip" data-filter="mastered" onclick="filterIdioms('mastered')">✨ Mastered</span>
+    </div>
+    <div class="idiom-list" id="list"></div>
+  </div>
+
+  <div id="quiz-view" style="display:none">
+    <div id="quiz-container"></div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+// ===== DATA: Top 50 business idioms by frequency =====
+const IDIOMS = [
+  {rank:1, en:"touch base", ja:"連絡を取る・近況確認", meaning:"To briefly contact someone, often to check in or update.",
+    register:"both", ex:[{en:"Let's touch base next week to discuss the project.",ja:"来週、プロジェクトについて連絡を取り合いましょう。"},{en:"Just touching base to see how things are going.",ja:"進捗を確認したくて連絡しました。"}]},
+  {rank:2, en:"on the same page", ja:"認識が一致している", meaning:"In agreement; sharing the same understanding.",
+    register:"both", ex:[{en:"Are we all on the same page about Q3 priorities?",ja:"Q3の優先事項について全員認識が一致してる？"},{en:"Let me make sure we're on the same page.",ja:"認識を合わせましょう。"}]},
+  {rank:3, en:"circle back", ja:"後で再度連絡する", meaning:"To return to a topic or person later.",
+    register:"both", ex:[{en:"I'll circle back on this once I have the data.",ja:"データが揃ったら、これについて改めて連絡します。"},{en:"Let's circle back to this point.",ja:"この点に戻りましょう。"}]},
+  {rank:4, en:"move the needle", ja:"大きな変化をもたらす", meaning:"To have a significant, measurable impact.",
+    register:"both", ex:[{en:"Will this initiative actually move the needle on revenue?",ja:"このイニシアチブで本当に売上が動くか？"},{en:"We need ideas that move the needle.",ja:"大きく動かすアイデアが必要だ。"}]},
+  {rank:5, en:"the bottom line", ja:"要点・最終的な結論", meaning:"The most important fact or final result.",
+    register:"both", ex:[{en:"The bottom line is, we need to cut costs.",ja:"要するに、コスト削減が必要だ。"},{en:"What's the bottom line here?",ja:"結論は何ですか？"}]},
+  {rank:6, en:"keep me posted", ja:"進捗を報告して", meaning:"Please update me as things develop.",
+    register:"both", ex:[{en:"Keep me posted on the negotiation.",ja:"交渉の進捗を教えてください。"},{en:"Will do — I'll keep you posted.",ja:"了解、進捗報告します。"}]},
+  {rank:7, en:"moving forward", ja:"今後は", meaning:"From now on; going forward.",
+    register:"formal", ex:[{en:"Moving forward, all reports must be submitted by Friday.",ja:"今後、全レポートは金曜までに提出。"},{en:"How should we handle this moving forward?",ja:"今後どう対応すべきか？"}]},
+  {rank:8, en:"low-hanging fruit", ja:"簡単に達成できる成果", meaning:"Easy wins; tasks that can be completed easily for quick results.",
+    register:"both", ex:[{en:"Let's start with the low-hanging fruit.",ja:"まずは簡単な成果から手をつけよう。"},{en:"There's a lot of low-hanging fruit in cost reduction.",ja:"コスト削減には簡単に取れる成果が多い。"}]},
+  {rank:9, en:"in the loop", ja:"情報を共有されている状態", meaning:"Informed and included in communications.",
+    register:"both", ex:[{en:"Please keep me in the loop on this.",ja:"これについて情報を共有してください。"},{en:"Make sure marketing is in the loop.",ja:"マーケに必ず情報を共有して。"}]},
+  {rank:10, en:"reach out", ja:"連絡を取る", meaning:"To contact someone, often for the first time or to offer help.",
+    register:"both", ex:[{en:"I'll reach out to the supplier today.",ja:"今日サプライヤーに連絡します。"},{en:"Feel free to reach out anytime.",ja:"いつでも気軽に連絡してください。"}]},
+  {rank:11, en:"think outside the box", ja:"型にとらわれず考える", meaning:"To think creatively, beyond conventional approaches.",
+    register:"both", ex:[{en:"We need to think outside the box on this one.",ja:"これは型破りに考える必要がある。"},{en:"Her proposal really thinks outside the box.",ja:"彼女の提案は本当に発想が斬新だ。"}]},
+  {rank:12, en:"a game changer", ja:"形勢を一変させるもの", meaning:"Something that fundamentally changes a situation or industry.",
+    register:"both", ex:[{en:"AI is a game changer for our industry.",ja:"AIは我々の業界の形勢を一変させる。"},{en:"This deal could be a game changer.",ja:"この契約は状況を一変させ得る。"}]},
+  {rank:13, en:"a no-brainer", ja:"考えるまでもないこと", meaning:"An obvious decision; very easy choice.",
+    register:"casual", ex:[{en:"Investing in this market is a no-brainer.",ja:"この市場への投資は考えるまでもない。"},{en:"It's a no-brainer for the company.",ja:"会社にとって明らかな選択だ。"}]},
+  {rank:14, en:"a win-win", ja:"双方にとって有利", meaning:"A situation that benefits everyone involved.",
+    register:"both", ex:[{en:"This partnership is a win-win.",ja:"このパートナーシップは双方にメリット。"},{en:"Let's find a win-win solution.",ja:"双方にとって良い解決策を見つけよう。"}]},
+  {rank:15, en:"big picture", ja:"全体像", meaning:"The overall view or strategic context.",
+    register:"both", ex:[{en:"Let's not lose sight of the big picture.",ja:"全体像を見失わないように。"},{en:"From a big-picture perspective…",ja:"全体像で見ると…"}]},
+  {rank:16, en:"hit the ground running", ja:"すぐに本格始動する", meaning:"To start a new task with full energy and effectiveness.",
+    register:"both", ex:[{en:"She hit the ground running in her new role.",ja:"彼女は新しい役割ですぐに本格始動した。"},{en:"We need someone who can hit the ground running.",ja:"すぐに動ける人材が必要だ。"}]},
+  {rank:17, en:"give the green light", ja:"承認する・GOサインを出す", meaning:"To approve a project or action.",
+    register:"both", ex:[{en:"The board gave the green light to the merger.",ja:"取締役会は合併を承認した。"},{en:"We're waiting for the green light from legal.",ja:"法務からのGOを待っている。"}]},
+  {rank:18, en:"raise the bar", ja:"水準を上げる", meaning:"To increase the standard of quality or performance.",
+    register:"both", ex:[{en:"This product really raises the bar.",ja:"この製品は水準を大幅に上げる。"},{en:"We need to raise the bar on customer service.",ja:"カスタマーサービスの水準を上げる必要がある。"}]},
+  {rank:19, en:"behind the scenes", ja:"舞台裏で", meaning:"In private; not visible to the public.",
+    register:"both", ex:[{en:"A lot of work goes on behind the scenes.",ja:"舞台裏で多くの作業が進んでいる。"},{en:"He played a key role behind the scenes.",ja:"彼は舞台裏で重要な役割を果たした。"}]},
+  {rank:20, en:"across the board", ja:"全面的に・全体にわたって", meaning:"Affecting everyone or everything.",
+    register:"both", ex:[{en:"Sales increased across the board.",ja:"全部門で売上が増加した。"},{en:"Cost cuts will apply across the board.",ja:"コスト削減は全面的に適用される。"}]},
+  {rank:21, en:"ramp up", ja:"加速する・拡大する", meaning:"To increase the level, intensity, or amount.",
+    register:"both", ex:[{en:"We're ramping up production for Q4.",ja:"Q4に向けて生産を拡大している。"},{en:"Time to ramp up our marketing efforts.",ja:"マーケティングを加速する時期だ。"}]},
+  {rank:22, en:"get up to speed", ja:"最新情報をキャッチアップする", meaning:"To learn the latest information; bring oneself or someone current.",
+    register:"both", ex:[{en:"Let me get you up to speed on the project.",ja:"プロジェクトの最新状況を共有します。"},{en:"I need to get up to speed on the new policy.",ja:"新方針について追いつく必要がある。"}]},
+  {rank:23, en:"run it by [someone]", ja:"〜に確認・相談する", meaning:"To present an idea to someone for feedback or approval.",
+    register:"both", ex:[{en:"Let me run it by my manager first.",ja:"まず上司に相談させて。"},{en:"Run the proposal by legal before sending.",ja:"送る前に法務に確認して。"}]},
+  {rank:24, en:"go the extra mile", ja:"期待以上の努力をする", meaning:"To make a special effort beyond what's expected.",
+    register:"both", ex:[{en:"Our team always goes the extra mile.",ja:"我々のチームは常に期待以上の努力をする。"},{en:"She went the extra mile for the client.",ja:"彼女はクライアントのために尽くした。"}]},
+  {rank:25, en:"in the pipeline", ja:"進行中・準備中", meaning:"Being planned or developed but not yet finished.",
+    register:"both", ex:[{en:"We have several deals in the pipeline.",ja:"いくつかの案件が進行中だ。"},{en:"What's in the pipeline for next quarter?",ja:"来四半期の予定は何ですか？"}]},
+  {rank:26, en:"close the loop", ja:"フォローアップして完結させる", meaning:"To follow up and ensure something is finalized.",
+    register:"formal", ex:[{en:"Please close the loop with the client by Friday.",ja:"金曜までにクライアントとの件を完結させて。"},{en:"Just closing the loop on our last conversation.",ja:"前回の話のフォローアップです。"}]},
+  {rank:27, en:"take ownership", ja:"主体的に責任を持つ", meaning:"To accept responsibility for a task or outcome.",
+    register:"formal", ex:[{en:"Take ownership of your project.",ja:"自分のプロジェクトに責任を持って。"},{en:"He took ownership of the issue immediately.",ja:"彼は即座に問題の責任を引き受けた。"}]},
+  {rank:28, en:"by the book", ja:"規則通りに", meaning:"Strictly following rules and procedures.",
+    register:"both", ex:[{en:"We need to do this by the book.",ja:"これは規則通りに進める必要がある。"},{en:"She always plays by the book.",ja:"彼女は常に規則通りに動く。"}]},
+  {rank:29, en:"crunch numbers", ja:"数字を細かく計算する", meaning:"To analyze numerical data carefully.",
+    register:"casual", ex:[{en:"I'll crunch the numbers and get back to you.",ja:"数字を計算して連絡します。"},{en:"Finance is crunching the numbers now.",ja:"財務が今、数字を分析中。"}]},
+  {rank:30, en:"pain point", ja:"顧客の悩み・課題", meaning:"A specific problem that customers experience.",
+    register:"formal", ex:[{en:"What's the biggest pain point for our customers?",ja:"顧客の最大の課題は何か？"},{en:"This product addresses a real pain point.",ja:"この製品は本当の悩みを解決する。"}]},
+  {rank:31, en:"a rule of thumb", ja:"目安・経験則", meaning:"A general guideline based on experience.",
+    register:"both", ex:[{en:"As a rule of thumb, allocate 20% to marketing.",ja:"目安として、20%をマーケに配分する。"},{en:"A good rule of thumb is to test before scaling.",ja:"スケール前にテストするのが経験則だ。"}]},
+  {rank:32, en:"raise red flags", ja:"危険信号を発する", meaning:"To indicate a warning or potential problem.",
+    register:"formal", ex:[{en:"The audit raised several red flags.",ja:"監査でいくつかの問題が指摘された。"},{en:"This data raises a red flag.",ja:"このデータは危険信号だ。"}]},
+  {rank:33, en:"push back", ja:"反対する・延期を要請する", meaning:"To resist a decision or postpone a deadline.",
+    register:"both", ex:[{en:"I'd like to push back on that proposal.",ja:"その提案には反対したい。"},{en:"Can we push back the deadline by a week?",ja:"締切を1週間延ばせますか？"}]},
+  {rank:34, en:"double down", ja:"さらに注力する・倍賭けする", meaning:"To strongly commit further to a strategy.",
+    register:"both", ex:[{en:"Let's double down on our digital strategy.",ja:"デジタル戦略にさらに注力しよう。"},{en:"They doubled down on the Asia market.",ja:"彼らはアジア市場にさらに賭けた。"}]},
+  {rank:35, en:"hit a wall", ja:"行き詰まる", meaning:"To reach a point where progress stops.",
+    register:"casual", ex:[{en:"We hit a wall in negotiations.",ja:"交渉で行き詰まった。"},{en:"I've hit a wall on this analysis.",ja:"この分析で行き詰まっている。"}]},
+  {rank:36, en:"on the back burner", ja:"優先順位を下げて保留", meaning:"Postponed; not currently the priority.",
+    register:"both", ex:[{en:"That project is on the back burner for now.",ja:"そのプロジェクトは今は保留中。"},{en:"Let's put it on the back burner.",ja:"優先順位を下げよう。"}]},
+  {rank:37, en:"under the weather", ja:"体調が悪い", meaning:"Feeling unwell.",
+    register:"both", ex:[{en:"I'm a bit under the weather today.",ja:"今日は少し体調が悪い。"},{en:"He's under the weather this week.",ja:"彼は今週、体調を崩している。"}]},
+  {rank:38, en:"with flying colors", ja:"見事に・大成功で", meaning:"With great success.",
+    register:"both", ex:[{en:"The product passed testing with flying colors.",ja:"製品はテストを見事にパスした。"},{en:"She passed the certification with flying colors.",ja:"彼女は資格試験を大成功で通過した。"}]},
+  {rank:39, en:"break even", ja:"収支トントン", meaning:"To make neither a profit nor a loss.",
+    register:"formal", ex:[{en:"We expect to break even by Q3.",ja:"Q3までに収支トントンを目指す。"},{en:"The new store broke even in 6 months.",ja:"新店は6ヶ月で損益分岐点に達した。"}]},
+  {rank:40, en:"cut corners", ja:"手抜きする・近道する", meaning:"To do something poorly or cheaply, often to save time/money.",
+    register:"both", ex:[{en:"We can't afford to cut corners on quality.",ja:"品質で手を抜く余裕はない。"},{en:"They cut corners and it backfired.",ja:"彼らは手を抜き、それが裏目に出た。"}]},
+  {rank:41, en:"drop the ball", ja:"失敗する・しくじる", meaning:"To make a mistake or fail to handle a responsibility.",
+    register:"casual", ex:[{en:"I dropped the ball on the proposal.",ja:"提案でしくじった。"},{en:"We can't drop the ball on this client.",ja:"このクライアントの件で失敗できない。"}]},
+  {rank:42, en:"get the ball rolling", ja:"物事を動かし始める", meaning:"To start a process or activity.",
+    register:"both", ex:[{en:"Let's get the ball rolling on the launch.",ja:"立ち上げの作業を始めよう。"},{en:"Who'll get the ball rolling?",ja:"誰が動かし始める？"}]},
+  {rank:43, en:"learn the ropes", ja:"仕事のコツを覚える", meaning:"To learn how to do a particular job or activity.",
+    register:"both", ex:[{en:"It takes time to learn the ropes.",ja:"仕事に慣れるには時間がかかる。"},{en:"He's still learning the ropes.",ja:"彼はまだ仕事を覚えているところだ。"}]},
+  {rank:44, en:"step up", ja:"対応する・名乗りを上げる", meaning:"To take responsibility or take action.",
+    register:"both", ex:[{en:"We need someone to step up and lead.",ja:"リードする人が必要だ。"},{en:"She really stepped up during the crisis.",ja:"彼女は危機で本当に頑張った。"}]},
+  {rank:45, en:"take a rain check", ja:"今回はパスする（また今度）", meaning:"To politely decline now but accept later.",
+    register:"casual", ex:[{en:"Can I take a rain check on lunch?",ja:"ランチは今度でいい？"},{en:"I'll take a rain check.",ja:"今回はパスで。"}]},
+  {rank:46, en:"on the fence", ja:"決めかねている・迷っている", meaning:"Undecided about something.",
+    register:"both", ex:[{en:"I'm on the fence about the new vendor.",ja:"新しいベンダーについて決めかねている。"},{en:"Many customers are on the fence.",ja:"多くの顧客が迷っている。"}]},
+  {rank:47, en:"a ballpark figure", ja:"おおよその数字", meaning:"An approximate number or estimate.",
+    register:"both", ex:[{en:"Can you give me a ballpark figure?",ja:"おおよその数字を教えて。"},{en:"That's a reasonable ballpark.",ja:"だいたいその範囲だね。"}]},
+  {rank:48, en:"think on your feet", ja:"その場で機転を利かせる", meaning:"To think and react quickly.",
+    register:"both", ex:[{en:"You need to think on your feet in negotiations.",ja:"交渉では機転が必要だ。"},{en:"She thinks well on her feet.",ja:"彼女はとっさの判断が得意だ。"}]},
+  {rank:49, en:"back to the drawing board", ja:"振り出しに戻る", meaning:"Start over because the previous attempt failed.",
+    register:"both", ex:[{en:"The proposal was rejected — back to the drawing board.",ja:"提案は却下、振り出しに戻る。"},{en:"Looks like we're back to the drawing board.",ja:"振り出しに戻ったようだ。"}]},
+  {rank:50, en:"close of business (COB)", ja:"終業時間まで", meaning:"By the end of the business day.",
+    register:"formal", ex:[{en:"Please send the report by COB Friday.",ja:"金曜の終業までにレポートを送って。"},{en:"I need this by close of business today.",ja:"今日の終業までに必要です。"}]},
+];
+
+// ===== STATE =====
+let mastery = JSON.parse(localStorage.getItem('idiom_mastery') || '{}'); // {rank: 0-3}
+let currentFilter = 'all';
+let currentMode = 'browse';
+let quizState = null;
+
+function saveMastery(){ localStorage.setItem('idiom_mastery', JSON.stringify(mastery)); }
+function getLevel(rank){ return mastery[rank] || 0; }
+function setLevel(rank, level){ mastery[rank] = level; saveMastery(); updateStats(); }
+
+// ===== BROWSE =====
+function updateStats(){
+  const known = Object.values(mastery).filter(v => v >= 1).length;
+  const mastered = Object.values(mastery).filter(v => v >= 3).length;
+  document.getElementById('stat-known').textContent = known;
+  document.getElementById('stat-mastered').textContent = mastered;
+}
+
+function renderList(){
+  const list = document.getElementById('list');
+  let filtered = IDIOMS;
+  if(currentFilter === 'new') filtered = IDIOMS.filter(i => getLevel(i.rank) === 0);
+  else if(currentFilter === 'learning') filtered = IDIOMS.filter(i => getLevel(i.rank) > 0 && getLevel(i.rank) < 3);
+  else if(currentFilter === 'mastered') filtered = IDIOMS.filter(i => getLevel(i.rank) >= 3);
+  if(filtered.length === 0){
+    list.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:13px">該当する慣用句はありません</div>`;
+    return;
+  }
+  list.innerHTML = filtered.map(i => {
+    const level = getLevel(i.rank);
+    const dots = [0,1,2,3].map(d => `<span class="dot ${d<level?'filled':''}"></span>`).join('');
+    return `<div class="idiom-card" onclick="openModal(${i.rank})">
+      <div class="idiom-info">
+        <div class="idiom-en"><span class="idiom-rank">${i.rank}</span><span class="text">${i.en}</span></div>
+        <p class="idiom-ja">${i.ja}</p>
+      </div>
+      <div class="mastery-dots">${dots}</div>
+    </div>`;
+  }).join('');
+}
+
+function filterIdioms(f){
+  currentFilter = f;
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.filter === f));
+  renderList();
+}
+
+function openModal(rank){
+  const i = IDIOMS.find(x => x.rank === rank);
+  const level = getLevel(rank);
+  const regLabel = i.register === 'formal' ? 'Formal' : i.register === 'casual' ? 'Casual' : 'Both';
+  document.getElementById('modal-content').innerHTML = `
+    <h2>${i.en}</h2>
+    <div class="modal-tags">
+      <span class="tag">#${i.rank}</span>
+      <span class="tag ${i.register}">${regLabel}</span>
+    </div>
+    <div class="modal-meaning"><strong>意味:</strong> ${i.ja}<br><span style="color:var(--muted);font-size:12px">${i.meaning}</span></div>
+    <div class="modal-section">
+      <h3>📌 例文</h3>
+      <ul class="ex-list">
+        ${i.ex.map(e => `<li>${e.en}<span class="ja">${e.ja}</span></li>`).join('')}
+      </ul>
+    </div>
+    <div class="modal-section">
+      <h3>📊 習得レベル</h3>
+      <div class="mastery-control">
+        <button class="mast-btn ${level===0?'active':''}" onclick="setLevelAndRefresh(${rank},0)">未学習</button>
+        <button class="mast-btn ${level===1?'active':''}" onclick="setLevelAndRefresh(${rank},1)">📖 学習中</button>
+        <button class="mast-btn ${level===2?'active':''}" onclick="setLevelAndRefresh(${rank},2)">👍 ほぼ覚えた</button>
+        <button class="mast-btn ${level===3?'active':''}" onclick="setLevelAndRefresh(${rank},3)">✨ マスター</button>
+      </div>
+    </div>
+    <button class="modal-close" onclick="closeModal()">閉じる</button>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+
+function setLevelAndRefresh(rank, level){
+  setLevel(rank, level);
+  openModal(rank);
+  renderList();
+}
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+
+// ===== QUIZ =====
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function startQuiz(){
+  quizState = {
+    questions: shuffle(IDIOMS).slice(0, 10),
+    current: 0,
+    correct: 0,
+  };
+  renderQuiz();
+}
+
+function renderQuiz(){
+  const c = document.getElementById('quiz-container');
+  if(quizState.current >= quizState.questions.length){
+    const pct = Math.round(quizState.correct / quizState.questions.length * 100);
+    let badge='🎯', msg='お疲れ様！';
+    if(pct >= 90){badge='🏆'; msg='完璧！イディオムマスター';}
+    else if(pct >= 70){badge='✨'; msg='よくできた！';}
+    else if(pct >= 50){badge='👍'; msg='もう一歩！';}
+    else {badge='📚'; msg='繰り返し練習しよう';}
+    c.innerHTML = `<div class="quiz-card quiz-result">
+      <div style="font-size:48px">${badge}</div>
+      <h2>${msg}</h2>
+      <div class="score">${quizState.correct}/${quizState.questions.length}</div>
+      <div style="color:var(--muted);font-size:13px">正答率 ${pct}%</div>
+      <button class="restart" onclick="startQuiz()">もう一度</button>
+    </div>`;
+    return;
+  }
+  const q = quizState.questions[quizState.current];
+  const wrong = shuffle(IDIOMS.filter(i => i.rank !== q.rank)).slice(0, 3);
+  const opts = shuffle([q, ...wrong]);
+  const pct = Math.round(quizState.current / quizState.questions.length * 100);
+  c.innerHTML = `<div class="quiz-card">
+    <div class="quiz-progress"><span>Q${quizState.current+1} / ${quizState.questions.length}</span><span>${quizState.correct} 正解</span></div>
+    <div class="quiz-bar"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
+    <p class="quiz-q">"${q.en}"</p>
+    <p class="quiz-context">この慣用句の意味は？</p>
+    <div class="quiz-options">
+      ${opts.map(o => `<button class="quiz-opt" onclick="answerQuiz(${o.rank})">${o.ja}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="qfb"></div>
+    <button class="quiz-next" id="qnext" onclick="nextQuiz()">次へ →</button>
+  </div>`;
+}
+
+function answerQuiz(chosenRank){
+  const q = quizState.questions[quizState.current];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach((o,idx) => {
+    o.disabled = true;
+    if(o.textContent === q.ja) o.classList.add('correct');
+    else if(idx === Array.from(opts).findIndex(x => x.getAttribute('onclick').includes(`(${chosenRank})`))) o.classList.add('wrong');
+  });
+  const fb = document.getElementById('qfb');
+  if(chosenRank === q.rank){
+    quizState.correct++;
+    fb.className = 'quiz-feedback show ok';
+    fb.innerHTML = `✅ 正解！<br><strong>${q.en}</strong> = ${q.ja}<br><em style="font-size:12px;color:var(--muted)">${q.ex[0].en}</em>`;
+    if(getLevel(q.rank) < 1) setLevel(q.rank, 1);
+  } else {
+    fb.className = 'quiz-feedback show ng';
+    fb.innerHTML = `❌ 正解は <strong>${q.ja}</strong><br><strong>${q.en}</strong>: ${q.meaning}<br><em style="font-size:12px;color:var(--muted)">${q.ex[0].en}</em>`;
+  }
+  document.getElementById('qnext').classList.add('show');
+}
+
+function nextQuiz(){
+  quizState.current++;
+  renderQuiz();
+}
+
+// ===== MODE SWITCH =====
+function switchMode(mode){
+  currentMode = mode;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  document.getElementById('browse-view').style.display = mode === 'browse' ? '' : 'none';
+  document.getElementById('quiz-view').style.display = mode === 'quiz' ? '' : 'none';
+  if(mode === 'quiz') startQuiz();
+}
+
+// ===== INIT =====
+updateStats();
+renderList();
+</script>
+</body>
+</html>
