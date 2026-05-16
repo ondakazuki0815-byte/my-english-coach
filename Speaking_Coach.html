@@ -104,6 +104,147 @@ body{
 }
 .target-text .word:hover{background:rgba(197,86,58,0.15)}
 .target-text .word.tricky{border-bottom:2px dashed var(--warning)}
+
+/* ===== Phase 1B: Chunks (Sense Group) 表示 ===== */
+.chunks-display{
+  margin-top:14px;padding:12px 10px;border-radius:10px;
+  background:rgba(245,233,200,0.4);border:1px dashed var(--border);
+  display:none;
+}
+.chunks-display.open{display:block}
+.chunks-toggle{
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;font-size:12px;color:var(--accent);font-weight:700;
+  padding:6px 8px;border-radius:6px;
+  text-transform:uppercase;letter-spacing:0.3px;
+}
+.chunks-toggle:hover{background:rgba(197,86,58,0.08)}
+.chunks-list{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.chunk-card{
+  background:#fff;border:1px solid var(--border);border-radius:8px;
+  padding:8px 12px;font-size:14px;line-height:1.4;
+  display:flex;align-items:center;gap:8px;
+  transition:all 0.2s;
+}
+.chunk-card:hover{transform:translateX(2px);box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.chunk-num{
+  flex-shrink:0;width:22px;height:22px;border-radius:50%;
+  background:var(--primary);color:#fff;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.chunk-text{flex:1;color:var(--text)}
+.chunk-play{
+  flex-shrink:0;background:transparent;border:1px solid var(--border);
+  color:var(--primary);width:28px;height:28px;border-radius:6px;
+  cursor:pointer;font-size:12px;
+}
+.chunk-play:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* ===== Phase 3: リズム練習モーダル ===== */
+.rhythm-btn{
+  background:linear-gradient(135deg,#C5563A,#E67E5A);
+  color:#fff;border:none;padding:8px 14px;border-radius:99px;
+  font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;
+  box-shadow:0 2px 8px rgba(197,86,58,0.3);
+  transition:transform 0.1s, box-shadow 0.2s;
+}
+.rhythm-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(197,86,58,0.4)}
+.rhythm-btn:active{transform:translateY(0)}
+.rhythm-modal{
+  display:none;position:fixed;inset:0;
+  background:rgba(31,58,95,0.92);z-index:1000;
+  align-items:center;justify-content:center;padding:16px;
+  overflow-y:auto;
+}
+.rhythm-modal.open{display:flex}
+.rhythm-card{
+  background:#fff;border-radius:18px;
+  max-width:540px;width:100%;max-height:90vh;overflow-y:auto;
+  padding:20px;box-shadow:0 12px 40px rgba(0,0,0,0.25);
+}
+.rhythm-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;
+}
+.rhythm-title{font-size:18px;font-weight:800;color:var(--text)}
+.rhythm-close{
+  background:transparent;border:none;font-size:22px;cursor:pointer;
+  color:var(--muted);padding:4px 8px;border-radius:6px;
+}
+.rhythm-close:hover{background:rgba(0,0,0,0.05);color:var(--text)}
+.rhythm-stage-tabs{
+  display:flex;gap:4px;margin-bottom:14px;padding:4px;
+  background:#F5E9C8;border-radius:10px;
+}
+.rhythm-stage-tab{
+  flex:1;padding:8px 4px;border:none;background:transparent;
+  border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;
+  cursor:pointer;color:var(--muted);transition:all 0.2s;
+}
+.rhythm-stage-tab.active{background:#fff;color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+.rhythm-stage{display:none}
+.rhythm-stage.active{display:block}
+.rhythm-instruction{
+  font-size:13px;color:var(--text);line-height:1.5;margin-bottom:14px;
+  padding:10px 12px;background:rgba(245,233,200,0.5);border-radius:8px;
+  border-left:3px solid var(--accent);
+}
+.beat-display{
+  display:flex;justify-content:center;align-items:center;gap:14px;
+  padding:18px 10px;margin:12px 0;
+  background:linear-gradient(135deg,#FFF8EC 0%,#FAF0DD 100%);
+  border-radius:14px;min-height:100px;flex-wrap:wrap;
+}
+.beat-dot{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--primary);color:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;line-height:1.1;
+  transition:transform 0.1s, background 0.2s;
+  cursor:pointer;text-align:center;padding:2px;
+}
+.beat-dot.active{
+  transform:scale(1.4);background:var(--accent);
+  box-shadow:0 0 0 8px rgba(232,158,77,0.3);
+}
+.beat-dot .beat-word{font-size:10px;font-weight:800}
+.rhythm-controls{
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px;
+}
+.rhythm-control-btn{
+  background:var(--primary);color:#fff;border:none;padding:9px 16px;
+  border-radius:99px;font-family:inherit;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;
+}
+.rhythm-control-btn:hover{background:var(--accent)}
+.rhythm-control-btn.secondary{background:transparent;color:var(--primary);border:1px solid var(--primary)}
+.rhythm-control-btn.secondary:hover{background:var(--primary);color:#fff}
+.rhythm-tempo{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin:10px 0;font-size:12px;color:var(--muted);
+}
+.rhythm-tempo input[type=range]{width:130px}
+.chunk-progress{
+  display:flex;flex-direction:column;gap:6px;margin:12px 0;
+  max-height:240px;overflow-y:auto;
+}
+.chunk-progress-item{
+  background:#fff;border:1px solid var(--border);border-radius:8px;
+  padding:8px 12px;font-size:13px;display:flex;align-items:center;gap:8px;
+  transition:all 0.2s;
+}
+.chunk-progress-item.current{
+  background:rgba(232,158,77,0.15);border-color:var(--accent);font-weight:600;
+}
+.chunk-progress-item.done{opacity:0.5}
+.chunk-progress-checkbox{
+  width:18px;height:18px;border-radius:50%;border:2px solid var(--border);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:11px;
+}
+.chunk-progress-item.done .chunk-progress-checkbox{
+  background:var(--success);border-color:var(--success);color:#fff;
+}
 .play-from-here{
   display:inline-flex;align-items:center;justify-content:center;
   width:22px;height:22px;border-radius:50%;
@@ -345,10 +486,88 @@ audio{display:none}
     <div class="target-label">🎯 Target — ▶でその文から再生／単語タップで個別再生</div>
     <div class="target-text" id="targetText">フレーズを選んでください</div>
     <div class="target-jp" id="targetJp"></div>
+
+    <!-- Phase 1B: Chunks (Sense Group) Display -->
+    <div class="chunks-display" id="chunksDisplay">
+      <div class="chunks-toggle" onclick="document.getElementById('chunksDisplay').classList.toggle('open')">
+        <span>✂️ Sense Group (チャンク区切り)</span>
+        <span style="font-size:14px">▼</span>
+      </div>
+      <div class="chunks-list" id="chunksList"></div>
+    </div>
+
     <div class="audio-btns">
       <button class="audio-btn" onclick="speakTarget(1.0)">🔊 標準速度</button>
       <button class="audio-btn slow" onclick="speakTarget(0.65)">🐢 ゆっくり</button>
       <button class="audio-btn word" onclick="speakWordByWord()">📖 単語ごと</button>
+      <button class="rhythm-btn" id="rhythmBtn" onclick="openRhythmModal()" style="display:none">🥁 リズム練習</button>
+    </div>
+  </div>
+
+  <!-- Phase 3: Rhythm Practice Modal -->
+  <div class="rhythm-modal" id="rhythmModal" onclick="if(event.target===this)closeRhythmModal()">
+    <div class="rhythm-card">
+      <div class="rhythm-header">
+        <div class="rhythm-title">🥁 リズム練習モード</div>
+        <button class="rhythm-close" onclick="closeRhythmModal()">✕</button>
+      </div>
+
+      <div class="rhythm-stage-tabs">
+        <button class="rhythm-stage-tab active" data-stage="0" onclick="switchRhythmStage(0)">Step A<br>強拍だけ</button>
+        <button class="rhythm-stage-tab" data-stage="1" onclick="switchRhythmStage(1)">Step B<br>チャンク練習</button>
+        <button class="rhythm-stage-tab" data-stage="2" onclick="switchRhythmStage(2)">Step C<br>繋ぐ</button>
+      </div>
+
+      <!-- Stage A: 強拍だけメトロノーム -->
+      <div class="rhythm-stage active" id="rhythmStage0">
+        <div class="rhythm-instruction">
+          🥁 <strong>Step A: 強拍リズム</strong><br>
+          英語は強拍が等間隔。下の強拍だけを机を指で叩きながら声に出してみましょう。
+          弱拍は強拍と強拍の間に勝手に詰まります。
+        </div>
+        <div class="beat-display" id="beatDisplayA"></div>
+        <div class="rhythm-tempo">
+          🎼 テンポ:
+          <input type="range" id="rhythmTempo" min="40" max="120" value="70" oninput="document.getElementById('tempoVal').textContent=this.value+' BPM'">
+          <span id="tempoVal">70 BPM</span>
+        </div>
+        <div class="rhythm-controls">
+          <button class="rhythm-control-btn" onclick="startBeatA()">▶ スタート</button>
+          <button class="rhythm-control-btn secondary" onclick="stopBeat()">⏹ ストップ</button>
+        </div>
+      </div>
+
+      <!-- Stage B: チャンクごとに再生 -->
+      <div class="rhythm-stage" id="rhythmStage1">
+        <div class="rhythm-instruction">
+          ✂️ <strong>Step B: チャンク単位の練習</strong><br>
+          1つずつ ▶ で再生して、リピートしてください。完了したら ✓ を押して次へ。
+          各チャンクは「名詞＋関係節を一塊」など、意味のかたまりです。
+        </div>
+        <div class="chunk-progress" id="chunkProgress"></div>
+        <div class="rhythm-controls">
+          <button class="rhythm-control-btn secondary" onclick="resetChunkProgress()">🔄 やり直し</button>
+        </div>
+      </div>
+
+      <!-- Stage C: 繋ぐ -->
+      <div class="rhythm-stage" id="rhythmStage2">
+        <div class="rhythm-instruction">
+          🔗 <strong>Step C: 段階的に繋ぐ</strong><br>
+          2チャンク → 3チャンク → ... と徐々に繋いでいきます。
+          失速したら 1段前に戻ってください。「強拍リズム」の感覚を保ったまま繋ぐのがコツ。
+        </div>
+        <div style="text-align:center;font-size:11px;color:var(--muted);margin:8px 0">
+          現在 <strong id="cumCount">2</strong> チャンクを連結中
+        </div>
+        <div id="cumChunkDisplay" style="background:#FFF8EC;padding:12px;border-radius:10px;font-size:14px;line-height:1.6;min-height:60px;margin:10px 0;border:1px solid var(--border)"></div>
+        <div class="rhythm-controls">
+          <button class="rhythm-control-btn" onclick="speakCumChunks(0.85)">🐢 ゆっくり再生</button>
+          <button class="rhythm-control-btn" onclick="speakCumChunks(1.0)">🔊 標準</button>
+          <button class="rhythm-control-btn secondary" onclick="changeCum(-1)">－ 減らす</button>
+          <button class="rhythm-control-btn secondary" onclick="changeCum(1)">＋ 増やす</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -722,6 +941,35 @@ const PHRASES = [
   {cat:"📅 Lesson Review",
     en:"Talent is no longer a back-office function — it is the front line of competitive advantage. Operators that lose top performers within their first eighteen months typically pay a hidden tax of thirty to forty percent of annual salary in replacement costs. Compounding leaders — those who develop two or three successors before stepping into bigger roles — build the strongest benches across global operations. The winning move is to coach for ownership, not to manage for compliance. We should anchor talent development in Tokyo, then scale our playbook across Asian markets within twenty-four months. Done well, every successful hire compounds into a culture asset that competitors cannot replicate.",
     jp:"📌 Day 9 People & Leadership — シャドーイング (今日の練習用)",
+    ipa:"/ˈtælənt ɪz noʊ ˈlɔːŋɡər ə ˌbækˈɔːfɪs ˈfʌŋkʃən — ɪt ɪz ðə frʌnt laɪn əv kəmˈpetɪtɪv ədˈvæntɪdʒ. ˈɒpəreɪtərz ðət luːz tɒp pərˈfɔːrmərz wɪˌðɪn ðeər fɜːrst eɪˈtiːn mʌnθs ˈtɪpɪkli peɪ ə ˈhɪdn tæks əv ˈθɜːrti tə ˈfɔːrti pərˈsent əv ˈænjuəl ˈsæləri ɪn rɪˈpleɪsmənt kɒsts. kəmˈpaʊndɪŋ ˈliːdərz — ðoʊz huː dɪˈveləp tuː ɔːr θriː səkˈsesərz bɪˈfɔːr ˈstepɪŋ ˈɪntə ˈbɪɡər roʊlz — bɪld ðə ˈstrɒŋɡɪst ˈbentʃɪz əˈkrɒs ˈɡloʊbəl ˌɒpəˈreɪʃənz. ðə ˈwɪnɪŋ muːv ɪz tə koʊtʃ fər ˈoʊnərʃɪp, nɒt tə ˈmænɪdʒ fər kəmˈplaɪəns. wi ʃʊd ˈæŋkər ˈtælənt dɪˈveləpmənt ɪn ˈtoʊkioʊ, ðen skeɪl aʊər ˈpleɪbʊk əˈkrɒs ˈeɪʃən ˈmɑːrkɪts wɪˌðɪn ˈtwenti fɔːr mʌnθs. dʌn wel, ˈevri səkˈsesfəl haɪər kəmˈpaʊndz ˈɪntə ə ˈkʌltʃər ˈæset ðət kəmˈpetɪtərz ˈkænɒt ˈreplɪkeɪt./",
+    stress:["TAL-ent","LON-ger","BACK-of-fice","FRONT","LINE","com-PET-i-tive","ad-VAN-tage","OP-er-a-tors","LOSE","TOP","per-FORM-ers","eigh-TEEN","HID-den","TAX","THIR-ty","FOR-ty","per-CENT","AN-nual","SAL-ary","re-PLACE-ment","com-POUND-ing","LEAD-ers","de-VEL-op","TWO","THREE","suc-CES-sors","STEP-ping","BIG-ger","BUILD","STRONG-est","BENCH-es","GLO-bal","OP-er-a-tions","WIN-ning","MOVE","COACH","OWN-er-ship","MAN-age","com-PLI-ance","AN-chor","TAL-ent","TO-ky-o","SCALE","PLAY-book","A-sian","MAR-kets","TWEN-ty-four","DONE","SUC-cess-ful","HIRE","com-POUNDS","CUL-ture","AS-set","com-PET-i-tors","REP-li-cate"],
+    chunks:[
+      "Talent is no longer a back-office function",
+      "— it is the front line",
+      "of competitive advantage.",
+      "Operators that lose top performers",
+      "within their first eighteen months",
+      "typically pay a hidden tax",
+      "of thirty to forty percent",
+      "of annual salary",
+      "in replacement costs.",
+      "Compounding leaders",
+      "— those who develop two or three successors",
+      "before stepping into bigger roles —",
+      "build the strongest benches",
+      "across global operations.",
+      "The winning move",
+      "is to coach for ownership,",
+      "not to manage for compliance.",
+      "We should anchor talent development in Tokyo,",
+      "then scale our playbook",
+      "across Asian markets",
+      "within twenty-four months.",
+      "Done well,",
+      "every successful hire compounds",
+      "into a culture asset",
+      "that competitors cannot replicate."
+    ],
     tips:[
       {type:"watch",msg:"再フレーミング: <strong>Talent is no longer a back-office function — it is the front line of competitive advantage</strong>"},
       {type:"watch",msg:"<strong>successors</strong> /səkˈsesərz/ サ-<strong>クセ</strong>-サーズ、第2音節 ces にストレス (× サクセッ<strong>サー</strong>ズ)"},
@@ -874,6 +1122,212 @@ function renderTargetText(){
 
   document.getElementById("targetText").innerHTML = html;
   document.getElementById("targetJp").textContent = currentPhrase.jp || "";
+
+  // Render chunks if available
+  renderChunks();
+}
+
+// ===== Phase 1B: Chunks Renderer =====
+function renderChunks(){
+  const display = document.getElementById("chunksDisplay");
+  const list = document.getElementById("chunksList");
+  const rhythmBtn = document.getElementById("rhythmBtn");
+  if(!display || !list) return;
+  const chunks = currentPhrase.chunks || [];
+  if(!chunks.length){
+    display.style.display = "none";
+    if(rhythmBtn) rhythmBtn.style.display = "none";
+    return;
+  }
+  display.style.display = "block";
+  if(rhythmBtn) rhythmBtn.style.display = "inline-block";
+  let html = "";
+  chunks.forEach((c, i) => {
+    const safe = c.replace(/'/g, "&apos;").replace(/"/g,"&quot;");
+    html += `<div class="chunk-card">
+      <div class="chunk-num">${i+1}</div>
+      <div class="chunk-text">${escapeHtml(c)}</div>
+      <button class="chunk-play" onclick="speakChunk(${i})" title="このチャンクを再生">▶</button>
+    </div>`;
+  });
+  list.innerHTML = html;
+}
+
+function speakChunk(idx){
+  const chunks = currentPhrase.chunks || [];
+  if(!chunks[idx]) return;
+  // Stop any existing speech
+  try{ window.speechSynthesis.cancel(); } catch(e){}
+  const u = new SpeechSynthesisUtterance(chunks[idx].replace(/—/g,","));
+  u.rate = 0.85;
+  u.lang = "en-US";
+  const voices = window.speechSynthesis.getVoices();
+  const v = voices.find(x=>/en-US/.test(x.lang) && /(google|samantha|alex)/i.test(x.name)) ||
+            voices.find(x=>/en-US/.test(x.lang));
+  if(v) u.voice = v;
+  window.speechSynthesis.speak(u);
+}
+
+// ===== Phase 3: Rhythm Practice Mode =====
+let rhythmState = {
+  beatTimer: null,
+  beatIdx: 0,
+  cumCount: 2,
+  chunkDone: new Set()
+};
+
+function openRhythmModal(){
+  const modal = document.getElementById("rhythmModal");
+  if(!modal) return;
+  modal.classList.add("open");
+  renderBeatDisplayA();
+  renderChunkProgress();
+  renderCumChunks();
+}
+
+function closeRhythmModal(){
+  stopBeat();
+  document.getElementById("rhythmModal").classList.remove("open");
+}
+
+function switchRhythmStage(idx){
+  stopBeat();
+  document.querySelectorAll(".rhythm-stage-tab").forEach((t,i)=>{
+    t.classList.toggle("active", i===idx);
+  });
+  document.querySelectorAll(".rhythm-stage").forEach((s,i)=>{
+    s.classList.toggle("active", i===idx);
+  });
+}
+
+// ----- Step A: Beat Display -----
+function renderBeatDisplayA(){
+  const display = document.getElementById("beatDisplayA");
+  if(!display) return;
+  const stress = currentPhrase.stress || [];
+  // Limit to first 8-12 for readability
+  const limited = stress.slice(0, 12);
+  let html = "";
+  limited.forEach((s, i) => {
+    const display = s.replace(/-/g,"");
+    html += `<div class="beat-dot" data-idx="${i}" onclick="speakWord('${escapeAttr(display)}')">
+      <span class="beat-word">${escapeHtml(display.toUpperCase())}</span>
+    </div>`;
+  });
+  if(stress.length > 12){
+    html += `<div style="font-size:11px;color:var(--muted);width:100%;text-align:center;margin-top:4px">+${stress.length-12} more...</div>`;
+  }
+  display.innerHTML = html;
+}
+
+function startBeatA(){
+  stopBeat();
+  const stress = currentPhrase.stress || [];
+  if(!stress.length) return;
+  const bpm = parseInt(document.getElementById("rhythmTempo").value, 10);
+  const interval = 60000 / bpm;
+  const dots = document.querySelectorAll("#beatDisplayA .beat-dot");
+  rhythmState.beatIdx = 0;
+
+  const tick = () => {
+    dots.forEach(d => d.classList.remove("active"));
+    if(rhythmState.beatIdx < dots.length){
+      const dot = dots[rhythmState.beatIdx];
+      dot.classList.add("active");
+      // Speak the stressed word
+      const word = dot.querySelector(".beat-word").textContent;
+      try{ window.speechSynthesis.cancel(); } catch(e){}
+      const u = new SpeechSynthesisUtterance(word);
+      u.rate = 0.9;
+      u.lang = "en-US";
+      const voices = window.speechSynthesis.getVoices();
+      const v = voices.find(x=>/en-US/.test(x.lang));
+      if(v) u.voice = v;
+      window.speechSynthesis.speak(u);
+      rhythmState.beatIdx++;
+    } else {
+      stopBeat();
+    }
+  };
+
+  tick();
+  rhythmState.beatTimer = setInterval(tick, interval);
+}
+
+function stopBeat(){
+  if(rhythmState.beatTimer){
+    clearInterval(rhythmState.beatTimer);
+    rhythmState.beatTimer = null;
+  }
+  document.querySelectorAll("#beatDisplayA .beat-dot").forEach(d=>d.classList.remove("active"));
+  try{ window.speechSynthesis.cancel(); } catch(e){}
+}
+
+// ----- Step B: Chunk Progress -----
+function renderChunkProgress(){
+  const container = document.getElementById("chunkProgress");
+  if(!container) return;
+  const chunks = currentPhrase.chunks || [];
+  if(!chunks.length){ container.innerHTML = "<p style='font-size:13px;color:var(--muted);text-align:center'>このフレーズには chunks データがありません</p>"; return; }
+  let html = "";
+  chunks.forEach((c, i) => {
+    const done = rhythmState.chunkDone.has(i);
+    html += `<div class="chunk-progress-item ${done?'done':''}" id="cpi-${i}">
+      <button class="chunk-progress-checkbox" onclick="toggleChunkDone(${i})" title="完了マーク">${done?'✓':''}</button>
+      <div style="flex:1">${escapeHtml(c)}</div>
+      <button class="chunk-play" onclick="speakChunk(${i})">▶</button>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function toggleChunkDone(i){
+  if(rhythmState.chunkDone.has(i)){
+    rhythmState.chunkDone.delete(i);
+  } else {
+    rhythmState.chunkDone.add(i);
+  }
+  renderChunkProgress();
+}
+
+function resetChunkProgress(){
+  rhythmState.chunkDone.clear();
+  renderChunkProgress();
+}
+
+// ----- Step C: Cumulative Chunks -----
+function renderCumChunks(){
+  const chunks = currentPhrase.chunks || [];
+  const display = document.getElementById("cumChunkDisplay");
+  const counter = document.getElementById("cumCount");
+  if(!display) return;
+  if(!chunks.length){ display.textContent = "(chunks データなし)"; return; }
+  const count = Math.min(rhythmState.cumCount, chunks.length);
+  if(counter) counter.textContent = count;
+  const combined = chunks.slice(0, count).join(" ");
+  display.innerHTML = escapeHtml(combined);
+}
+
+function changeCum(delta){
+  const chunks = currentPhrase.chunks || [];
+  rhythmState.cumCount = Math.max(1, Math.min(chunks.length, rhythmState.cumCount + delta));
+  renderCumChunks();
+}
+
+function speakCumChunks(rate){
+  const chunks = currentPhrase.chunks || [];
+  const count = Math.min(rhythmState.cumCount, chunks.length);
+  const text = chunks.slice(0, count).join(" ").replace(/—/g,",");
+  if(!text) return;
+  try{ window.speechSynthesis.cancel(); } catch(e){}
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = rate;
+  u.lang = "en-US";
+  const voices = window.speechSynthesis.getVoices();
+  const v = voices.find(x=>/en-US/.test(x.lang) && /(google|samantha|alex)/i.test(x.name)) ||
+            voices.find(x=>/en-US/.test(x.lang));
+  if(v) u.voice = v;
+  window.speechSynthesis.speak(u);
 }
 
 function renderPronGuide(){
