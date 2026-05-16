@@ -4,7 +4,9 @@ Personalized 90-day English learning program for global F&B leadership.
 
 ## 🌐 Live URL
 
-Hosted on Netlify: `https://[your-site].netlify.app`
+**https://my-english-coach.vercel.app**
+
+Hosted on Vercel (migrated from Netlify on 2026-05-16 due to free-tier limits).
 
 ## 📱 Apps
 
@@ -14,20 +16,18 @@ Hosted on Netlify: `https://[your-site].netlify.app`
 | `Lesson_Studio.html` | Daily Reading + Writing exercises (interactive) |
 | `Phrase_Master.html` | Phrase library with 5-level mastery + 3-mode quiz |
 | `Speaking_Coach.html` | Voice recording + AI transcription scoring |
-| `lessons.json` | Daily lesson data (auto-updated) |
+| `Question_Master.html` | Question pattern drills |
+| `Preposition_Visual.html` | Preposition learning with SVG visuals |
+| `Idiom_Master.html` | Business idioms top 50 |
+| `Phrasal_Verb_Master.html` | Phrasal verbs top 50 |
+| `lessons.json` | Daily lesson data |
 
 ## 🚀 How It Works
 
-1. Open the Netlify URL on iPhone or Mac
+1. Open https://my-english-coach.vercel.app on iPhone or Mac
 2. **Lesson Studio** loads today's lesson from `lessons.json`
 3. Type answers in the textareas — auto-saves to localStorage
-4. Tap "📤 Copy answers" to share with the coach (paste into Claude chat)
-
-## 🔄 Auto-Update Flow
-
-- Daily 8 AM: Scheduled task generates new `lessons.json` entry
-- Push to GitHub → Netlify auto-deploys
-- iPhone reload → see today's lesson
+4. Share answers with the coach via Google Docs (the in-app clipboard route is deprecated)
 
 ## 🔒 Privacy
 
@@ -35,34 +35,30 @@ Hosted on Netlify: `https://[your-site].netlify.app`
 - No external services contacted
 - No analytics, no tracking
 
-## 📊 Progress
-
-- **Day 5 of 90** (Started 2026-05-02)
-- **81+ phrases** learned
-- **40%** of Month 3 target
-
 ## 🛠 Tech Stack
 
-- Pure HTML/CSS/JS — no frameworks
+- Pure HTML/CSS/JS — no frameworks, no build step
 - localStorage for persistence
 - Web Speech API for transcription (Speaking Coach)
 - SpeechSynthesis API for native pronunciation (Phrase Master, Speaking Coach)
 
-## 📝 Repository Structure
-
-```
-my-english-coach/
-├── index.html              # Landing page
-├── Lesson_Studio.html      # Daily exercises
-├── Phrase_Master.html      # Phrase library
-├── Speaking_Coach.html     # Speaking practice
-├── lessons.json            # Daily lesson data
-└── README.md               # This file
-```
-
 ## 🚢 Deployment
 
-Connected to Netlify via GitHub integration. Pushes to `main` branch auto-deploy to production.
+```bash
+# Deploy with a single command (commits and pushes; Vercel auto-deploys)
+./deploy.sh "your commit message"
+
+# Dry-run to see what would be pushed without actually pushing
+./deploy.sh --dry-run
+```
+
+The script:
+- Stages all changes
+- Checks that no private files (CLAUDE.md, memory/, Lessons/, etc.) are about to be pushed
+- Commits with the provided message
+- Pushes to `origin/main`, which triggers Vercel auto-deploy
+
+See `VERCEL_MIGRATION.md` for migration history and Vercel setup details.
 
 ## 👤 User
 

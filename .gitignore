@@ -13,6 +13,10 @@ Lessons/
 # Personal planning documents
 3_Month_English_Roadmap.docx
 
+# Coaching program internal files (Claude Code context)
+CLAUDE.md
+memory/
+
 # Backup files
 *.bak
 *.tmp
