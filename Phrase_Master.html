@@ -885,7 +885,17 @@ const PHRASES = [
   {cat:"meeting",ipa:"/aɪm ˈkɑːnfɪdənt ðɪs wɪl wɜːrk/",
     vis:[{role:"subject",icon:"person",label:"I"},{role:"emotion",icon:"flex",label:"confident"},{role:"object",icon:"speech",label:"this"},{role:"verb",icon:"check",label:"will work"}],
     en:"I'm confident this will work.",jp:"これは上手く機能すると確信しています",
-    ex:"Based on our market data, I'm confident this strategy will work in Japan.",exJp:"市場データに基づき、この戦略は日本で機能すると確信しています。"}
+    ex:"Based on our market data, I'm confident this strategy will work in Japan.",exJp:"市場データに基づき、この戦略は日本で機能すると確信しています。"},
+
+  // PERSISTENCE / CONTINUOUS IMPROVEMENT (added 2026-05-17 from coaching session)
+  {cat:"meeting",ipa:"/lɛts kiːp æt ɪt/",
+    vis:[{role:"subject",icon:"team",label:"Let's"},{role:"verb",icon:"gear",label:"keep at"},{role:"object",icon:"target",label:"it"}],
+    en:"Let's keep at it.",jp:"粘り強く続けよう / このまま続けよう",
+    ex:"The Tokyo team kept at it for three quarters, and same-store sales finally turned positive.",exJp:"東京チームは3四半期粘り強く続け、既存店売上がついにプラスに転じました。"},
+  {cat:"meeting",ipa:"/wiːl kiːp ˈɪtəreɪtɪŋ ɒn/",
+    vis:[{role:"subject",icon:"team",label:"We'll"},{role:"verb",icon:"arrow-circle",label:"keep iterating"},{role:"object",icon:"chart",label:"on ~"}],
+    en:"We'll keep iterating on ~.",jp:"〜の改善を続けます",
+    ex:"We'll keep iterating on the Singapore menu until the unit economics stabilize.",exJp:"ユニットエコノミクスが安定するまで、シンガポールのメニュー改善を続けます。"}
 ];
 
 const CATS = [
@@ -951,7 +961,9 @@ const SCENARIOS = {
   "I'm not sure I follow.": "内容が分からない時に丁寧に伝える",
   "Let's circle back to this.": "議題を後回しにする提案",
   "The action item is ~.": "会議のアクションアイテムを宣言する",
-  "I'm confident this will work.": "自分の戦略への確信を表明する"
+  "I'm confident this will work.": "自分の戦略への確信を表明する",
+  "Let's keep at it.": "長期戦の取り組みを継続する宣言（リーダーシップ言語）",
+  "We'll keep iterating on ~.": "改善を続ける約束（PDCA・ユニットエコノミクス改善などで）"
 };
 function getScenario(en){ return SCENARIOS[en] || ""; }
 
