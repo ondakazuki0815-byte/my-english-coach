@@ -90,10 +90,10 @@ body{
   <header class="hero">
     <h1>📘 My English Coach</h1>
     <p class="sub">Personalized 90-day English program for global F&B leadership</p>
-    <div class="stats">
-      <span class="stat"><strong>Day 8</strong> of 90</span>
-      <span class="stat"><strong>99+</strong> phrases learned</span>
-      <span class="stat"><strong>50%</strong> Month 3 target</span>
+    <div class="stats" id="heroStats">
+      <span class="stat"><strong id="statDay">Day —</strong> of 90</span>
+      <span class="stat"><strong id="statPhrases">—</strong> phrases learned</span>
+      <span class="stat"><strong id="statPct">—</strong> Month 3 target</span>
     </div>
   </header>
 
@@ -184,16 +184,62 @@ body{
     <div class="tile-row">
       <div class="tile-icon alt-3">⏰</div>
       <div class="tile-text">
-        <div class="tile-title">Saturday, May 9 · GW Day 5（最終日）</div>
-        <p class="tile-desc">
-          📝 Day 7 Writing（昨日の続き）— Google Docs で完了 → 共有<br>
-          🎙 Speaking Coach の Lesson Review から自由復習<br>
-          🆕 NEW: Question Master / Preposition Visual / Idiom Master を試す<br>
-          🌙 5/11（月）から通勤再開予定 — Lesson Studio + Google Docs で
+        <div class="tile-title" id="todayTitle">読み込み中…</div>
+        <p class="tile-desc" id="todayBody">
+          📅 SRS Warm-up（Phrase Master の "今日の復習"）— 5分<br>
+          🎙 Shadowing（Speaking Coach で本日のスクリプトを録音）— 15分<br>
+          📖 Reading（Lesson Studio で本日の Reading）— 20分<br>
+          ✍️ Writing（Lesson Studio で本日の Writing）— 25分<br>
+          🌙 Reflection（"I noticed / I learned that…"）— 5分
         </p>
       </div>
     </div>
   </div>
+
+  <script>
+  (function(){
+    // --- Dynamic header + Today's Plan ---
+    const START = new Date("2026-05-02T00:00:00");
+    const PROGRAM_DAYS = 90;
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const diffDays = Math.floor((today - START) / 86400000);
+    const dayN = Math.max(1, Math.min(PROGRAM_DAYS, diffDays + 1));
+
+    // Hero stats
+    const dayEl = document.getElementById("statDay");
+    if(dayEl) dayEl.textContent = "Day " + dayN;
+
+    // Phrase count from Phrase Master localStorage (same origin)
+    try{
+      const pm = JSON.parse(localStorage.getItem("phraseMaster_v3") || localStorage.getItem("phraseMaster_v2") || localStorage.getItem("phraseMaster_v1") || "{}");
+      const mastery = pm.mastery || {};
+      const learned = Object.values(mastery).filter(m => (m?.level||0) >= 1).length;
+      const phrasesEl = document.getElementById("statPhrases");
+      if(phrasesEl && learned > 0) phrasesEl.textContent = String(learned);
+      else if(phrasesEl) phrasesEl.textContent = "105";  // fallback to last known
+      const pctEl = document.getElementById("statPct");
+      if(pctEl){
+        const pct = Math.round(((learned || 105) / 200) * 100);
+        pctEl.textContent = pct + "%";
+      }
+    }catch(e){
+      const phrasesEl = document.getElementById("statPhrases");
+      if(phrasesEl) phrasesEl.textContent = "105";
+      const pctEl = document.getElementById("statPct");
+      if(pctEl) pctEl.textContent = "53%";
+    }
+
+    // Today's title: weekday, date, Day N
+    const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const wd = WEEKDAYS[today.getDay()];
+    const mo = MONTHS[today.getMonth()];
+    const dt = today.getDate();
+    const titleEl = document.getElementById("todayTitle");
+    if(titleEl) titleEl.textContent = `${wd}, ${mo} ${dt} · Day ${dayN} of ${PROGRAM_DAYS}`;
+  })();
+  </script>
 
   <footer class="footer">
     <div>

@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "version": "2.0",
-    "lastUpdated": "2026-05-06",
+    "version": "2.1",
+    "lastUpdated": "2026-05-17",
     "user": "Kazuki Onda",
     "startDate": "2026-05-02"
   },
@@ -354,6 +354,146 @@
         "answerFields": [
           {"id": "subject", "label": "Subject 行", "rows": 1, "placeholder": "[FILL IN] - ..."},
           {"id": "body", "label": "本文 (5〜7文)", "rows": 14, "placeholder": "Hi John,\n\n..."}
+        ]
+      }
+    },
+    {
+      "day": 6,
+      "date": "2026-05-07",
+      "weekday": "Thursday",
+      "topic": "Off-Premise Economics",
+      "topicSlug": "OffPremiseEconomics",
+      "reading": {
+        "title": "Off-Premise Economics",
+        "subtitle": "📄 本日の Reading は docx で実施します",
+        "paragraphs": [
+          {"text": "演習本文・設問・採点はすべて Google Docs（docx）で行います。下記ファイルを開いて取り組んでください。"}
+        ],
+        "tips": [
+          "ファイル: Lessons/Day6_Reading_OffPremiseEconomics.docx",
+          "Google Docs にアップロード済みの場合はそちらを編集",
+          "完了したらコーチへ共有 / ペースト"
+        ],
+        "keyPhrases": [
+          "off-premise / on-premise",
+          "delivery margin compression",
+          "third-party aggregator economics"
+        ]
+      },
+      "writing": {
+        "scenario": "本日の Writing 演習は docx で実施します。下記ファイルをGoogle Docs で開いて 5〜7 文の戦略メールを書いてください。",
+        "from": "Kazuki Onda (Strategy Lead, Global F&B)",
+        "to": "John (UK HQ)",
+        "subjectHint": "Off-Premise Strategy — Japan Market",
+        "requirements": [
+          "ファイル: Lessons/Day6_Writing_OffPremiseStrategy.docx",
+          "Day 1-5 で習得済みフレーズを 8 個以上組み込む",
+          "完了後にコーチへ共有"
+        ]
+      }
+    },
+    {
+      "day": 7,
+      "date": "2026-05-08",
+      "weekday": "Friday",
+      "topic": "ESG & Sustainability",
+      "topicSlug": "ESGSustainability",
+      "reading": {
+        "title": "ESG & Sustainability in Global F&B",
+        "subtitle": "📄 本日の Reading は docx で実施します",
+        "paragraphs": [
+          {"text": "演習本文・設問・採点はすべて Google Docs（docx）で行います。下記ファイルを開いて取り組んでください。"}
+        ],
+        "tips": [
+          "ファイル: Lessons/Day7_Reading_ESGSustainability.docx",
+          "Q1 1-sentence summary（parenthetical 構造）/ A and B トラップ回避を継続",
+          "完了したらコーチへ共有 / ペースト"
+        ],
+        "keyPhrases": [
+          "substance behind the numbers",
+          "hedge against [regulatory / reputational] risk",
+          "compounding advantages"
+        ]
+      },
+      "writing": {
+        "scenario": "本日の Writing 演習は docx で実施します。下記ファイルを開いて 5〜7 文の戦略メールを書いてください。",
+        "from": "Kazuki Onda (Strategy Lead, Global F&B)",
+        "to": "John (UK HQ)",
+        "subjectHint": "ESG Strategy — Japan Market",
+        "requirements": [
+          "ファイル: Lessons/Day7_Writing_ESGStrategy.docx",
+          "Day 1-6 で習得済みフレーズを 8 個以上組み込む",
+          "完了後にコーチへ共有"
+        ]
+      }
+    },
+    {
+      "day": 8,
+      "date": "2026-05-09",
+      "weekday": "Saturday",
+      "topic": "Asia Market Expansion",
+      "topicSlug": "AsiaMarketExpansion",
+      "reading": {
+        "title": "Asia Market Expansion",
+        "subtitle": "📄 本日の Reading は docx で実施します",
+        "paragraphs": [
+          {"text": "演習本文・設問・採点はすべて Google Docs（docx）で行います。下記ファイルを開いて取り組んでください。"}
+        ],
+        "tips": [
+          "ファイル: Lessons/Day8_Reading_AsiaMarketExpansion.docx",
+          "Speaking PB 94/100 を出した Day（Asia Market script）",
+          "完了したらコーチへ共有 / ペースト"
+        ],
+        "keyPhrases": [
+          "anchor pilot in [market]",
+          "localization vs. standardization tradeoff",
+          "first-mover constraints"
+        ]
+      },
+      "writing": {
+        "scenario": "本日の Writing 演習は docx で実施します。下記ファイルを開いて 5〜7 文の戦略メールを書いてください。",
+        "from": "Kazuki Onda (Strategy Lead, Global F&B)",
+        "to": "John (UK HQ)",
+        "subjectHint": "Singapore Anchor Pilot — Proposal",
+        "requirements": [
+          "ファイル: Lessons/Day8_Writing_SingaporeAnchorPilot.docx",
+          "Day 1-7 で習得済みフレーズを 8 個以上組み込む",
+          "完了後にコーチへ共有"
+        ]
+      }
+    },
+    {
+      "day": 9,
+      "date": "2026-05-10",
+      "weekday": "Sunday",
+      "topic": "Compounding Talent",
+      "topicSlug": "CompoundingTalent",
+      "reading": {
+        "title": "Compounding Talent — People as Strategy",
+        "subtitle": "📄 本日の Reading は docx で実施します",
+        "paragraphs": [
+          {"text": "演習本文・設問・採点はすべて Google Docs（docx）で行います。下記ファイルを開いて取り組んでください。"}
+        ],
+        "tips": [
+          "ファイル: Lessons/Day9_Reading_CompoundingTalent.docx",
+          "Talent / Leadership / People management 領域（未カバーから新規）",
+          "完了したらコーチへ共有 / ペースト"
+        ],
+        "keyPhrases": [
+          "compounding talent advantages",
+          "talent density",
+          "retention as a strategy lever"
+        ]
+      },
+      "writing": {
+        "scenario": "本日の Writing 演習は docx で実施します。下記ファイルを開いて 5〜7 文の戦略メールを書いてください。",
+        "from": "Kazuki Onda (Strategy Lead, Global F&B)",
+        "to": "John (UK HQ)",
+        "subjectHint": "Tokyo Talent Hub — Initiative",
+        "requirements": [
+          "ファイル: Lessons/Day9_Writing_TokyoTalentHub.docx",
+          "Day 1-8 で習得済みフレーズを 8 個以上組み込む",
+          "完了後にコーチへ共有"
         ]
       }
     }
