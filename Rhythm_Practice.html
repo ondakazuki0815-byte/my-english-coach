@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rhythm Practice">
+<meta name="theme-color" content="#1F3A5F">
+<title>My English Coach — Rhythm Practice</title>
+<style>
+:root{
+  --primary:#1F3A5F;
+  --accent:#C5563A;
+  --accent-soft:#E8826B;
+  --sand:#F4E9DD;
+  --bg:#FAF8F4;
+  --card:#FFFFFF;
+  --text:#2A2A2A;
+  --muted:#6B6B6B;
+  --border:#E5DFD3;
+  --success:#3A7D44;
+  --warning:#D69100;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif;
+  background:var(--bg);color:var(--text);
+  padding-bottom:env(safe-area-inset-bottom,0);
+}
+.container{max-width:720px;margin:0 auto;padding:14px;padding-top:max(14px,env(safe-area-inset-top,0))}
+.topnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:12px}
+.topnav a{color:var(--accent);text-decoration:none;font-weight:700}
+.topnav a:hover{text-decoration:underline}
+h1{margin:6px 0 4px;font-size:22px;color:var(--primary);letter-spacing:-0.5px}
+.subtitle{color:var(--muted);font-size:12px;margin-bottom:14px}
+
+.intro-card{
+  background:var(--card);border-radius:14px;padding:14px;margin-bottom:14px;
+  border:1px solid var(--border);font-size:13px;line-height:1.5;
+}
+.intro-card h2{font-size:14px;margin:0 0 8px;color:var(--primary)}
+.intro-card ol{margin:6px 0 0 18px;padding:0}
+.intro-card li{margin:4px 0}
+
+.section-title{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:14px 0 6px}
+
+.picker-card{background:var(--card);border-radius:14px;padding:14px;border:1px solid var(--border);margin-bottom:12px}
+.picker-card label{display:block;font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px}
+.picker-card select{
+  width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;
+  font-family:inherit;font-size:14px;background:#fff;color:var(--text);
+}
+
+.preview-card{
+  background:linear-gradient(135deg,#FFF8EC 0%,#FAF0DD 100%);
+  border-radius:14px;padding:14px;margin-bottom:14px;border:1px solid var(--border);
+}
+.preview-label{font-size:11px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;text-align:center}
+.preview-text{font-size:15px;font-weight:600;color:var(--text);line-height:1.6;text-align:center}
+.preview-jp{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+
+/* ===== Step Tabs ===== */
+.stage-tabs{
+  display:flex;gap:4px;margin-bottom:14px;padding:4px;
+  background:#F5E9C8;border-radius:10px;
+}
+.stage-tab{
+  flex:1;padding:10px 6px;border:none;background:transparent;
+  border-radius:7px;font-family:inherit;font-size:12px;font-weight:700;
+  cursor:pointer;color:var(--muted);transition:all 0.2s;line-height:1.2;
+}
+.stage-tab.active{background:#fff;color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+.stage{display:none}
+.stage.active{display:block}
+
+.stage-card{background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--border);margin-bottom:12px}
+.instruction{
+  font-size:13px;color:var(--text);line-height:1.5;margin-bottom:14px;
+  padding:10px 12px;background:rgba(245,233,200,0.5);border-radius:8px;
+  border-left:3px solid var(--accent);
+}
+
+/* ===== Step A: Beat Display ===== */
+.beat-display{
+  display:flex;justify-content:center;align-items:center;gap:14px;
+  padding:18px 10px;margin:12px 0;
+  background:linear-gradient(135deg,#FFF8EC 0%,#FAF0DD 100%);
+  border-radius:14px;min-height:100px;flex-wrap:wrap;
+}
+.beat-dot{
+  min-width:46px;height:42px;border-radius:12px;
+  background:var(--primary);color:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;line-height:1.1;
+  transition:transform 0.1s, background 0.2s, box-shadow 0.2s;
+  cursor:pointer;text-align:center;padding:4px 8px;
+}
+.beat-dot.active{
+  transform:scale(1.3);background:var(--accent);
+  box-shadow:0 0 0 8px rgba(232,158,77,0.3);
+}
+.beat-dot .beat-word{font-size:11px;font-weight:800;letter-spacing:0.5px}
+
+.tempo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin:12px 0;font-size:12px;color:var(--muted)}
+.tempo-row input[type=range]{width:160px}
+
+.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.control-btn{
+  background:var(--primary);color:#fff;border:none;padding:10px 18px;
+  border-radius:99px;font-family:inherit;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;
+}
+.control-btn:hover{background:var(--accent)}
+.control-btn.secondary{background:transparent;color:var(--primary);border:1px solid var(--primary)}
+.control-btn.secondary:hover{background:var(--primary);color:#fff}
+
+/* ===== Step B: Chunk Progress ===== */
+.chunk-progress{
+  display:flex;flex-direction:column;gap:6px;margin:12px 0;
+  max-height:340px;overflow-y:auto;padding-right:4px;
+}
+.chunk-item{
+  background:#fff;border:1px solid var(--border);border-radius:8px;
+  padding:10px 12px;font-size:13px;display:flex;align-items:center;gap:8px;
+  transition:all 0.2s;
+}
+.chunk-item.done{opacity:0.55}
+.chunk-checkbox{
+  width:22px;height:22px;border-radius:50%;border:2px solid var(--border);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:13px;cursor:pointer;background:#fff;color:transparent;
+  transition:all 0.2s;
+}
+.chunk-item.done .chunk-checkbox{
+  background:var(--success);border-color:var(--success);color:#fff;
+}
+.chunk-text{flex:1;line-height:1.4}
+.chunk-play{
+  flex-shrink:0;background:transparent;border:1px solid var(--border);
+  color:var(--primary);width:32px;height:32px;border-radius:8px;
+  cursor:pointer;font-size:13px;
+}
+.chunk-play:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* ===== Step C: Cumulative ===== */
+.cum-display{
+  background:#FFF8EC;padding:14px;border-radius:10px;font-size:14px;line-height:1.6;
+  min-height:80px;margin:12px 0;border:1px solid var(--border);
+}
+.cum-counter{text-align:center;font-size:12px;color:var(--muted);margin:8px 0}
+.cum-counter strong{font-size:16px;color:var(--accent)}
+
+.footer-note{text-align:center;color:var(--muted);font-size:11px;margin:24px 0 12px;line-height:1.5}
+
+@media (max-width:480px){
+  h1{font-size:18px}
+  .preview-text{font-size:14px}
+  .beat-dot{min-width:42px;height:38px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="topnav">
+    <a href="index.html">← ホーム</a>
+    <a href="Speaking_Coach.html">🎤 Speaking Coach →</a>
+  </div>
+
+  <h1>🥁 Rhythm Practice</h1>
+  <div class="subtitle">英語の「強拍リズム」を体に入れる練習モード</div>
+
+  <div class="intro-card">
+    <h2>3ステップで進めましょう</h2>
+    <ol>
+      <li><strong>Step A</strong> — 強拍だけメトロノームで叩く（リズム感を体に入れる）</li>
+      <li><strong>Step B</strong> — チャンク（意味のかたまり）を1つずつ反復</li>
+      <li><strong>Step C</strong> — チャンクを段階的に繋いで全文に到達</li>
+    </ol>
+  </div>
+
+  <div class="picker-card">
+    <label for="phrasePicker">練習するスクリプト</label>
+    <select id="phrasePicker"></select>
+  </div>
+
+  <div class="preview-card">
+    <div class="preview-label">📜 Preview</div>
+    <div class="preview-text" id="previewText"></div>
+    <div class="preview-jp" id="previewJp"></div>
+  </div>
+
+  <div class="stage-tabs">
+    <button class="stage-tab active" data-stage="0" onclick="switchStage(0)">Step A<br>🥁 強拍</button>
+    <button class="stage-tab" data-stage="1" onclick="switchStage(1)">Step B<br>✂️ チャンク</button>
+    <button class="stage-tab" data-stage="2" onclick="switchStage(2)">Step C<br>🔗 繋ぐ</button>
+  </div>
+
+  <!-- ===== Step A ===== -->
+  <div class="stage active" id="stage0">
+    <div class="stage-card">
+      <div class="instruction">
+        🥁 <strong>Step A: 強拍リズム</strong><br>
+        英語は強拍が等間隔。下の強拍だけを <strong>机を指で叩きながら</strong> 声に出してみましょう。
+        弱拍は強拍と強拍の間に勝手に詰まります。
+      </div>
+      <div class="beat-display" id="beatDisplayA"></div>
+      <div class="tempo-row">
+        🎼 テンポ:
+        <input type="range" id="tempoSlider" min="40" max="120" value="70" oninput="document.getElementById('tempoVal').textContent=this.value+' BPM'">
+        <span id="tempoVal">70 BPM</span>
+      </div>
+      <div class="controls">
+        <button class="control-btn" onclick="startBeatA()">▶ スタート</button>
+        <button class="control-btn secondary" onclick="stopBeat()">⏹ ストップ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Step B ===== -->
+  <div class="stage" id="stage1">
+    <div class="stage-card">
+      <div class="instruction">
+        ✂️ <strong>Step B: チャンク単位の練習</strong><br>
+        1つずつ ▶ で再生 → 自分で発声 → ✓ で完了マーク。
+        各チャンクは「名詞＋関係節を一塊」のような意味のかたまりです。
+      </div>
+      <div class="chunk-progress" id="chunkProgress"></div>
+      <div class="controls">
+        <button class="control-btn secondary" onclick="resetChunkProgress()">🔄 やり直し</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Step C ===== -->
+  <div class="stage" id="stage2">
+    <div class="stage-card">
+      <div class="instruction">
+        🔗 <strong>Step C: 段階的に繋ぐ</strong><br>
+        2チャンク → 3チャンク → ... と徐々に繋いでいきます。
+        失速したら 1段前に戻ってください。Step A のリズム感を保ったまま繋ぐのがコツ。
+      </div>
+      <div class="cum-counter">現在 <strong id="cumCount">2</strong> チャンクを連結中</div>
+      <div class="cum-display" id="cumDisplay"></div>
+      <div class="controls">
+        <button class="control-btn" onclick="speakCum(0.85)">🐢 ゆっくり</button>
+        <button class="control-btn" onclick="speakCum(1.0)">🔊 標準</button>
+      </div>
+      <div class="controls" style="margin-top:8px">
+        <button class="control-btn secondary" onclick="changeCum(-1)">－ 減らす</button>
+        <button class="control-btn secondary" onclick="changeCum(1)">＋ 増やす</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    リズムが整ったら <a href="Speaking_Coach.html" style="color:var(--accent);font-weight:700">🎤 Speaking Coach</a> で全文録音 →スコア確認
+  </div>
+
+</div>
+
+<script>
+// ===== Phrase Data =====
+const PHRASES = [
+  {
+    id:"day9",
+    label:"Day 9 — People & Leadership (full Shadowing script)",
+    en:"Talent is no longer a back-office function — it is the front line of competitive advantage. Operators that lose top performers within their first eighteen months typically pay a hidden tax of thirty to forty percent of annual salary in replacement costs. Compounding leaders — those who develop two or three successors before stepping into bigger roles — build the strongest benches across global operations. The winning move is to coach for ownership, not to manage for compliance. We should anchor talent development in Tokyo, then scale our playbook across Asian markets within twenty-four months. Done well, every successful hire compounds into a culture asset that competitors cannot replicate.",
+    jp:"📌 Day 9 People & Leadership",
+    stress:["TAL-ent","LON-ger","BACK-of-fice","FRONT","LINE","com-PET-i-tive","ad-VAN-tage","OP-er-a-tors","LOSE","TOP","per-FORM-ers","eigh-TEEN","HID-den","TAX","THIR-ty","FOR-ty","per-CENT","AN-nual","SAL-ary","re-PLACE-ment","com-POUND-ing","LEAD-ers","de-VEL-op","TWO","THREE","suc-CES-sors","STEP-ping","BIG-ger","BUILD","STRONG-est","BENCH-es","GLO-bal","OP-er-a-tions","WIN-ning","MOVE","COACH","OWN-er-ship","MAN-age","com-PLI-ance","AN-chor","TAL-ent","TO-ky-o","SCALE","PLAY-book","A-sian","MAR-kets","TWEN-ty-four","DONE","SUC-cess-ful","HIRE","com-POUNDS","CUL-ture","AS-set","com-PET-i-tors","REP-li-cate"],
+    chunks:[
+      "Talent is no longer a back-office function",
+      "— it is the front line",
+      "of competitive advantage.",
+      "Operators that lose top performers",
+      "within their first eighteen months",
+      "typically pay a hidden tax",
+      "of thirty to forty percent",
+      "of annual salary",
+      "in replacement costs.",
+      "Compounding leaders",
+      "— those who develop two or three successors",
+      "before stepping into bigger roles —",
+      "build the strongest benches",
+      "across global operations.",
+      "The winning move",
+      "is to coach for ownership,",
+      "not to manage for compliance.",
+      "We should anchor talent development in Tokyo,",
+      "then scale our playbook",
+      "across Asian markets",
+      "within twenty-four months.",
+      "Done well,",
+      "every successful hire compounds",
+      "into a culture asset",
+      "that competitors cannot replicate."
+    ]
+  }
+];
+
+// ===== State =====
+let currentPhrase = PHRASES[0];
+let beatTimer = null;
+let beatIdx = 0;
+let cumCount = 2;
+let chunkDone = new Set();
+
+// ===== Init =====
+function init(){
+  const picker = document.getElementById("phrasePicker");
+  PHRASES.forEach((p,i)=>{
+    const opt = document.createElement("option");
+    opt.value = i; opt.textContent = p.label;
+    picker.appendChild(opt);
+  });
+  picker.addEventListener("change", e=>{
+    currentPhrase = PHRASES[parseInt(e.target.value,10)];
+    chunkDone.clear();
+    cumCount = 2;
+    renderAll();
+  });
+  renderAll();
+}
+
+function renderAll(){
+  renderPreview();
+  renderBeatDisplayA();
+  renderChunkProgress();
+  renderCum();
+}
+
+function renderPreview(){
+  document.getElementById("previewText").textContent = currentPhrase.en;
+  document.getElementById("previewJp").textContent = currentPhrase.jp || "";
+}
+
+// ===== Tabs =====
+function switchStage(i){
+  stopBeat();
+  document.querySelectorAll(".stage-tab").forEach((t,idx)=>t.classList.toggle("active", idx===i));
+  document.querySelectorAll(".stage").forEach((s,idx)=>s.classList.toggle("active", idx===i));
+}
+
+// ===== Speech helpers =====
+function pickVoice(){
+  const voices = window.speechSynthesis.getVoices();
+  return voices.find(x=>/en-US/.test(x.lang) && /(google|samantha|alex)/i.test(x.name)) ||
+         voices.find(x=>/en-US/.test(x.lang)) ||
+         voices.find(x=>/en-/.test(x.lang));
+}
+function speak(text, rate=1.0){
+  try{ window.speechSynthesis.cancel(); } catch(e){}
+  const u = new SpeechSynthesisUtterance(text.replace(/—/g,","));
+  u.rate = rate;
+  u.lang = "en-US";
+  const v = pickVoice();
+  if(v) u.voice = v;
+  window.speechSynthesis.speak(u);
+}
+
+// ===== Step A: Beat =====
+function renderBeatDisplayA(){
+  const el = document.getElementById("beatDisplayA");
+  const stress = currentPhrase.stress || [];
+  const limited = stress.slice(0, 12);
+  let html = "";
+  limited.forEach((s, i) => {
+    const w = s.replace(/-/g,"");
+    html += `<div class="beat-dot" data-idx="${i}" onclick="speak('${w}', 0.9)">
+      <span class="beat-word">${w.toUpperCase()}</span>
+    </div>`;
+  });
+  if(stress.length > 12){
+    html += `<div style="font-size:11px;color:var(--muted);width:100%;text-align:center;margin-top:4px">+${stress.length-12} more in this script</div>`;
+  }
+  el.innerHTML = html;
+}
+
+function startBeatA(){
+  stopBeat();
+  const stress = currentPhrase.stress || [];
+  if(!stress.length) return;
+  const bpm = parseInt(document.getElementById("tempoSlider").value, 10);
+  const interval = 60000 / bpm;
+  const dots = document.querySelectorAll("#beatDisplayA .beat-dot");
+  beatIdx = 0;
+
+  const tick = () => {
+    dots.forEach(d => d.classList.remove("active"));
+    if(beatIdx < dots.length){
+      const dot = dots[beatIdx];
+      dot.classList.add("active");
+      const word = dot.querySelector(".beat-word").textContent;
+      speak(word, 0.9);
+      beatIdx++;
+    } else {
+      stopBeat();
+    }
+  };
+  tick();
+  beatTimer = setInterval(tick, interval);
+}
+
+function stopBeat(){
+  if(beatTimer){ clearInterval(beatTimer); beatTimer = null; }
+  document.querySelectorAll("#beatDisplayA .beat-dot").forEach(d=>d.classList.remove("active"));
+  try{ window.speechSynthesis.cancel(); } catch(e){}
+}
+
+// ===== Step B: Chunk Progress =====
+function renderChunkProgress(){
+  const el = document.getElementById("chunkProgress");
+  const chunks = currentPhrase.chunks || [];
+  if(!chunks.length){ el.innerHTML = "<p style='font-size:13px;color:var(--muted);text-align:center'>このスクリプトには chunks データがありません</p>"; return; }
+  let html = "";
+  chunks.forEach((c, i) => {
+    const done = chunkDone.has(i);
+    const safe = c.replace(/'/g,"&apos;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+    html += `<div class="chunk-item ${done?'done':''}">
+      <button class="chunk-checkbox" onclick="toggleChunkDone(${i})" title="完了マーク">${done?'✓':''}</button>
+      <div class="chunk-text">${safe}</div>
+      <button class="chunk-play" onclick="speakChunk(${i})" title="再生">▶</button>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function speakChunk(i){
+  const c = (currentPhrase.chunks || [])[i];
+  if(c) speak(c, 0.85);
+}
+
+function toggleChunkDone(i){
+  if(chunkDone.has(i)) chunkDone.delete(i); else chunkDone.add(i);
+  renderChunkProgress();
+}
+
+function resetChunkProgress(){
+  chunkDone.clear();
+  renderChunkProgress();
+}
+
+// ===== Step C: Cumulative =====
+function renderCum(){
+  const chunks = currentPhrase.chunks || [];
+  document.getElementById("cumCount").textContent = Math.min(cumCount, chunks.length);
+  const text = chunks.slice(0, Math.min(cumCount, chunks.length)).join(" ");
+  document.getElementById("cumDisplay").textContent = text || "(chunks データなし)";
+}
+
+function changeCum(delta){
+  const chunks = currentPhrase.chunks || [];
+  cumCount = Math.max(1, Math.min(chunks.length, cumCount + delta));
+  renderCum();
+}
+
+function speakCum(rate){
+  const chunks = currentPhrase.chunks || [];
+  const text = chunks.slice(0, Math.min(cumCount, chunks.length)).join(" ");
+  if(text) speak(text, rate);
+}
+
+// ===== Boot =====
+if(window.speechSynthesis){
+  window.speechSynthesis.onvoiceschanged = ()=>{};
+}
+init();
+</script>
+</body>
+</html>
