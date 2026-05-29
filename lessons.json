@@ -497,5 +497,221 @@
         ]
       }
     }
-  ]
+  ],
+  "diagnostic_baseline_v1": {
+    "version": "1.0",
+    "createdAt": "2026-05-29",
+    "description": "Day 12 開始時の発音ベースライン録音。5文×5回=25録音。v1 は自分比較用の物差し（簡易判定）。絶対値ではなく、後日の経過比較に使う。",
+    "thresholds": {
+      "WEAK": 0.5,
+      "WATCH": 0.25,
+      "_note": "WEAK = 50%未満で誤認識/欠落 → 弱点。WATCH = 25-50% → 要観察。CLEAR = 25%未満 → クリア"
+    },
+    "targetRepeats": 5,
+    "sentences": [
+      {
+        "id": "S1",
+        "text": "We're planning to open three new flagship stores in London this year.",
+        "topic": "Expansion plan",
+        "wordCount": 13,
+        "probes": {
+          "TH": [
+            {"word": "three", "phoneme": "θ", "position": "onset", "note": "voiceless TH。S/F に化けやすい"},
+            {"word": "this", "phoneme": "ð", "position": "onset", "note": "voiced TH。Z/D に化けやすい"}
+          ],
+          "R_vs_L": [
+            {"word": "planning", "phoneme": "l", "position": "onset-cluster", "pair": "PLAN vs PRAN"},
+            {"word": "flagship", "phoneme": "l", "position": "onset-cluster", "pair": "FLAG vs FRAG"},
+            {"word": "London", "phoneme": "l", "position": "onset", "pair": "L vs R"},
+            {"word": "stores", "phoneme": "r", "position": "coda", "pair": "STORZ vs STOLZ"}
+          ],
+          "V_vs_B": [],
+          "VOWEL_LENGTH": [
+            {"word": "stores", "vowel": "ɔː", "type": "long", "note": "短いと stoz/stuz に化ける"},
+            {"word": "three", "vowel": "iː", "type": "long", "note": "短いと thri に近づく"}
+          ],
+          "STRESS": [
+            {"word": "planning", "syllable": 1, "marked": "PLAN-ning"},
+            {"word": "flagship", "syllable": 1, "marked": "FLAG-ship"},
+            {"word": "London", "syllable": 1, "marked": "LON-don"}
+          ],
+          "LINKING": [
+            {"from": "open", "to": "three", "type": "consonant-consonant", "note": "n→θ は連結弱、明瞭に切る"},
+            {"from": "stores", "to": "in", "type": "consonant-vowel", "note": "z→ɪ で linking, store-zin に近づく"},
+            {"from": "in", "to": "London", "type": "consonant-consonant", "note": "n→l で n が脱落気味"},
+            {"from": "this", "to": "year", "type": "consonant-vowel", "note": "s→j(i) で this-year → thi-syear に近づく"}
+          ]
+        }
+      },
+      {
+        "id": "S2",
+        "text": "Our same-store sales grew by twelve percent last quarter.",
+        "topic": "Sales performance",
+        "wordCount": 10,
+        "probes": {
+          "TH": [],
+          "R_vs_L": [
+            {"word": "Our", "phoneme": "r", "position": "coda", "pair": "AUR vs AUL"},
+            {"word": "store", "phoneme": "r", "position": "coda", "pair": "STOR vs STOL"},
+            {"word": "sales", "phoneme": "l", "position": "coda", "pair": "SAYLZ vs SAYRZ"},
+            {"word": "grew", "phoneme": "r", "position": "onset-cluster", "pair": "GREW vs GLEW"},
+            {"word": "last", "phoneme": "l", "position": "onset", "pair": "L vs R"},
+            {"word": "quarter", "phoneme": "r", "position": "coda", "pair": "QUARTER vs QUARTEL"}
+          ],
+          "V_vs_B": [
+            {"word": "twelve", "phoneme": "v", "position": "coda", "pair": "TWELV vs TWELB"},
+            {"word": "by", "phoneme": "b", "position": "onset", "note": "コントラスト用"}
+          ],
+          "VOWEL_LENGTH": [
+            {"word": "store", "vowel": "ɔː", "type": "long"},
+            {"word": "grew", "vowel": "uː", "type": "long", "note": "短いと gru で曖昧"},
+            {"word": "last", "vowel": "æ", "type": "short-tense", "note": "米はæ"}
+          ],
+          "STRESS": [
+            {"word": "same-store", "syllable": 1, "marked": "SAME-store", "note": "複合語前強勢"},
+            {"word": "twelve", "syllable": 1, "marked": "TWELVE"},
+            {"word": "percent", "syllable": 2, "marked": "per-CENT"},
+            {"word": "quarter", "syllable": 1, "marked": "QUAR-ter"}
+          ],
+          "LINKING": [
+            {"from": "Our", "to": "same", "type": "consonant-consonant", "note": "r→s で r 脱落"},
+            {"from": "store", "to": "sales", "type": "consonant-consonant", "note": "r→s, 子音連続"},
+            {"from": "grew", "to": "by", "type": "vowel-consonant", "note": "uː→b で linking 弱"},
+            {"from": "twelve", "to": "percent", "type": "consonant-consonant", "note": "v→p, v が無声化しやすい"},
+            {"from": "last", "to": "quarter", "type": "consonant-consonant", "note": "t→k で t が glottal stop or 脱落（flap は母音間限定なのでここでは不適切）"}
+          ]
+        }
+      },
+      {
+        "id": "S3",
+        "text": "The kitchen workflow needs to be more efficient during peak hours.",
+        "topic": "Operations efficiency",
+        "wordCount": 11,
+        "probes": {
+          "TH": [
+            {"word": "the", "phoneme": "ð", "position": "onset", "note": "voiced TH。Z/D に化けやすい"}
+          ],
+          "R_vs_L": [
+            {"word": "workflow", "phoneme": "r", "position": "coda", "pair": "WORK vs WOLK", "note": "work の r コーダが脱落しやすい"},
+            {"word": "workflow", "phoneme": "l", "position": "onset-cluster", "pair": "FLOW vs FROW", "note": "flow の fl- クラスター"},
+            {"word": "more", "phoneme": "r", "position": "coda", "pair": "MORE vs MOLE"},
+            {"word": "during", "phoneme": "r", "position": "medial", "pair": "DURING vs DULING"},
+            {"word": "hours", "phoneme": "r", "position": "implicit-coda", "note": "aʊər の r が消えると owz に近づく"},
+            {"word": "efficient", "phoneme": "ʃ", "position": "medial", "note": "R/L 直接対象ではないが、ʃ の口形は L 側に近い"}
+          ],
+          "V_vs_B": [
+            {"word": "be", "phoneme": "b", "position": "onset", "note": "コントラスト用（V 出現なし、B のみ）"}
+          ],
+          "VOWEL_LENGTH": [
+            {"word": "needs", "vowel": "iː", "type": "long", "note": "短いと nidz/nɪdz に化ける"},
+            {"word": "peak", "vowel": "iː", "type": "long", "note": "短いと pɪk(=pick) に化ける弱点ポイント"},
+            {"word": "more", "vowel": "ɔː", "type": "long"},
+            {"word": "hours", "vowel": "aʊə", "type": "diphthong-long"}
+          ],
+          "STRESS": [
+            {"word": "kitchen", "syllable": 1, "marked": "KIT-chen"},
+            {"word": "workflow", "syllable": 1, "marked": "WORK-flow", "note": "複合語前強勢"},
+            {"word": "efficient", "syllable": 2, "marked": "ef-FI-cient"},
+            {"word": "during", "syllable": 1, "marked": "DUR-ing"},
+            {"word": "peak", "syllable": 1, "marked": "PEAK", "note": "PEAK は1音節。日本語話者は「ピーク」と母音挿入しがち"}
+          ],
+          "LINKING": [
+            {"from": "the", "to": "kitchen", "type": "consonant-consonant", "note": "ð→k で ð が脱落気味"},
+            {"from": "needs", "to": "to", "type": "consonant-consonant", "note": "z→t で z が無声化し s/t 化"},
+            {"from": "to", "to": "be", "type": "consonant-consonant", "note": "t→b で t が glottal stop"},
+            {"from": "more", "to": "efficient", "type": "consonant-vowel", "note": "r→ɪ で linking R 発生、more-efficient → mo-re-efficient"},
+            {"from": "during", "to": "peak", "type": "consonant-consonant", "note": "ŋ→p で ŋ が n に化けやすい"},
+            {"from": "peak", "to": "hours", "type": "consonant-vowel", "note": "k→aʊ で linking、peak-hours → pea-kours に近づく"}
+          ]
+        }
+      },
+      {
+        "id": "S4",
+        "text": "I'd like to share my thoughts on the brand strategy.",
+        "topic": "Meeting opener / opinion",
+        "wordCount": 10,
+        "probes": {
+          "TH": [
+            {"word": "thoughts", "phoneme": "θ", "position": "onset", "note": "voiceless TH。S/F に化けやすい最頻出パターン"},
+            {"word": "the", "phoneme": "ð", "position": "onset", "note": "voiced TH。Z/D に化けやすい"}
+          ],
+          "R_vs_L": [
+            {"word": "like", "phoneme": "l", "position": "onset", "pair": "LIKE vs RIKE"},
+            {"word": "share", "phoneme": "ʃ", "position": "onset", "note": "ʃ は R/L 直接対象ではないが舌位置の参照点"},
+            {"word": "share", "phoneme": "r", "position": "coda", "pair": "SHARE vs SHAL"},
+            {"word": "brand", "phoneme": "r", "position": "onset-cluster", "pair": "BRAND vs BLAND", "note": "br- vs bl- 最頻出ミニマルペア"},
+            {"word": "strategy", "phoneme": "r", "position": "onset-cluster", "pair": "STRAT vs STLAT", "note": "str- の r"}
+          ],
+          "V_vs_B": [],
+          "VOWEL_LENGTH": [
+            {"word": "like", "vowel": "aɪ", "type": "diphthong"},
+            {"word": "share", "vowel": "eə", "type": "diphthong-long", "note": "短いと she/shel に近づく"},
+            {"word": "my", "vowel": "aɪ", "type": "diphthong"},
+            {"word": "thoughts", "vowel": "ɔː", "type": "long"}
+          ],
+          "STRESS": [
+            {"word": "like", "syllable": 1, "marked": "LIKE"},
+            {"word": "share", "syllable": 1, "marked": "SHARE"},
+            {"word": "thoughts", "syllable": 1, "marked": "THOUGHTS"},
+            {"word": "brand", "syllable": 1, "marked": "BRAND"},
+            {"word": "strategy", "syllable": 1, "marked": "STRA-te-gy"}
+          ],
+          "LINKING": [
+            {"from": "like", "to": "to", "type": "consonant-consonant", "note": "k→t 子音連続、k が glottal stop で消えやすい"},
+            {"from": "to", "to": "share", "type": "consonant-consonant", "note": "t→ʃ で t が脱落"},
+            {"from": "share", "to": "my", "type": "consonant-consonant", "note": "r→m で r が脱落（米でも弱化）"},
+            {"from": "thoughts", "to": "on", "type": "consonant-vowel", "note": "s→ɒ で linking、thought-son に近づく"},
+            {"from": "on", "to": "the", "type": "consonant-consonant", "note": "n→ð で ð が脱落気味"},
+            {"from": "brand", "to": "strategy", "type": "consonant-consonant", "note": "d→s で d が脱落、bran-strategy に近づく"}
+          ]
+        }
+      },
+      {
+        "id": "S5",
+        "text": "Could you walk me through the value proposition for this market?",
+        "topic": "Inquiry / clarification",
+        "wordCount": 11,
+        "probes": {
+          "TH": [
+            {"word": "through", "phoneme": "θ", "position": "onset", "note": "voiceless TH + r クラスター、難所"},
+            {"word": "the", "phoneme": "ð", "position": "onset"},
+            {"word": "this", "phoneme": "ð", "position": "onset"}
+          ],
+          "R_vs_L": [
+            {"word": "walk", "phoneme": "l", "position": "coda-silent", "note": "walk の l はサイレント（発音しない）。発音してしまうと wolk に"},
+            {"word": "through", "phoneme": "r", "position": "onset-cluster", "pair": "THROUGH vs THLOUGH", "note": "θ+r の難クラスター"},
+            {"word": "value", "phoneme": "l", "position": "medial", "pair": "VALUE vs VARUE"},
+            {"word": "proposition", "phoneme": "r", "position": "onset-cluster", "pair": "PRO vs PLO"},
+            {"word": "for", "phoneme": "r", "position": "coda"},
+            {"word": "market", "phoneme": "r", "position": "coda"}
+          ],
+          "V_vs_B": [
+            {"word": "value", "phoneme": "v", "position": "onset", "pair": "VALUE vs BALUE", "note": "V/B 弱点の代表"}
+          ],
+          "VOWEL_LENGTH": [
+            {"word": "walk", "vowel": "ɔː", "type": "long", "note": "短いと wʌk に化ける"},
+            {"word": "through", "vowel": "uː", "type": "long", "note": "短いと θrʊ で曖昧"},
+            {"word": "you", "vowel": "uː", "type": "long"},
+            {"word": "for", "vowel": "ɔː", "type": "long"}
+          ],
+          "STRESS": [
+            {"word": "walk", "syllable": 1, "marked": "WALK"},
+            {"word": "through", "syllable": 1, "marked": "THROUGH"},
+            {"word": "value", "syllable": 1, "marked": "VAL-ue"},
+            {"word": "proposition", "syllable": 3, "marked": "pro-po-SI-tion"},
+            {"word": "market", "syllable": 1, "marked": "MAR-ket"}
+          ],
+          "LINKING": [
+            {"from": "could", "to": "you", "type": "palatalization", "note": "d→j で /dʒ/ 化（could you → couldjyou）。日本語話者は分離しがち"},
+            {"from": "walk", "to": "me", "type": "consonant-consonant", "note": "k→m で k が glottal stop"},
+            {"from": "me", "to": "through", "type": "vowel-consonant", "note": "iː→θ、θ が s/f に化けやすい"},
+            {"from": "through", "to": "the", "type": "consonant-consonant", "note": "uː→ð、ð が脱落気味"},
+            {"from": "value", "to": "proposition", "type": "vowel-consonant", "note": "uː→p で linking 弱、value が val-yu-proposition に分離しがち"},
+            {"from": "for", "to": "this", "type": "consonant-consonant", "note": "r→ð で r 脱落"},
+            {"from": "this", "to": "market", "type": "consonant-consonant", "note": "s→m で s が無声化"}
+          ]
+        }
+      }
+    ]
+  }
 }

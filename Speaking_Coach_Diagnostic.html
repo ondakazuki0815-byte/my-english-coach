@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Speaking Coach — Diagnostic v1</title>
+<!--
+  Diagnostic (発音ベースライン録音) アプリ
+  - 既存 Speaking_Coach.html とは完全分離（localStorage は read-only）
+  - URL ?day=N を最優先、未指定時は _meta.startDate から自動算出
+  - iPhone はバナー表示で停止（Mac Chrome 専用）
+  - v1 = 自分比較用の物差し。絶対値ではなく経過比較に使う
+-->
+<style>
+:root{
+  --primary:#1F3A5F;
+  --accent:#C5563A;
+  --accent-soft:#E8826B;
+  --sand:#F4E9DD;
+  --bg:#FAF8F4;
+  --card:#FFFFFF;
+  --text:#2A2A2A;
+  --muted:#6B6B6B;
+  --border:#E5DFD3;
+  --success:#3A7D44;
+  --danger:#D4523F;
+  --warning:#D69100;
+  --info:#3567A8;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.55;font-size:16px;
+}
+.header{
+  background:linear-gradient(135deg,var(--primary) 0%,#2C5081 100%);
+  color:#fff;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+.header-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.title{font-size:18px;font-weight:700}
+.subtitle{font-size:12px;opacity:0.85;margin-top:2px}
+.daybadge{background:rgba(255,255,255,0.15);padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700}
+.container{max-width:760px;margin:0 auto;padding:14px}
+
+/* iPhone banner */
+.mobile-banner{
+  display:none;background:#FFF3E0;border:1px solid #FFB74D;border-radius:12px;
+  padding:18px 14px;margin:14px 0;text-align:center;color:#5D4037;
+}
+.mobile-banner.show{display:block}
+.mobile-banner strong{display:block;font-size:16px;margin-bottom:6px;color:var(--accent)}
+
+/* Warning banner (no SR support) */
+.warn-banner{
+  display:none;background:#FFF3E0;border:1px solid #FFB74D;border-radius:12px;
+  padding:14px;margin:14px 0;color:#5D4037;font-size:14px;
+}
+.warn-banner.show{display:block}
+
+/* Info notice */
+.notice{
+  background:#EAF2FB;border-left:3px solid var(--info);border-radius:8px;
+  padding:10px 12px;margin:14px 0;font-size:13px;color:#2A4A6E;
+}
+.notice strong{color:var(--info)}
+
+/* Progress bar */
+.progress-wrap{
+  background:var(--card);border-radius:12px;padding:12px 14px;
+  box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:14px;
+}
+.progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.progress-label{font-size:13px;font-weight:600;color:var(--primary)}
+.progress-count{font-size:12px;color:var(--muted)}
+.progress-bar{height:8px;background:var(--sand);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent) 0%,var(--accent-soft) 100%);transition:width 0.3s ease;width:0%}
+
+/* Sentence card */
+.sentence-card{
+  background:var(--card);border-radius:14px;padding:18px 16px;
+  box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:14px;
+}
+.sentence-label{
+  font-size:11px;color:var(--accent);font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;
+}
+.sentence-text{font-size:19px;font-weight:500;line-height:1.6;color:var(--text)}
+.sentence-meta{font-size:12px;color:var(--muted);margin-top:8px}
+
+/* Rep indicator */
+.rep-row{display:flex;gap:6px;margin-top:12px}
+.rep-dot{
+  flex:1;height:8px;border-radius:4px;background:var(--sand);
+  transition:background 0.2s;
+}
+.rep-dot.done{background:var(--success)}
+.rep-dot.current{background:var(--accent);box-shadow:0 0 0 3px rgba(197,86,58,0.2)}
+
+/* Controls */
+.controls{
+  display:flex;flex-direction:column;gap:10px;
+  background:var(--card);border-radius:14px;padding:16px;
+  box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:14px;
+}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  flex:1;min-width:120px;padding:12px 14px;border:none;border-radius:10px;
+  font-size:14px;font-weight:600;cursor:pointer;
+  font-family:inherit;transition:transform 0.1s,box-shadow 0.2s;
+}
+.btn:active{transform:scale(0.98)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#B04A30}
+.btn-secondary{background:var(--sand);color:var(--text)}
+.btn-secondary:hover{background:#EBDDC9}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
+.rec-btn{
+  width:80px;height:80px;border-radius:50%;border:none;
+  background:var(--accent);color:#fff;font-size:36px;cursor:pointer;
+  box-shadow:0 4px 12px rgba(197,86,58,0.3);
+  transition:transform 0.1s,box-shadow 0.2s;margin:8px auto;display:block;
+}
+.rec-btn:active{transform:scale(0.95)}
+.rec-btn.recording{
+  background:var(--danger);animation:pulse 1.2s infinite;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 4px 12px rgba(212,82,63,0.4)}
+  50%{box-shadow:0 4px 20px rgba(212,82,63,0.7)}
+}
+.rec-status{text-align:center;font-size:13px;color:var(--muted);margin-top:8px;min-height:18px}
+.live-text{
+  background:#F7F4ED;border-radius:8px;padding:10px 12px;margin-top:10px;
+  font-size:14px;color:var(--muted);min-height:42px;
+}
+
+/* Result panel */
+.result-panel{
+  display:none;background:var(--card);border-radius:14px;padding:16px;
+  box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:14px;
+}
+.result-panel.show{display:block}
+.result-row{display:flex;gap:12px;justify-content:space-around;text-align:center;margin-bottom:12px}
+.result-metric{flex:1}
+.result-metric strong{display:block;font-size:22px;color:var(--accent);font-weight:700}
+.result-metric small{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px}
+
+.diff-view{
+  background:#F7F4ED;border-radius:8px;padding:10px 12px;font-size:14px;line-height:1.7;
+  margin-top:8px;
+}
+.w-match{color:var(--success);font-weight:500}
+.w-miss{color:var(--danger);text-decoration:line-through;font-weight:500}
+.w-extra{color:var(--info);font-style:italic;font-size:12px}
+
+/* Report screen */
+.report-screen{display:none}
+.report-screen.show{display:block}
+.report-section{
+  background:var(--card);border-radius:14px;padding:16px;
+  box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:14px;
+}
+.report-section h3{margin:0 0 10px;font-size:15px;color:var(--primary)}
+
+/* Sentence selector */
+.sentence-selector{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.sel-chip{
+  flex:1;min-width:60px;padding:8px;border-radius:8px;background:var(--card);
+  border:1px solid var(--border);text-align:center;font-size:12px;font-weight:600;
+  cursor:pointer;color:var(--muted);
+}
+.sel-chip.done{background:#E8F5E9;color:var(--success);border-color:var(--success)}
+.sel-chip.current{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.footer-note{
+  text-align:center;font-size:11px;color:var(--muted);
+  padding:20px 12px;
+}
+
+/* ===== P4: Phoneme Breakdown ===== */
+/* タグ別配色 (WEAK/WATCH/OK/NO_DATA) */
+.tag-pill{
+  display:inline-block;font-size:11px;font-weight:700;
+  padding:2px 8px;border-radius:10px;letter-spacing:0.3px;
+  white-space:nowrap;
+}
+.tag-pill.WEAK    { background:#fee2e2; color:#b91c1c; border:1px solid #fecaca; }
+.tag-pill.WATCH   { background:#fef3c7; color:#92400e; border:1px solid #fde68a; }
+.tag-pill.OK      { background:#dcfce7; color:#166534; border:1px solid #bbf7d0; }
+.tag-pill.NO_DATA { background:#f3f4f6; color:#6b7280; border:1px solid #e5e7eb; }
+
+/* タグ名称ラベル (R_vs_L 等の見出し用) */
+.tag-name{
+  display:inline-block;font-size:13px;font-weight:700;color:#1f2937;
+  padding:2px 8px;border-radius:6px;background:#f3f4f6;border:1px solid #e5e7eb;
+}
+/* LINKING は常時赤系で強調（WEAK/WATCH/OK と独立して強調） */
+.tag-name.LINKING{
+  background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; font-weight:800;
+}
+.tag-name.LINKING::before{ content:"⚡ "; }
+
+/* breakdown テーブル */
+.phoneme-table{
+  width:100%;border-collapse:collapse;font-size:13px;margin-top:6px;
+}
+.phoneme-table th, .phoneme-table td{
+  text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);
+}
+.phoneme-table th{
+  background:#fafaf7;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;
+  color:var(--muted);font-weight:700;
+}
+.phoneme-table td{ vertical-align:middle; }
+.phoneme-table tr.is-linking{ background:#fff7f5; }
+.rate-cell{ font-variant-numeric:tabular-nums; color:var(--muted); }
+
+/* WeakTags summary */
+.weak-summary{
+  background:#fff7f5;border:1px solid #fecaca;border-radius:10px;
+  padding:10px 12px;margin-top:10px;font-size:13px;color:#7f1d1d;
+}
+.weak-summary strong{ color:#b91c1c; }
+.weak-summary .tag-name{ margin-right:6px; }
+.weak-summary.no-weak{
+  background:#f0fdf4;border-color:#bbf7d0;color:#166534;
+}
+
+/* タブUI */
+.tab-row{
+  display:flex;gap:6px;margin:14px 0 10px;border-bottom:1px solid var(--border);
+}
+.tab-btn{
+  padding:8px 14px;background:transparent;border:none;cursor:pointer;
+  font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);
+  border-bottom:2px solid transparent;transition:all 0.15s;
+}
+.tab-btn:hover{ color:var(--text); }
+.tab-btn.active{ color:var(--accent);border-bottom-color:var(--accent); }
+
+.tab-panel{ display:none; }
+.tab-panel.active{ display:block; }
+
+/* Evidence cards (タグ別ビュー) */
+.evidence-group{
+  margin-bottom:14px;padding:10px 12px;background:#fafaf7;
+  border-radius:8px;border:1px solid var(--border);
+}
+.evidence-group.is-linking{
+  background:#fff7f5;border-color:#fecaca;
+}
+.evidence-group-head{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
+}
+.evidence-group-head .count{
+  font-size:11px;color:var(--muted);
+}
+.evidence-list{ margin:0;padding:0;list-style:none; }
+.evidence-item{
+  padding:6px 0;font-size:13px;border-top:1px dashed var(--border);
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+}
+.evidence-item:first-child{ border-top:none; }
+.evidence-word{
+  font-weight:600;color:var(--text);font-family:'SF Mono','Menlo',monospace;
+  background:#fff;padding:2px 6px;border-radius:4px;border:1px solid var(--border);
+}
+.evidence-loc{ font-size:11px;color:var(--muted); }
+.evidence-tags{ display:flex;gap:4px;flex-wrap:wrap; }
+.evidence-tags .mini-tag{
+  font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;
+  background:#f3f4f6;color:#374151;border:1px solid #e5e7eb;
+  letter-spacing:0.3px;
+}
+.evidence-tags .mini-tag.LINKING{
+  background:#fee2e2;color:#b91c1c;border-color:#fca5a5;
+}
+
+/* 時系列ビュー */
+.timeline-row{
+  padding:8px 10px;border-bottom:1px solid var(--border);font-size:13px;
+}
+.timeline-row:last-child{ border-bottom:none; }
+.timeline-head{
+  font-size:11px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;
+}
+.timeline-events{ display:flex;flex-wrap:wrap;gap:6px; }
+.timeline-event{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:12px;padding:3px 8px;border-radius:6px;
+  background:#fafaf7;border:1px solid var(--border);
+}
+.timeline-event.has-linking{ background:#fee2e2;border-color:#fca5a5;color:#7f1d1d; }
+.timeline-event .word{ font-family:'SF Mono','Menlo',monospace;font-weight:600; }
+
+/* 説明的なヘッダー */
+.disclaimer-mini{
+  font-size:12px;color:var(--muted);background:#fff8e1;
+  border-left:3px solid #f59e0b;border-radius:6px;
+  padding:8px 10px;margin:8px 0 12px;
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-row">
+    <div>
+      <div class="title">Speaking Coach — Diagnostic</div>
+      <div class="subtitle">発音ベースライン録音 v1</div>
+    </div>
+    <div class="daybadge" id="dayBadge">Day ?</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- iPhone banner -->
+  <div class="mobile-banner" id="mobileBanner">
+    <strong>v1 はMac Chrome専用</strong>
+    iPhone対応は v1.1 以降。PC の Chrome で開き直してください。
+  </div>
+
+  <!-- No SR support banner -->
+  <div class="warn-banner" id="warnBanner">
+    このブラウザは音声認識 API（Web Speech）に対応していません。Mac Chrome で開いてください。
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="notice">
+    <strong>v1 は簡易判定です。</strong>絶対値ではなく、自分比較（前回 vs 今回）用の物差しとして使ってください。本格的な発音評価は v1.1 (Azure Pronunciation Assessment) で実装予定。
+  </div>
+
+  <!-- Sentence selector chips -->
+  <div class="sentence-selector" id="sentenceSelector"></div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-row">
+      <div class="progress-label">全体進捗</div>
+      <div class="progress-count" id="progressCount">0 / 25 録音</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- Recording screen -->
+  <div id="recordScreen">
+    <div class="sentence-card">
+      <div class="sentence-label" id="sentenceLabel">Sentence 1 / 5</div>
+      <div class="sentence-text" id="sentenceText">—</div>
+      <div class="sentence-meta" id="sentenceMeta"></div>
+      <div class="rep-row" id="repRow"></div>
+    </div>
+
+    <div class="controls">
+      <button class="rec-btn" id="recBtn" onclick="toggleRecord()">🎙</button>
+      <div class="rec-status" id="recStatus">録音ボタンを押して開始</div>
+      <div class="live-text" id="liveText">—</div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="playTargetBtn" onclick="speakTarget()">🔊 ターゲット再生</button>
+        <button class="btn btn-ghost" id="playRecBtn" onclick="playRecording()" disabled>🎧 自分の録音</button>
+      </div>
+    </div>
+
+    <div class="result-panel" id="resultPanel">
+      <div class="result-row">
+        <div class="result-metric"><strong id="rScore">—</strong><small>Accuracy</small></div>
+        <div class="result-metric"><strong id="rMatch">—</strong><small>Match</small></div>
+        <div class="result-metric"><strong id="rWpm">—</strong><small>WPM</small></div>
+      </div>
+      <div class="diff-view" id="diffView">—</div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-primary" id="nextRepBtn" onclick="acceptAndNext()">次の録音へ →</button>
+        <button class="btn btn-ghost" onclick="retryCurrent()">やり直し</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report screen -->
+  <div id="reportScreen" class="report-screen">
+    <div class="report-section">
+      <h3>診断完了</h3>
+      <div id="reportSummary">—</div>
+      <div class="disclaimer-mini">
+        ⚠️ v1 は簡易判定。絶対値ではなく自分比較用。Day 20 Azure 実測で上書き予定。
+      </div>
+    </div>
+
+    <!-- P4: 音素別 弱点サマリ -->
+    <div class="report-section">
+      <h3>音素別 弱点サマリ</h3>
+      <div id="reportPhonemeTable">—</div>
+      <div id="reportWeakTags" class="weak-summary">—</div>
+    </div>
+
+    <!-- P4: Evidence（タブ切替） -->
+    <div class="report-section">
+      <h3>Evidence</h3>
+      <div class="tab-row">
+        <button class="tab-btn active" data-tab="byTag" onclick="switchEvidenceTab('byTag')">タグ別</button>
+        <button class="tab-btn" data-tab="timeline" onclick="switchEvidenceTab('timeline')">時系列順</button>
+      </div>
+      <div id="evidencePanel_byTag" class="tab-panel active">—</div>
+      <div id="evidencePanel_timeline" class="tab-panel">—</div>
+    </div>
+
+    <div class="report-section">
+      <h3>文ごとのサマリー</h3>
+      <div id="reportPerSentence">—</div>
+    </div>
+    <div class="report-section">
+      <h3>注意事項</h3>
+      <div style="font-size:13px;color:var(--muted);line-height:1.7">
+        v1 は ASR (Web Speech) と単語マッチングベースの簡易判定です。<br>
+        絶対値ではなく <strong>自分比較用の物差し</strong> として使ってください。<br>
+        音素レベルの正確な評価は v1.1 (Azure Pronunciation Assessment) で実装予定です。
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="exportBaseline()">📥 JSON Export</button>
+      <button class="btn btn-ghost" onclick="location.reload()">最初に戻る</button>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Speaking Coach Diagnostic v1.0 · Read-only mode (existing speakingCoach_v2 untouched)
+  </div>
+</div>
+
+<audio id="audioPlayer" style="display:none"></audio>
+
+<script>
+// ============== CONSTANTS ==============
+const PHONEME_THRESHOLDS = {
+  WEAK: 0.5,
+  WATCH: 0.25
+};
+const TARGET_REPEATS = 5;
+const DIAGNOSTIC_KEY = 'speakingCoach_diagnostic_v1';
+const READONLY_KEYS = ['speakingCoach_v2']; // 触らない既存キー
+
+// ============== STATE ==============
+let baselineData = null;        // lessons.json の diagnostic_baseline_v1
+let dayLabel = null;            // 表示用 Day N
+let sentences = [];             // baselineData.sentences
+let currentSentenceIdx = 0;     // 0..4
+let currentRep = 0;             // 0..4 (5 reps)
+let recordings = {};            // { S1: [{rep, text, score, wpm, audio, diff, ts}, ...], ... }
+
+// Recording state
+let mediaRecorder = null;
+let audioChunks = [];
+let currentAudioBlob = null;
+let recognition = null;
+let recognitionRestartTimer = null;
+let liveResult = "";
+let isRecording = false;
+let recordStartTs = 0;
+let recordingDuration = 0;
+
+// IDB for audio storage (lightweight wrapper)
+let idbDB = null;
+
+// ============== INIT ==============
+window.addEventListener('DOMContentLoaded', init);
+
+async function init(){
+  // iPhone / iPad guard
+  if(isMobile()){
+    document.getElementById('mobileBanner').classList.add('show');
+    document.getElementById('recBtn').disabled = true;
+    return;
+  }
+
+  // SR support check
+  if(!checkSupport()) return;
+
+  // Load lessons.json
+  try{
+    const res = await fetch('lessons.json');
+    const data = await res.json();
+    baselineData = data.diagnostic_baseline_v1;
+    if(!baselineData){
+      alert('diagnostic_baseline_v1 が lessons.json に見つかりません');
+      return;
+    }
+    sentences = baselineData.sentences;
+    dayLabel = resolveDayLabel(data._meta && data._meta.startDate);
+    document.getElementById('dayBadge').textContent = 'Day ' + dayLabel;
+  }catch(e){
+    alert('lessons.json の読み込みに失敗: ' + e.message);
+    return;
+  }
+
+  // Init IDB
+  await initIDB();
+
+  // P5: 古いセッション (>3) は最古セッションの blob を削除（メタは触らない）
+  try{
+    const pruneResult = await pruneOldSessions();
+    if(pruneResult.prunedDays.length > 0){
+      console.log('[diagnostic] pruned old sessions:', pruneResult);
+    }
+  }catch(e){ console.warn('pruneOldSessions skipped:', e.message); }
+
+  // Init state for each sentence
+  sentences.forEach(s => { recordings[s.id] = []; });
+
+  // Try to restore from localStorage (diagnostic-only key)
+  restoreState();
+
+  // Render UI
+  renderSentenceSelector();
+  renderCurrentSentence();
+  renderProgress();
+
+  // Voice load (for speakTarget)
+  loadVoices();
+  if(typeof speechSynthesis !== 'undefined'){
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+}
+
+function isMobile(){
+  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
+
+function checkSupport(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    document.getElementById('warnBanner').classList.add('show');
+    document.getElementById('recBtn').disabled = true;
+    return false;
+  }
+  return true;
+}
+
+function resolveDayLabel(startDate){
+  // 1. URL ?day=N が最優先
+  const params = new URLSearchParams(location.search);
+  const urlDay = params.get('day');
+  if(urlDay && /^\d+$/.test(urlDay)) return parseInt(urlDay);
+
+  // 2. startDate からの経過日数フォールバック
+  if(startDate){
+    const start = new Date(startDate);
+    const today = new Date();
+    start.setHours(0,0,0,0); today.setHours(0,0,0,0);
+    const diff = Math.floor((today - start) / (1000*60*60*24)) + 1;
+    return diff > 0 ? diff : 1;
+  }
+  return '?';
+}
+
+// ============== STATE PERSISTENCE (diagnostic-only key) ==============
+function saveState(){
+  try{
+    const payload = {
+      dayLabel,
+      currentSentenceIdx,
+      currentRep,
+      recordings: serializeRecordings(),
+      // P3: フラットな集計サマリ。次回ロード時の即時参照用（再計算でも作れるが、外部エクスポート時にも便利）
+      phonemeReport: latestPhonemeReport,
+      weakTags: latestWeakTags,
+      updatedAt: Date.now()
+    };
+    localStorage.setItem(DIAGNOSTIC_KEY, JSON.stringify(payload));
+  }catch(e){ console.warn('saveState skipped:', e.message); }
+}
+
+function restoreState(){
+  try{
+    const raw = localStorage.getItem(DIAGNOSTIC_KEY);
+    if(!raw) return;
+    const payload = JSON.parse(raw);
+    // Only restore if same dayLabel (avoid mixing across days)
+    if(payload.dayLabel !== dayLabel) return;
+    currentSentenceIdx = payload.currentSentenceIdx || 0;
+    currentRep = payload.currentRep || 0;
+    if(payload.recordings){
+      sentences.forEach(s => {
+        if(payload.recordings[s.id]) recordings[s.id] = payload.recordings[s.id];
+      });
+    }
+    // P3: restore したら集計も復元（diff が残っていれば再計算可能）
+    refreshPhonemeAggregate();
+  }catch(e){ console.warn('restoreState skipped:', e.message); }
+}
+
+function serializeRecordings(){
+  // Strip audio blobs (those go to IDB), keep metadata
+  const out = {};
+  for(const id in recordings){
+    out[id] = recordings[id].map(r => ({
+      rep: r.rep, text: r.text, score: r.score, wpm: r.wpm,
+      diff: r.diff, ts: r.ts, audioKey: r.audioKey
+    }));
+  }
+  return out;
+}
+
+// Sanity check: existing key must not be touched
+function assertReadOnlyKeysUntouched(){
+  // Just log — we never write to these keys, so they should be untouched.
+  // For test/debug.
+  const before = {};
+  READONLY_KEYS.forEach(k => { before[k] = localStorage.getItem(k); });
+  return before;
+}
+
+// ============== IDB (audio storage) ==============
+function initIDB(){
+  return new Promise((resolve) => {
+    if(!window.indexedDB){ resolve(null); return; }
+    const req = indexedDB.open('SpeakingCoachDiagnostic', 1);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains('audio')){
+        db.createObjectStore('audio', {keyPath: 'key'});
+      }
+    };
+    req.onsuccess = (e) => { idbDB = e.target.result; resolve(idbDB); };
+    req.onerror = () => { console.warn('IDB unavailable'); resolve(null); };
+  });
+}
+
+function idbPut(key, blob){
+  return new Promise((resolve) => {
+    if(!idbDB){ resolve(false); return; }
+    try{
+      const tx = idbDB.transaction(['audio'], 'readwrite');
+      const store = tx.objectStore('audio');
+      store.put({key, blob, ts: Date.now()});
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(false);
+    }catch(e){ resolve(false); }
+  });
+}
+
+function idbGet(key){
+  return new Promise((resolve) => {
+    if(!idbDB){ resolve(null); return; }
+    try{
+      const tx = idbDB.transaction(['audio'], 'readonly');
+      const store = tx.objectStore('audio');
+      const req = store.get(key);
+      req.onsuccess = () => resolve(req.result ? req.result.blob : null);
+      req.onerror = () => resolve(null);
+    }catch(e){ resolve(null); }
+  });
+}
+
+// P5: IDB の audio store 全件をメタ (key, ts) で取得（blob は重いので取らない）
+function idbListMeta(){
+  return new Promise((resolve) => {
+    if(!idbDB){ resolve([]); return; }
+    try{
+      const tx = idbDB.transaction(['audio'], 'readonly');
+      const store = tx.objectStore('audio');
+      // openCursor だと値も読まれるので、getAllKeys() で key だけ取り、ts は key から逆算する
+      // key の形式: `${dayLabel}_${sentenceId}_rep${n}_${ts}` なので、末尾の数値で ts を推定可能
+      const req = store.getAllKeys();
+      req.onsuccess = () => {
+        const keys = req.result || [];
+        const metas = keys.map(k => {
+          // key の最後の "_数値" 部分を ts として取り出す
+          const m = String(k).match(/_(\d+)$/);
+          const ts = m ? parseInt(m[1]) : 0;
+          // dayLabel は先頭の "_" まで
+          const dayMatch = String(k).match(/^([^_]+)_/);
+          const dayLabel = dayMatch ? dayMatch[1] : null;
+          return { key: String(k), ts, dayLabel };
+        });
+        resolve(metas);
+      };
+      req.onerror = () => resolve([]);
+    }catch(e){ resolve([]); }
+  });
+}
+
+function idbDelete(key){
+  return new Promise((resolve) => {
+    if(!idbDB){ resolve(false); return; }
+    try{
+      const tx = idbDB.transaction(['audio'], 'readwrite');
+      const store = tx.objectStore('audio');
+      store.delete(key);
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(false);
+    }catch(e){ resolve(false); }
+  });
+}
+
+/**
+ * P5: pruneOldSessions
+ * IDB の audio blob を「dayLabel ごと」のセッションとしてグループ化し、
+ * セッション数が MAX_SESSIONS を超える場合は最古セッションの blob のみ全削除する。
+ * localStorage 側のメタ（diagnostic_v1）は触らない（そもそも dayLabel 単位で上書き運用）。
+ * 戻り値: { sessionsFound, prunedDays:[...], prunedKeysCount }
+ */
+const MAX_SESSIONS = 3;
+async function pruneOldSessions(){
+  const metas = await idbListMeta();
+  if(metas.length === 0) return { sessionsFound: 0, prunedDays: [], prunedKeysCount: 0 };
+  // dayLabel → 最古 ts でグルーピング
+  const byDay = new Map();
+  for(const m of metas){
+    if(!m.dayLabel) continue;
+    if(!byDay.has(m.dayLabel)) byDay.set(m.dayLabel, { keys: [], minTs: Infinity });
+    const g = byDay.get(m.dayLabel);
+    g.keys.push(m.key);
+    if(m.ts < g.minTs) g.minTs = m.ts;
+  }
+  const sessions = Array.from(byDay.entries())
+    .map(([day, g]) => ({ day, keys: g.keys, minTs: g.minTs }))
+    .sort((a, b) => a.minTs - b.minTs); // 古い順
+
+  if(sessions.length <= MAX_SESSIONS){
+    return { sessionsFound: sessions.length, prunedDays: [], prunedKeysCount: 0 };
+  }
+  // 超過分の最古セッションを削除
+  const toPrune = sessions.slice(0, sessions.length - MAX_SESSIONS);
+  let totalDeleted = 0;
+  const prunedDays = [];
+  for(const sess of toPrune){
+    for(const k of sess.keys){
+      const ok = await idbDelete(k);
+      if(ok) totalDeleted++;
+    }
+    prunedDays.push(sess.day);
+  }
+  return { sessionsFound: sessions.length, prunedDays, prunedKeysCount: totalDeleted };
+}
+
+// ============== UI RENDERING ==============
+function renderSentenceSelector(){
+  const sel = document.getElementById('sentenceSelector');
+  sel.innerHTML = sentences.map((s, idx) => {
+    const done = (recordings[s.id] || []).length >= TARGET_REPEATS;
+    const isCur = idx === currentSentenceIdx;
+    const cls = done ? 'done' : (isCur ? 'current' : '');
+    return `<div class="sel-chip ${cls}" onclick="jumpTo(${idx})">${s.id}</div>`;
+  }).join('');
+}
+
+function renderCurrentSentence(){
+  if(currentSentenceIdx >= sentences.length){
+    showReport();
+    return;
+  }
+  const s = sentences[currentSentenceIdx];
+  document.getElementById('sentenceLabel').textContent = `Sentence ${currentSentenceIdx+1} / ${sentences.length}  ·  ${s.topic}`;
+  document.getElementById('sentenceText').textContent = s.text;
+  document.getElementById('sentenceMeta').textContent = `${s.wordCount} words · ${TARGET_REPEATS} reps`;
+
+  // Rep dots
+  const repRow = document.getElementById('repRow');
+  const done = (recordings[s.id] || []).length;
+  currentRep = done; // resume position
+  repRow.innerHTML = Array.from({length: TARGET_REPEATS}, (_, i) => {
+    const cls = i < done ? 'done' : (i === done ? 'current' : '');
+    return `<div class="rep-dot ${cls}"></div>`;
+  }).join('');
+
+  // Hide result panel from previous sentence
+  document.getElementById('resultPanel').classList.remove('show');
+  document.getElementById('liveText').textContent = '—';
+  document.getElementById('recStatus').textContent = `${done}/${TARGET_REPEATS} 完了 — 録音ボタンで開始`;
+}
+
+function renderProgress(){
+  let total = 0;
+  for(const id in recordings){ total += recordings[id].length; }
+  const max = sentences.length * TARGET_REPEATS;
+  const pct = max ? Math.round(total/max*100) : 0;
+  document.getElementById('progressCount').textContent = `${total} / ${max} 録音`;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function jumpTo(idx){
+  if(idx < 0 || idx >= sentences.length) return;
+  currentSentenceIdx = idx;
+  saveState();
+  renderSentenceSelector();
+  renderCurrentSentence();
+}
+
+// ============== RECORDING (copied from Speaking_Coach.html, independent) ==============
+function getSupportedMimeType(){
+  if(typeof MediaRecorder === 'undefined') return null;
+  const types = [
+    'audio/mp4;codecs=mp4a.40.2',
+    'audio/mp4',
+    'audio/webm;codecs=opus',
+    'audio/webm',
+    'audio/ogg;codecs=opus',
+    'audio/ogg'
+  ];
+  for(const t of types){
+    try{ if(MediaRecorder.isTypeSupported(t)) return t; }catch(e){}
+  }
+  return '';
+}
+
+async function toggleRecord(){
+  if(isRecording){ stopRecording(); return; }
+  if(currentSentenceIdx >= sentences.length){ alert('全文完了済み'); return; }
+  await startRecording();
+}
+
+async function startRecording(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ alert('音声認識に対応していないブラウザです'); return; }
+
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const mimeType = getSupportedMimeType();
+    try{
+      mediaRecorder = mimeType ? new MediaRecorder(stream, {mimeType}) : new MediaRecorder(stream);
+    }catch(e){
+      try{ mediaRecorder = new MediaRecorder(stream); }
+      catch(e2){ mediaRecorder = null; }
+    }
+    audioChunks = [];
+    if(mediaRecorder){
+      mediaRecorder.ondataavailable = e => { if(e.data && e.data.size > 0) audioChunks.push(e.data); };
+      mediaRecorder.onstop = () => {
+        const type = mediaRecorder.mimeType || mimeType || 'audio/webm';
+        currentAudioBlob = new Blob(audioChunks, {type});
+        try{ stream.getTracks().forEach(t => t.stop()); }catch(e){}
+        setTimeout(analyzeAndShow, 100);
+      };
+      mediaRecorder.start(250);
+    } else {
+      try{ stream.getTracks().forEach(t => t.stop()); }catch(e){}
+    }
+
+    liveResult = "";
+    document.getElementById('liveText').textContent = "";
+    document.getElementById('resultPanel').classList.remove('show');
+
+    recognition = new SR();
+    recognition.lang = 'en-US';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (e) => {
+      let interim = "", finalT = "";
+      for(let i = e.resultIndex; i < e.results.length; i++){
+        const t = e.results[i][0].transcript;
+        if(e.results[i].isFinal) finalT += t;
+        else interim += t;
+      }
+      if(finalT) liveResult += finalT;
+      document.getElementById('liveText').textContent = (liveResult + interim).trim() || '聞き取り中...';
+    };
+    recognition.onerror = (e) => {
+      console.warn('recognition error:', e.error);
+      if(e.error === 'no-speech'){
+        document.getElementById('recStatus').textContent = '🔴 録音中... (音声待機)';
+      } else if(e.error === 'not-allowed'){
+        document.getElementById('recStatus').textContent = 'マイクの利用が許可されませんでした';
+        isRecording = false;
+      }
+    };
+    recognition.onend = () => {
+      if(isRecording){
+        if(recognitionRestartTimer) clearTimeout(recognitionRestartTimer);
+        recognitionRestartTimer = setTimeout(() => {
+          if(!isRecording) return;
+          try{ recognition.start(); }catch(err){ console.warn('Recognition restart skipped:', err.message); }
+        }, 250);
+      }
+    };
+
+    recognition.start();
+    isRecording = true;
+    recordStartTs = Date.now();
+    document.getElementById('recBtn').classList.add('recording');
+    document.getElementById('recBtn').textContent = '⏹';
+    document.getElementById('recStatus').textContent = '🔴 録音中... ターゲットを話してください';
+  }catch(err){
+    alert('マイクの利用許可が必要です: ' + err.message);
+  }
+}
+
+function stopRecording(){
+  if(!isRecording) return;
+  isRecording = false;
+  if(recognitionRestartTimer){ clearTimeout(recognitionRestartTimer); recognitionRestartTimer = null; }
+  recordingDuration = (Date.now() - recordStartTs) / 1000;
+  document.getElementById('recBtn').classList.remove('recording');
+  document.getElementById('recBtn').textContent = '🎙';
+  document.getElementById('recStatus').textContent = '解析中...';
+  try{ recognition && recognition.stop(); }catch(e){}
+  if(mediaRecorder && mediaRecorder.state !== 'inactive'){
+    try{
+      mediaRecorder.requestData && mediaRecorder.requestData();
+      mediaRecorder.stop();
+    }catch(e){ setTimeout(analyzeAndShow, 100); }
+  } else {
+    setTimeout(analyzeAndShow, 100);
+  }
+}
+
+// ============== ANALYSIS (copied, simplified) ==============
+const _NUM_WORDS = {
+  "0":"zero","1":"one","2":"two","3":"three","4":"four","5":"five",
+  "6":"six","7":"seven","8":"eight","9":"nine","10":"ten",
+  "11":"eleven","12":"twelve","13":"thirteen","14":"fourteen","15":"fifteen",
+  "16":"sixteen","17":"seventeen","18":"eighteen","19":"nineteen","20":"twenty",
+  "30":"thirty","40":"forty","50":"fifty","60":"sixty","70":"seventy",
+  "80":"eighty","90":"ninety","100":"one hundred"
+};
+function _numToWords(n){
+  if(_NUM_WORDS[n]) return _NUM_WORDS[n];
+  const num = parseInt(n);
+  if(isNaN(num)) return n;
+  if(num >= 21 && num <= 99){
+    const tens = Math.floor(num/10)*10;
+    const ones = num%10;
+    if(ones === 0) return _NUM_WORDS[String(tens)] || n;
+    return (_NUM_WORDS[String(tens)] || "") + " " + (_NUM_WORDS[String(ones)] || "");
+  }
+  return n;
+}
+function normalize(s){
+  let t = (s||"").toLowerCase()
+    .replace(/[.,!?;:"'""''()—]/g," ")
+    .replace(/\s+/g," ").trim();
+  t = t.replace(/(\d+)\s*%/g, (m, n) => _numToWords(n) + " percent");
+  t = t.replace(/\b(\d{1,3})\b/g, (m, n) => _numToWords(n));
+  t = t.replace(/-/g, " ").replace(/\s+/g, " ").trim();
+  return t;
+}
+function tokenize(s){ return normalize(s).split(/\s+/).filter(Boolean); }
+
+function diffWords(target, said){
+  const m = target.length, n = said.length;
+  const dp = Array.from({length:m+1},()=>Array(n+1).fill(0));
+  for(let i=1;i<=m;i++){
+    for(let j=1;j<=n;j++){
+      if(target[i-1] === said[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+      else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  const result = [];
+  let i = m, j = n;
+  while(i>0 || j>0){
+    if(i>0 && j>0 && target[i-1] === said[j-1]){
+      result.unshift({type:"match",word:target[i-1]}); i--; j--;
+    } else if(j>0 && (i===0 || dp[i][j-1] >= dp[i-1][j])){
+      result.unshift({type:"extra",word:said[j-1]}); j--;
+    } else {
+      result.unshift({type:"miss",word:target[i-1]}); i--;
+    }
+  }
+  return result;
+}
+
+// ============== PHONEME REPORT (P3) ==============
+// probes の word を tokenize と同じ normalize にかけ、サブトークン配列で持つ
+// (例: "same-store" → ["same","store"], "Our" → ["our"])。
+// LINKING は from/to の語をまとめてカバー対象とみなす。
+const PHONEME_TAGS = ['TH','R_vs_L','V_vs_B','VOWEL_LENGTH','STRESS','LINKING'];
+
+function _normTokens(word){
+  if(!word) return [];
+  return tokenize(String(word));
+}
+
+function _collectProbeWords(probesForTag){
+  // probesForTag: array of probe objects
+  // returns array of {tokens: [...], raw: probeObj}
+  if(!Array.isArray(probesForTag)) return [];
+  const out = [];
+  for(const p of probesForTag){
+    // LINKING uses from/to, others use word
+    if(p.word){
+      const toks = _normTokens(p.word);
+      if(toks.length) out.push({tokens: toks, raw: p, label: p.word});
+    } else if(p.from || p.to){
+      const toks = [..._normTokens(p.from), ..._normTokens(p.to)];
+      if(toks.length) out.push({tokens: toks, raw: p, label: `${p.from}→${p.to}`});
+    }
+  }
+  return out;
+}
+
+// 1 rep の diff (target ベース、type=match|miss|extra) から、
+// "target 側の単語 → missしたかどうか" を返す。extra は除外。
+function _missSetFromDiff(diff){
+  // returns: Map<tokenLower, {miss:count, total:count}>
+  const map = new Map();
+  for(const d of diff){
+    if(d.type === 'extra') continue;
+    const tok = String(d.word || '').toLowerCase();
+    if(!tok) continue;
+    const cur = map.get(tok) || {miss:0, total:0};
+    cur.total += 1;
+    if(d.type === 'miss') cur.miss += 1;
+    map.set(tok, cur);
+  }
+  return map;
+}
+
+/**
+ * buildMultiTagIndex
+ * 各 sentence × 各 tag に登場する「単語キー」を逆引きできるインデックスを作る。
+ * key = `${sentenceId}:${tokenLower}` （単語）または `${sentenceId}:${fromTok}>${toTok}` （linking pair）
+ * value = Set<tag>
+ * これで evidence 1件に対し他タグの probe にも該当するか cross-check できる。
+ */
+function buildMultiTagIndex(baselineSentences){
+  const idx = new Map();
+  for(const sent of baselineSentences){
+    const probes = sent.probes || {};
+    for(const tag of PHONEME_TAGS){
+      const list = probes[tag];
+      if(!Array.isArray(list)) continue;
+      for(const p of list){
+        if(p.word){
+          const toks = _normTokens(p.word);
+          for(const tok of toks){
+            const k = `${sent.id}:${tok}`;
+            if(!idx.has(k)) idx.set(k, new Set());
+            idx.get(k).add(tag);
+          }
+        } else if(p.from || p.to){
+          const fts = _normTokens(p.from);
+          const tts = _normTokens(p.to);
+          // pair key (順序保持)
+          for(const ft of fts){
+            for(const tt of tts){
+              const k = `${sent.id}:${ft}>${tt}`;
+              if(!idx.has(k)) idx.set(k, new Set());
+              idx.get(k).add(tag);
+            }
+          }
+          // 各単語単体でも引けるようにしておく（cross-tag 用）
+          for(const tok of [...fts, ...tts]){
+            const k = `${sent.id}:${tok}`;
+            if(!idx.has(k)) idx.set(k, new Set());
+            idx.get(k).add(tag);
+          }
+        }
+      }
+    }
+  }
+  return idx;
+}
+
+// あるキー（word or pair）が複数タグに該当するか調べる
+function _lookupTagsFor(multiTagIndex, sentenceId, key){
+  if(!multiTagIndex) return [];
+  const set = multiTagIndex.get(`${sentenceId}:${key}`);
+  return set ? Array.from(set) : [];
+}
+
+/**
+ * computePhonemeReport
+ * @returns {Object} report keyed by PHONEME_TAGS
+ *   各値: {attempts, errors, errorRate, tag, evidence:[{word, sentenceId, repIdx, tags:[...], isLinking, displayLabel}]}
+ *   evidence は全件保持（UI 側で必要に応じて 5件カット）。
+ */
+function computePhonemeReport(recordingsMap, baselineSentences){
+  const report = {};
+  for(const tag of PHONEME_TAGS){
+    report[tag] = {attempts:0, errors:0, errorRate:null, tag:'NO_DATA', evidence:[]};
+  }
+
+  const multiTagIndex = buildMultiTagIndex(baselineSentences);
+
+  for(const sent of baselineSentences){
+    const reps = (recordingsMap && recordingsMap[sent.id]) || [];
+    if(reps.length === 0) continue;
+    const probes = sent.probes || {};
+
+    for(const tag of PHONEME_TAGS){
+      const probeWords = _collectProbeWords(probes[tag]);
+      if(probeWords.length === 0) continue;
+
+      reps.forEach((rep, repIdx) => {
+        if(!rep || !Array.isArray(rep.diff)) return;
+        const missMap = _missSetFromDiff(rep.diff);
+
+        for(const pw of probeWords){
+          let anyPresent = false;
+          let anyMiss = false;
+          let missedTok = null;
+          for(const tok of pw.tokens){
+            const stat = missMap.get(tok);
+            if(stat && stat.total > 0){
+              anyPresent = true;
+              if(stat.miss > 0){
+                anyMiss = true;
+                if(!missedTok) missedTok = tok;
+              }
+            }
+          }
+          if(anyPresent){
+            report[tag].attempts += 1;
+            if(anyMiss){
+              report[tag].errors += 1;
+
+              // multi-tag cross-check
+              const isLinking = !!(pw.raw && (pw.raw.from || pw.raw.to));
+              let crossTags = new Set([tag]);
+              if(isLinking){
+                // pair key で照会
+                const fts = _normTokens(pw.raw.from);
+                const tts = _normTokens(pw.raw.to);
+                for(const ft of fts){
+                  for(const tt of tts){
+                    _lookupTagsFor(multiTagIndex, sent.id, `${ft}>${tt}`)
+                      .forEach(t => crossTags.add(t));
+                  }
+                }
+                // 構成単語単体でも他タグ参照
+                for(const tok of [...fts, ...tts]){
+                  _lookupTagsFor(multiTagIndex, sent.id, tok)
+                    .forEach(t => crossTags.add(t));
+                }
+              } else {
+                // word ベース
+                for(const tok of pw.tokens){
+                  _lookupTagsFor(multiTagIndex, sent.id, tok)
+                    .forEach(t => crossTags.add(t));
+                }
+              }
+
+              report[tag].evidence.push({
+                word: missedTok || pw.label,
+                displayLabel: pw.label,
+                sentenceId: sent.id,
+                repIdx: repIdx + 1,
+                isLinking,
+                tags: Array.from(crossTags),
+                ts: rep.ts || 0
+              });
+            }
+          }
+        }
+      });
+    }
+  }
+
+  for(const tag of PHONEME_TAGS){
+    const r = report[tag];
+    if(r.attempts === 0){
+      r.errorRate = null;
+      r.tag = 'NO_DATA';
+      continue;
+    }
+    r.errorRate = r.errors / r.attempts;
+    if(r.errorRate >= PHONEME_THRESHOLDS.WEAK) r.tag = 'WEAK';
+    else if(r.errorRate >= PHONEME_THRESHOLDS.WATCH) r.tag = 'WATCH';
+    else r.tag = 'OK';
+  }
+  return report;
+}
+
+function extractWeakTags(phonemeReport){
+  if(!phonemeReport) return [];
+  return PHONEME_TAGS.filter(t => phonemeReport[t] && phonemeReport[t].tag === 'WEAK');
+}
+
+// 集計を再計算して latestPhonemeReport / latestWeakTags に格納
+let latestPhonemeReport = null;
+let latestWeakTags = [];
+function refreshPhonemeAggregate(){
+  if(!baselineData) return;
+  latestPhonemeReport = computePhonemeReport(recordings, baselineData.sentences);
+  latestWeakTags = extractWeakTags(latestPhonemeReport);
+}
+
+async function analyzeAndShow(){
+  const s = sentences[currentSentenceIdx];
+  const tWords = tokenize(s.text);
+  const sWords = tokenize(liveResult || "");
+  const diff = diffWords(tWords, sWords);
+  const matched = diff.filter(d => d.type === 'match').length;
+  const total = tWords.length;
+  const accuracy = total ? Math.round(matched/total*100) : 0;
+  const wpm = recordingDuration > 0 ? Math.round(sWords.length / recordingDuration * 60) : 0;
+
+  // Save audio to IDB
+  let audioKey = null;
+  if(currentAudioBlob && currentAudioBlob.size > 0){
+    audioKey = `${dayLabel}_${s.id}_rep${currentRep+1}_${Date.now()}`;
+    await idbPut(audioKey, currentAudioBlob);
+  }
+
+  // Record this rep
+  const rec = {
+    rep: currentRep + 1,
+    text: liveResult,
+    score: accuracy,
+    wpm: wpm,
+    diff: diff,
+    audioKey: audioKey,
+    ts: Date.now()
+  };
+  recordings[s.id].push(rec);
+
+  // P3: refresh phoneme-level aggregate after each rep
+  refreshPhonemeAggregate();
+
+  // Render result
+  document.getElementById('rScore').textContent = accuracy;
+  document.getElementById('rMatch').textContent = `${matched}/${total}`;
+  document.getElementById('rWpm').textContent = wpm || '—';
+  document.getElementById('diffView').innerHTML = diff.map(d => {
+    if(d.type === 'match') return `<span class="w-match">${escapeHtml(d.word)}</span> `;
+    if(d.type === 'miss') return `<span class="w-miss">${escapeHtml(d.word)}</span> `;
+    return `<span class="w-extra">[${escapeHtml(d.word)}]</span> `;
+  }).join('');
+  document.getElementById('resultPanel').classList.add('show');
+  document.getElementById('playRecBtn').disabled = !currentAudioBlob;
+  document.getElementById('recStatus').textContent = `Rep ${currentRep+1}/${TARGET_REPEATS} 完了`;
+
+  saveState();
+  renderProgress();
+
+  document.getElementById('resultPanel').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function acceptAndNext(){
+  const s = sentences[currentSentenceIdx];
+  const done = recordings[s.id].length;
+  if(done >= TARGET_REPEATS){
+    // Move to next sentence
+    currentSentenceIdx++;
+    if(currentSentenceIdx >= sentences.length){
+      showReport();
+      return;
+    }
+    saveState();
+    renderSentenceSelector();
+    renderCurrentSentence();
+  } else {
+    // Just refresh UI for next rep within same sentence
+    currentRep = done;
+    document.getElementById('resultPanel').classList.remove('show');
+    renderCurrentSentence();
+  }
+}
+
+function retryCurrent(){
+  // Pop last rep
+  const s = sentences[currentSentenceIdx];
+  if(recordings[s.id].length > 0){
+    recordings[s.id].pop();
+  }
+  // P3: rep を捨てたので集計も再計算
+  refreshPhonemeAggregate();
+  saveState();
+  document.getElementById('resultPanel').classList.remove('show');
+  renderCurrentSentence();
+  renderProgress();
+}
+
+// ============== PLAYBACK ==============
+let _voices = [];
+function loadVoices(){
+  if(typeof speechSynthesis === 'undefined') return;
+  _voices = speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+}
+function speakTarget(){
+  if(currentSentenceIdx >= sentences.length) return;
+  const text = sentences[currentSentenceIdx].text;
+  if(typeof speechSynthesis === 'undefined'){ alert('音声合成非対応'); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 1.0;
+  const v = _voices.find(v => v.lang === 'en-US') || _voices[0];
+  if(v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+function playRecording(){
+  if(!currentAudioBlob || currentAudioBlob.size === 0){
+    alert('録音データがまだ準備できていません');
+    return;
+  }
+  const url = URL.createObjectURL(currentAudioBlob);
+  const a = document.getElementById('audioPlayer');
+  a.src = url;
+  a.style.display = 'block';
+  a.play();
+}
+
+// ============== REPORT ==============
+function showReport(){
+  document.getElementById('recordScreen').style.display = 'none';
+  document.getElementById('reportScreen').classList.add('show');
+
+  // 最新集計を確実に反映
+  refreshPhonemeAggregate();
+
+  // Summary
+  let total = 0, sumScore = 0;
+  sentences.forEach(s => {
+    (recordings[s.id]||[]).forEach(r => { total++; sumScore += r.score; });
+  });
+  const avgScore = total ? Math.round(sumScore/total) : 0;
+  document.getElementById('reportSummary').innerHTML = `
+    <div style="font-size:14px;line-height:1.7">
+      🎤 Day ${dayLabel} Pronunciation Baseline (v1)<br>
+      完了日時: ${new Date().toLocaleString('ja-JP')}<br>
+      平均スコア: <strong style="color:var(--accent);font-size:18px">${avgScore}</strong> / 100<br>
+      録音数: ${total} / ${sentences.length * TARGET_REPEATS}
+    </div>
+  `;
+
+  // P4: 音素別 breakdown + evidence
+  renderPhonemeBreakdown();
+
+  // Per-sentence
+  document.getElementById('reportPerSentence').innerHTML = sentences.map(s => {
+    const reps = recordings[s.id] || [];
+    if(reps.length === 0) return `<div style="padding:8px 0;color:var(--muted);font-size:13px">${s.id}: 未録音</div>`;
+    const scores = reps.map(r => r.score);
+    const avg = Math.round(scores.reduce((a,b)=>a+b,0) / scores.length);
+    const best = Math.max(...scores);
+    return `
+      <div style="padding:10px 0;border-bottom:1px solid var(--border);font-size:13px">
+        <strong>${s.id}</strong>: avg ${avg} / best ${best} (${reps.length} reps)<br>
+        <span style="color:var(--muted);font-size:12px">"${escapeHtml(s.text)}"</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============== P4: PHONEME BREAKDOWN UI ==============
+const TAG_DISPLAY = {
+  TH:            'TH',
+  R_vs_L:        'R_vs_L',
+  V_vs_B:        'V_vs_B',
+  VOWEL_LENGTH:  'VOWEL_LEN',
+  STRESS:        'STRESS',
+  LINKING:       'LINKING'
+};
+const TAG_ICON = {
+  WEAK: '🔴', WATCH: '🟡', OK: '🟢', NO_DATA: '⚪'
+};
+
+function renderPhonemeBreakdown(){
+  if(!latestPhonemeReport){
+    document.getElementById('reportPhonemeTable').innerHTML = '<div style="color:var(--muted);font-size:13px">集計データなし</div>';
+    document.getElementById('reportWeakTags').innerHTML = '';
+    document.getElementById('evidencePanel_byTag').innerHTML = '';
+    document.getElementById('evidencePanel_timeline').innerHTML = '';
+    return;
+  }
+
+  // (1) 音素別 サマリテーブル
+  const rows = PHONEME_TAGS.map(tag => {
+    const r = latestPhonemeReport[tag];
+    const icon = TAG_ICON[r.tag] || '⚪';
+    const pct = r.errorRate == null ? '—' : `${Math.round(r.errorRate*100)}%`;
+    const ratio = r.attempts === 0 ? '0/0' : `${r.errors}/${r.attempts}`;
+    const linkClass = tag === 'LINKING' ? ' is-linking' : '';
+    return `
+      <tr class="${linkClass}">
+        <td><span class="tag-name ${tag === 'LINKING' ? 'LINKING' : ''}">${escapeHtml(TAG_DISPLAY[tag])}</span></td>
+        <td><span class="tag-pill ${r.tag}">${icon} ${r.tag}</span></td>
+        <td class="rate-cell">${ratio} (${pct})</td>
+      </tr>`;
+  }).join('');
+  document.getElementById('reportPhonemeTable').innerHTML = `
+    <table class="phoneme-table">
+      <thead><tr><th>タグ</th><th>判定</th><th>エラー / 試行</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+
+  // (2) weak tags サマリ
+  const weakEl = document.getElementById('reportWeakTags');
+  if(latestWeakTags.length === 0){
+    weakEl.classList.add('no-weak');
+    weakEl.innerHTML = `✅ <strong>v1 弱点タグなし</strong>。Day 20 Azure 実測で再評価予定。`;
+  } else {
+    weakEl.classList.remove('no-weak');
+    const badges = latestWeakTags.map(t => `<span class="tag-name ${t === 'LINKING' ? 'LINKING' : ''}">${escapeHtml(TAG_DISPLAY[t])}</span>`).join('');
+    weakEl.innerHTML = `<strong>あなたの v1 弱点タグ:</strong> ${badges}<br><span style="font-size:11px;color:var(--muted)">Day 20 Azure 実測で上書き予定</span>`;
+  }
+
+  // (3) Evidence — タグ別ビュー
+  document.getElementById('evidencePanel_byTag').innerHTML = renderEvidenceByTag();
+  // (4) Evidence — 時系列ビュー
+  document.getElementById('evidencePanel_timeline').innerHTML = renderEvidenceTimeline();
+}
+
+function renderEvidenceByTag(){
+  // WEAK → WATCH → OK の順、LINKING は最上位に強制配置（強調目的）
+  const order = ['LINKING', ...PHONEME_TAGS.filter(t => t !== 'LINKING')];
+  const blocks = [];
+  for(const tag of order){
+    const r = latestPhonemeReport[tag];
+    if(!r) continue;
+    if(r.evidence.length === 0){
+      // 試行ゼロも OK もここでは省略
+      if(r.tag === 'NO_DATA' || r.attempts === 0) continue;
+      blocks.push(`
+        <div class="evidence-group ${tag === 'LINKING' ? 'is-linking' : ''}">
+          <div class="evidence-group-head">
+            <span class="tag-name ${tag === 'LINKING' ? 'LINKING' : ''}">${escapeHtml(TAG_DISPLAY[tag])}</span>
+            <span class="tag-pill ${r.tag}">${TAG_ICON[r.tag]} ${r.tag}</span>
+            <span class="count">エラー 0 件</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted)">この音素では誤りなし</div>
+        </div>`);
+      continue;
+    }
+    // evidence は最大 5 件表示（pm-hobby 要件通り）
+    const items = r.evidence.slice(0, 5).map(ev => {
+      const tagBadges = (ev.tags || [tag]).map(t => `<span class="mini-tag ${t}">${escapeHtml(TAG_DISPLAY[t])}</span>`).join('');
+      return `
+        <li class="evidence-item">
+          <span class="evidence-word">${escapeHtml(ev.displayLabel || ev.word)}</span>
+          <span class="evidence-loc">${escapeHtml(ev.sentenceId)} rep${ev.repIdx}</span>
+          <span class="evidence-tags">${tagBadges}</span>
+        </li>`;
+    }).join('');
+    const more = r.evidence.length > 5 ? `<div style="font-size:11px;color:var(--muted);margin-top:6px">他 ${r.evidence.length - 5} 件…</div>` : '';
+    blocks.push(`
+      <div class="evidence-group ${tag === 'LINKING' ? 'is-linking' : ''}">
+        <div class="evidence-group-head">
+          <span class="tag-name ${tag === 'LINKING' ? 'LINKING' : ''}">${escapeHtml(TAG_DISPLAY[tag])}</span>
+          <span class="tag-pill ${r.tag}">${TAG_ICON[r.tag]} ${r.tag}</span>
+          <span class="count">${r.evidence.length} 件</span>
+        </div>
+        <ul class="evidence-list">${items}</ul>
+        ${more}
+      </div>`);
+  }
+  return blocks.length ? blocks.join('') : '<div style="color:var(--muted);font-size:13px">evidence なし</div>';
+}
+
+function renderEvidenceTimeline(){
+  // sentenceId 順 × repIdx 順で並べる。各 rep に発生した evidence を集約。
+  // map: `${sentenceId}#${repIdx}` → [{tag, word, displayLabel, tags, isLinking}]
+  const bucket = new Map();
+  for(const tag of PHONEME_TAGS){
+    const r = latestPhonemeReport[tag];
+    if(!r || !r.evidence) continue;
+    for(const ev of r.evidence){
+      const key = `${ev.sentenceId}#${ev.repIdx}`;
+      if(!bucket.has(key)) bucket.set(key, []);
+      bucket.get(key).push({...ev, _primaryTag: tag});
+    }
+  }
+  // 重複除去: 同じ (sentenceId, repIdx, word) は statement 1つにまとめ tags を統合
+  const grouped = new Map();
+  for(const [key, evs] of bucket){
+    const inner = new Map(); // word → {displayLabel, tags:Set, isLinking}
+    for(const ev of evs){
+      const w = ev.displayLabel || ev.word;
+      if(!inner.has(w)) inner.set(w, {displayLabel:w, tags:new Set(), isLinking:false});
+      const slot = inner.get(w);
+      (ev.tags || [ev._primaryTag]).forEach(t => slot.tags.add(t));
+      if(ev.isLinking) slot.isLinking = true;
+    }
+    grouped.set(key, Array.from(inner.values()));
+  }
+
+  // sentenceId, repIdx でソート
+  const keys = Array.from(grouped.keys()).sort((a,b) => {
+    const [sa, ra] = a.split('#'); const [sb, rb] = b.split('#');
+    if(sa !== sb) return sa.localeCompare(sb);
+    return parseInt(ra) - parseInt(rb);
+  });
+  if(keys.length === 0) return '<div style="color:var(--muted);font-size:13px">evidence なし</div>';
+
+  return keys.map(k => {
+    const [sid, rid] = k.split('#');
+    const events = grouped.get(k);
+    const evHtml = events.map(e => {
+      const tagsArr = Array.from(e.tags);
+      const cls = (e.isLinking || tagsArr.includes('LINKING')) ? 'has-linking' : '';
+      const badges = tagsArr.map(t => `<span class="mini-tag ${t}">${escapeHtml(TAG_DISPLAY[t])}</span>`).join(' ');
+      return `<span class="timeline-event ${cls}"><span class="word">${escapeHtml(e.displayLabel)}</span> ${badges}</span>`;
+    }).join('');
+    return `
+      <div class="timeline-row">
+        <div class="timeline-head">${escapeHtml(sid)} · rep ${escapeHtml(rid)}</div>
+        <div class="timeline-events">${evHtml}</div>
+      </div>`;
+  }).join('');
+}
+
+function switchEvidenceTab(which){
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === which);
+  });
+  document.getElementById('evidencePanel_byTag').classList.toggle('active', which === 'byTag');
+  document.getElementById('evidencePanel_timeline').classList.toggle('active', which === 'timeline');
+}
+
+function exportBaseline(){
+  // P3: エクスポート時にも最新の集計を取り直す（safety）
+  refreshPhonemeAggregate();
+  const payload = {
+    version: '1.0',
+    dayLabel: dayLabel,
+    exportedAt: new Date().toISOString(),
+    sentences: sentences.map(s => ({
+      id: s.id,
+      text: s.text,
+      probes: s.probes,
+      reps: (recordings[s.id] || []).map(r => ({
+        rep: r.rep, text: r.text, score: r.score, wpm: r.wpm, ts: r.ts
+      }))
+    })),
+    phonemeReport: latestPhonemeReport,
+    weakTags: latestWeakTags,
+    disclaimer: 'v1 は簡易判定。絶対値ではなく自分比較用の物差し。'
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `diagnostic_baseline_day${dayLabel}_${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============== UTILS ==============
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  }[c]));
+}
+
+// ============== DEBUG (P4/P5 用) ==============
+// コンソールから __debugFillDummyReport() を叩くと、ダミー recordings を流して
+// showReport() を強制描画する。実 localStorage には書き込まない（in-memory のみ）。
+// pm-hobby 検証用 / P5 自己テスト用。
+window.__debugFillDummyReport = function(profile){
+  if(!baselineData){ console.warn('baselineData 未ロード。lessons.json fetch を待って'); return; }
+  profile = profile || 'mixed'; // 'mixed' | 'allMiss' | 'allMatch'
+
+  // 各文の target tokens を取り出して、ランダムに miss / match を割り当てる diff を作る
+  const fakeRecordings = {};
+  sentences.forEach((s, sIdx) => {
+    const tWords = tokenize(s.text);
+    const reps = [];
+    for(let r = 0; r < TARGET_REPEATS; r++){
+      // profile に応じて miss rate を変える。リアリスティック profile では LINKING / V_vs_B / R_vs_L を多めにミスらせる
+      const diff = tWords.map((w, i) => {
+        let isMiss = false;
+        if(profile === 'allMiss') isMiss = true;
+        else if(profile === 'allMatch') isMiss = false;
+        else {
+          // mixed: linking pair の構成語 / v / r / l を含むトークンを優先的にミスらせる
+          const linkingTokens = new Set();
+          (s.probes?.LINKING || []).forEach(p => {
+            tokenize(p.from || '').forEach(t => linkingTokens.add(t));
+            tokenize(p.to   || '').forEach(t => linkingTokens.add(t));
+          });
+          const vTokens = new Set((s.probes?.V_vs_B || []).flatMap(p => tokenize(p.word || '')));
+          const wlow = w.toLowerCase();
+          if(vTokens.has(wlow)) isMiss = (Math.random() < 0.75);
+          else if(linkingTokens.has(wlow)) isMiss = (Math.random() < 0.6);
+          else if(/^(the|three|this|thoughts|through)$/.test(wlow)) isMiss = (Math.random() < 0.15);
+          else if(/r|l/.test(wlow)) isMiss = (Math.random() < 0.35);
+          else isMiss = (Math.random() < 0.12);
+        }
+        return { type: isMiss ? 'miss' : 'match', word: w };
+      });
+      const matched = diff.filter(d => d.type === 'match').length;
+      reps.push({
+        rep: r+1,
+        text: '(dummy)',
+        score: Math.round(matched/tWords.length*100),
+        wpm: 110 + Math.floor(Math.random()*30),
+        diff,
+        ts: Date.now() - (sentences.length - sIdx)*60000 + r*1000
+      });
+    }
+    fakeRecordings[s.id] = reps;
+  });
+
+  // 既存の recordings を一時退避して dummy を流す（DOM 描画用、localStorage には書かない）
+  const _saved = recordings;
+  recordings = fakeRecordings;
+  refreshPhonemeAggregate();
+  showReport();
+  console.log('[debug] dummy report rendered. profile=', profile);
+  console.log('[debug] phonemeReport:', latestPhonemeReport);
+  console.log('[debug] weakTags:', latestWeakTags);
+  console.log('[debug] 元の recordings は in-memory で保持。reload で復元可。');
+  // recordings は dummy のままにする（ユーザーが画面を見たいので）。
+  // ページリロードで戻したい場合は location.reload() を案内。
+  window.__debugRestore = () => {
+    recordings = _saved;
+    refreshPhonemeAggregate();
+    console.log('[debug] recordings 復元 (showReport は呼び直さない)');
+  };
+};
+
+// READONLY_KEYS のテスト用 watcher（P5 用）
+window.__debugCheckReadonly = function(){
+  const snap = {};
+  READONLY_KEYS.forEach(k => { snap[k] = localStorage.getItem(k); });
+  console.log('[debug] READONLY_KEYS snapshot:', snap);
+  return snap;
+};
+
+// ============== P5: __debugCheckP5 ==============
+// DevTools から一括で検証する。副作用なし（snapshot 比較・dummy フローはメモリのみ）。
+// 検証項目:
+//   T1. READONLY スナップショット hash 一致 (before / after dummy flow)
+//   T2. iPhone 判定 (UA spoof)
+//   T3. dayLabel 解決 (URL ?day, startDate fallback)
+//   T4. dayLabel 切替時 restoreState skip
+//   T5. recordings 復元境界 (途中再開, 完了済み, dayLabel 不一致)
+//   T6. IDB pruning ロジック (lookup のみ)
+//   T7. phonemeReport 境界値 (空 / allMiss / allMatch)
+// 戻り値: [{name, pass, info}]
+window.__debugCheckP5 = async function(){
+  const results = [];
+  const log = (name, pass, info='') => {
+    results.push({ name, pass, info });
+    const tag = pass ? 'PASS' : 'FAIL';
+    console.log(`[P5][${tag}] ${name}${info ? ' — '+info : ''}`);
+  };
+
+  // --- T1: READONLY hash 一致 ---
+  async function sha256(str){
+    const enc = new TextEncoder().encode(str || '');
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+  const snapBefore = __debugCheckReadonly();
+  const hashesBefore = {};
+  for(const k of READONLY_KEYS){ hashesBefore[k] = await sha256(snapBefore[k] || ''); }
+
+  // dummy フロー: __debugFillDummyReport (in-memory のみ書く) を呼んで saveState 含めて回す
+  if(window.__debugFillDummyReport){
+    try{ window.__debugFillDummyReport('mixed'); }catch(e){ console.warn('dummy fill failed:', e); }
+  }
+  // saveState を強制発火 (resultPanel → acceptAndNext の代わりに直接呼ぶ)
+  try{ if(typeof saveState === 'function') saveState(); }catch(e){}
+
+  const snapAfter = __debugCheckReadonly();
+  const hashesAfter = {};
+  for(const k of READONLY_KEYS){ hashesAfter[k] = await sha256(snapAfter[k] || ''); }
+
+  for(const k of READONLY_KEYS){
+    log(`T1 [${k}] hash 一致`,
+      hashesBefore[k] === hashesAfter[k],
+      `before=${hashesBefore[k].slice(0,12)} after=${hashesAfter[k].slice(0,12)}`
+    );
+  }
+  // restore 用に dummy を戻す
+  try{ if(window.__debugRestore) window.__debugRestore(); }catch(e){}
+
+  // --- T2: iPhone 判定 ---
+  // 実 UA は変えられない (read-only) ので、isMobile 関数の正規表現を直接叩く
+  const fakeUAs = [
+    {ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15', expect: true},
+    {ua: 'Mozilla/5.0 (iPad; CPU OS 17_5 like Mac OS X) AppleWebKit/605.1.15', expect: true},
+    {ua: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36', expect: true},
+    {ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/126.0', expect: false},
+    {ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126.0', expect: false}
+  ];
+  for(const f of fakeUAs){
+    const isMob = /iPhone|iPad|iPod|Android/i.test(f.ua);
+    log(`T2 UA="${f.ua.slice(0,40)}..." → mobile=${isMob} (expect ${f.expect})`,
+      isMob === f.expect
+    );
+  }
+
+  // --- T3: dayLabel 解決 ---
+  function resolveDayLabelTest(startDate, urlDay, todayStr){
+    if(urlDay && /^\d+$/.test(urlDay)) return parseInt(urlDay);
+    if(startDate){
+      const start = new Date(startDate);
+      const today = todayStr ? new Date(todayStr) : new Date();
+      start.setHours(0,0,0,0); today.setHours(0,0,0,0);
+      const diff = Math.floor((today - start) / (1000*60*60*24)) + 1;
+      return diff > 0 ? diff : 1;
+    }
+    return '?';
+  }
+  log('T3.1 ?day=12 が優先', resolveDayLabelTest('2026-05-02','12','2026-05-29') === 12);
+  log('T3.2 ?day 未指定で startDate fallback (2026-05-02→2026-05-13 = Day 12)',
+    resolveDayLabelTest('2026-05-02', null, '2026-05-13') === 12);
+  log('T3.3 不正 ?day=foo は無視', resolveDayLabelTest('2026-05-02','foo','2026-05-29') === 28);
+
+  // --- T4: dayLabel 切替時 restoreState skip ---
+  // restoreState を直接呼ぶと現在 dayLabel と比較するので、別 dayLabel の payload を一時的に書いて挙動確認
+  const _origLS = localStorage.getItem(DIAGNOSTIC_KEY);
+  try{
+    const fakePayload = {
+      dayLabel: (typeof dayLabel === 'number' ? dayLabel + 1 : 'X'),
+      currentSentenceIdx: 99, currentRep: 99, recordings: {},
+      updatedAt: Date.now()
+    };
+    localStorage.setItem(DIAGNOSTIC_KEY, JSON.stringify(fakePayload));
+    // 復元前後の currentSentenceIdx を比較
+    const before = currentSentenceIdx;
+    restoreState();
+    const after = currentSentenceIdx;
+    log('T4 別 dayLabel の payload は restore で skip (currentSentenceIdx 変化なし)',
+      after === before,
+      `before=${before} after=${after} (payload.dayLabel=${fakePayload.dayLabel}, current=${dayLabel})`
+    );
+  }finally{
+    // 元に戻す
+    if(_origLS === null) localStorage.removeItem(DIAGNOSTIC_KEY);
+    else localStorage.setItem(DIAGNOSTIC_KEY, _origLS);
+  }
+
+  // --- T5: recordings 復元境界 ---
+  // 同 dayLabel で「途中まで埋めた payload」を入れて restoreState を呼ぶ
+  const _origLS2 = localStorage.getItem(DIAGNOSTIC_KEY);
+  const _origRec = JSON.parse(JSON.stringify(recordings));
+  try{
+    const halfFilled = {};
+    sentences.forEach((s, i) => {
+      halfFilled[s.id] = (i < 2) ? [
+        {rep:1, text:'half', score:80, wpm:110, diff:[{type:'match',word:'half'}], ts: Date.now(), audioKey: null}
+      ] : [];
+    });
+    const payload = {
+      dayLabel, currentSentenceIdx: 0, currentRep: 1,
+      recordings: halfFilled, updatedAt: Date.now()
+    };
+    // recordings をリセット
+    sentences.forEach(s => { recordings[s.id] = []; });
+    localStorage.setItem(DIAGNOSTIC_KEY, JSON.stringify(payload));
+    restoreState();
+    log('T5.1 途中 (S1=1rep, S2=1rep) → 復元される',
+      recordings[sentences[0].id].length === 1 && recordings[sentences[1].id].length === 1,
+      `S1=${recordings[sentences[0].id].length}, S2=${recordings[sentences[1].id].length}`
+    );
+
+    // 25録音完了済み payload
+    const fullFilled = {};
+    sentences.forEach(s => {
+      fullFilled[s.id] = Array.from({length: TARGET_REPEATS}, (_, i) => ({
+        rep: i+1, text:'full', score:90, wpm:120, diff:[{type:'match',word:'full'}],
+        ts: Date.now()+i, audioKey: null
+      }));
+    });
+    sentences.forEach(s => { recordings[s.id] = []; });
+    localStorage.setItem(DIAGNOSTIC_KEY, JSON.stringify({
+      dayLabel, currentSentenceIdx: sentences.length, currentRep: 0,
+      recordings: fullFilled, updatedAt: Date.now()
+    }));
+    restoreState();
+    const totalReps = sentences.reduce((acc, s) => acc + recordings[s.id].length, 0);
+    log('T5.2 25録音 完了 payload → 全件復元',
+      totalReps === sentences.length * TARGET_REPEATS,
+      `totalReps=${totalReps}`
+    );
+  }finally{
+    // 元に戻す
+    sentences.forEach(s => { recordings[s.id] = _origRec[s.id] || []; });
+    if(_origLS2 === null) localStorage.removeItem(DIAGNOSTIC_KEY);
+    else localStorage.setItem(DIAGNOSTIC_KEY, _origLS2);
+  }
+
+  // --- T6: IDB pruning ロジック確認 (実 IDB は触らず、関数の有無のみ) ---
+  log('T6.1 idbListMeta 関数が定義されている', typeof idbListMeta === 'function');
+  log('T6.2 idbDelete 関数が定義されている', typeof idbDelete === 'function');
+  log('T6.3 pruneOldSessions 関数が定義されている', typeof pruneOldSessions === 'function');
+  log('T6.4 MAX_SESSIONS = 3', typeof MAX_SESSIONS === 'number' && MAX_SESSIONS === 3);
+  // 実際の IDB 状態を pruneOldSessions の戻り値で確認
+  try{
+    const result = await pruneOldSessions();
+    log('T6.5 pruneOldSessions 実行成功',
+      result && typeof result.sessionsFound === 'number',
+      `sessionsFound=${result.sessionsFound}, prunedDays=${JSON.stringify(result.prunedDays)}`
+    );
+  }catch(e){
+    log('T6.5 pruneOldSessions 実行成功', false, e.message);
+  }
+
+  // --- T7: phonemeReport 境界値 ---
+  // 空 recordings
+  const _saved = JSON.parse(JSON.stringify(recordings));
+  try{
+    sentences.forEach(s => { recordings[s.id] = []; });
+    const empty = computePhonemeReport(recordings, sentences);
+    log('T7.1 空 recordings → 全タグ NO_DATA',
+      PHONEME_TAGS.every(t => empty[t].tag === 'NO_DATA')
+    );
+    // allMatch
+    sentences.forEach(s => {
+      const tWords = tokenize(s.text);
+      recordings[s.id] = [{
+        rep:1, text:s.text, score:100, wpm:110,
+        diff: tWords.map(w => ({type:'match', word:w})), ts: Date.now()
+      }];
+    });
+    const allMatch = computePhonemeReport(recordings, sentences);
+    log('T7.2 allMatch → 試行ありタグ全 OK',
+      PHONEME_TAGS.every(t => {
+        const r = allMatch[t];
+        return r.attempts === 0 ? r.tag === 'NO_DATA' : r.tag === 'OK';
+      })
+    );
+    // allMiss
+    sentences.forEach(s => {
+      const tWords = tokenize(s.text);
+      recordings[s.id] = [{
+        rep:1, text:'', score:0, wpm:0,
+        diff: tWords.map(w => ({type:'miss', word:w})), ts: Date.now()
+      }];
+    });
+    const allMiss = computePhonemeReport(recordings, sentences);
+    log('T7.3 allMiss → 試行ありタグ全 WEAK',
+      PHONEME_TAGS.every(t => {
+        const r = allMiss[t];
+        return r.attempts === 0 ? r.tag === 'NO_DATA' : r.tag === 'WEAK';
+      })
+    );
+  }finally{
+    sentences.forEach(s => { recordings[s.id] = _saved[s.id] || []; });
+    refreshPhonemeAggregate();
+  }
+
+  // --- SUMMARY ---
+  const passed = results.filter(r => r.pass).length;
+  const failed = results.filter(r => !r.pass).length;
+  console.log(`\n[P5] SUMMARY: ${passed}/${results.length} passed (${failed} failed)`);
+  console.table(results.map(r => ({test: r.name, pass: r.pass ? 'PASS' : 'FAIL', info: r.info})));
+  return results;
+};
+</script>
+</body>
+</html>
