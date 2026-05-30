@@ -322,6 +322,91 @@ audio{display:none}
   .container{padding:20px}
   .target-text{font-size:20px}
 }
+
+/* ======= MODEL TAB — モデル版シャドーイングタブ (speakingCoach_model_v1) ======= */
+.tab-bar{
+  background:var(--card);border-bottom:2px solid var(--border);
+  display:flex;max-width:760px;margin:0 auto;
+}
+.tab-btn{
+  flex:1;padding:12px 8px;background:none;border:none;
+  font-family:inherit;font-size:13px;font-weight:600;
+  color:var(--muted);cursor:pointer;
+  border-bottom:3px solid transparent;margin-bottom:-2px;
+  transition:color 0.15s,border-color 0.15s;
+}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--accent)}
+.tab-btn:hover:not(.active){color:var(--text)}
+
+.model-section{display:none;max-width:760px;margin:0 auto;padding:14px}
+.model-section.tab-visible{display:block}
+
+.hl-legend{
+  display:flex;gap:10px;flex-wrap:wrap;
+  font-size:12px;background:var(--card);
+  border:1px solid var(--border);border-radius:12px;
+  padding:10px 14px;margin-bottom:14px;line-height:1.6;
+}
+.hl-legend-item{display:flex;align-items:center;gap:5px}
+.hl-rl{background:#FDECEA;color:#C0392B;font-weight:700;border-radius:3px;padding:0 3px}
+.hl-vowel{background:#FFF8E1;color:#B7650A;font-weight:700;border-radius:3px;padding:0 3px}
+.hl-th{background:#E9F5EE;color:#1E7A44;font-weight:700;border-radius:3px;padding:0 3px}
+.hl-link{color:#1A5CA8;text-decoration:underline;text-underline-offset:3px;
+  text-decoration-color:#3567A8;font-weight:600}
+
+.model-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:16px;margin-bottom:14px;
+  box-shadow:var(--shadow);
+}
+.model-card-title{
+  font-size:13px;font-weight:700;color:var(--primary);
+  margin:0 0 12px;display:flex;align-items:center;gap:6px;
+}
+.model-email-line{
+  font-size:15px;line-height:2;padding:3px 0;
+  border-bottom:1px dashed var(--border);
+}
+.model-email-line:last-of-type{border-bottom:none}
+
+.target-block{
+  background:#F8F6F2;border-radius:10px;
+  padding:12px 14px;margin-bottom:10px;
+  font-size:14px;line-height:1.8;
+}
+.target-block .mp{
+  font-size:13px;color:var(--muted);margin-bottom:8px;
+  font-style:italic;line-height:1.7;
+}
+.target-block .note{
+  font-size:12px;color:var(--muted);margin-top:8px;
+  padding-top:6px;border-top:1px dashed var(--border);
+}
+
+.shadow-checks{
+  display:flex;gap:8px;align-items:center;
+  margin-top:12px;flex-wrap:wrap;
+}
+.shadow-checks .checks-label{
+  font-size:12px;color:var(--muted);font-weight:600;
+  margin-right:2px;flex-shrink:0;
+}
+.shadow-check-item{
+  display:flex;align-items:center;gap:5px;
+  font-size:12px;color:var(--muted);cursor:pointer;
+  background:#F4F4F4;border-radius:8px;padding:5px 10px;
+  border:1px solid var(--border);
+  transition:background 0.15s,border-color 0.15s,color 0.15s;
+  user-select:none;
+}
+.shadow-check-item.done{
+  background:#E6F4EA;border-color:var(--success);color:var(--success);font-weight:600;
+}
+.shadow-check-item input[type=checkbox]{
+  width:15px;height:15px;cursor:pointer;accent-color:var(--success);flex-shrink:0;
+}
+
+@media(min-width:720px){.model-section{padding:20px}}
 </style>
 </head>
 <body>
@@ -341,7 +426,13 @@ audio{display:none}
   </div>
 </header>
 
-<div class="container">
+<!-- MODEL TAB BAR — add model-scripts shadowing tab (non-invasive 2026-05-30) -->
+<nav class="tab-bar" id="tabBar" role="tablist" aria-label="Speaking Coach tabs">
+  <button class="tab-btn active" id="tabPracticeBtn" role="tab" aria-selected="true" onclick="switchTab('practice')">🎙 録音練習</button>
+  <button class="tab-btn" id="tabModelBtn" role="tab" aria-selected="false" onclick="switchTab('model')">📖 モデル版</button>
+</nav>
+
+<div class="container" id="practiceSection">
 
   <div class="warn-banner" id="warnBanner">
     ⚠️ このブラウザは音声認識に未対応です。<br>
@@ -444,6 +535,105 @@ audio{display:none}
   <div class="history" id="history"></div>
 
 </div>
+
+<!-- MODEL SECTION — speakingCoach_model_v1 (non-invasive, content from Model_Scripts.md) -->
+<section class="model-section" id="modelSection" aria-label="モデル版シャドーイング">
+
+  <div class="hl-legend">
+    <span class="hl-legend-item"><span class="hl-rl">R/L</span> R・L 音</span>
+    <span class="hl-legend-item"><span class="hl-vowel">iː/ɔː</span> 母音の長短</span>
+    <span class="hl-legend-item"><span class="hl-th">TH</span> TH 音</span>
+    <span class="hl-legend-item"><span class="hl-link">link</span> リンキング</span>
+  </div>
+
+  <!-- A. モデルメール -->
+  <div class="section-title" style="margin-top:4px">A. モデルメール</div>
+  <div class="model-card">
+    <p class="model-card-title">💼 Camden 価格改定メール（Day 12 Writing モデル版）</p>
+    <div class="model-email-line">I'm writing to propose a <span class="hl-rl">pri</span>cing change for our lunch set at the Camden <span class="hl-rl">fl</span>agship.</div>
+    <div class="model-email-line">Here's the context: office workers are <span class="hl-rl">pri</span>ce-sensitive on weekdays, so we launched a £12 lunch set —</div>
+    <div class="model-email-line">but the number of customers isn't <span class="hl-rl">r</span>ising, and lunch sets show higher e<span class="hl-rl">l</span>asticity than dinner mains.</div>
+    <div class="model-email-line"><span class="hl-rl">R</span>ather than cut the £12 set to a cheaper <span class="hl-rl">pri</span>ce, we will int<span class="hl-rl">r</span>oduce a £16 <span class="hl-rl">pr</span>emium anchor</div>
+    <div class="model-email-line">so that customers t<span class="hl-rl">r</span>ade up and AOV <span class="hl-rl">r</span>ises above £14.</div>
+    <div class="model-email-line"><span class="hl-th">Th</span>ree weeks of testing will show whether AOV <span class="hl-rl">r</span>ises <span class="hl-rl">fr</span>om £14 <span class="hl-link">t</span>oward £15.50.</div>
+    <div class="model-email-line"><span class="hl-rl">Pr</span>emium <span class="hl-rl">pri</span>cing is only as st<span class="hl-rl">r</span>ong as the b<span class="hl-rl">r</span>and equity behind it.</div>
+    <div class="model-email-line">I look <span class="hl-link">f</span>orward <span class="hl-link">t</span>o hea<span class="hl-rl">r</span>ing <span class="hl-rl">fr</span>om you. <span style="font-size:13px;color:var(--info)">🔗 look-forward / hearing-from</span></div>
+    <div class="shadow-checks">
+      <span class="checks-label">3× シャドーイング:</span>
+      <label class="shadow-check-item"><input type="checkbox" data-key="email-1" onchange="onModelCheck(this)"> 1回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="email-2" onchange="onModelCheck(this)"> 2回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="email-3" onchange="onModelCheck(this)"> 3回目</label>
+    </div>
+  </div>
+
+  <!-- B. Phase 1 ターゲット音スクリプト -->
+  <div class="section-title">B. Phase 1 ターゲット音</div>
+
+  <!-- ① R/L -->
+  <div class="model-card">
+    <p class="model-card-title"><span class="hl-rl">① R / L</span> 🔴</p>
+    <div class="target-block">
+      <div class="mp">Minimal pairs: <strong>fr</strong>y / <strong>fl</strong>y &nbsp;·&nbsp; g<strong>r</strong>ew / g<strong>l</strong>ue &nbsp;·&nbsp; b<strong>r</strong>and / b<strong>l</strong>and &nbsp;·&nbsp; <strong>r</strong>ight / <strong>l</strong>ight &nbsp;·&nbsp; p<strong>r</strong>ay / p<strong>l</strong>ay &nbsp;·&nbsp; co<strong>rr</strong>ect / co<strong>ll</strong>ect</div>
+      <div>Our <span class="hl-rl">pr</span>emium <span class="hl-rl">fl</span>agship d<span class="hl-rl">r</span>ives ma<span class="hl-rl">r</span>gin even at <span class="hl-rl">l</span>ower vo<span class="hl-rl">l</span>ume.</div>
+      <div style="margin-top:6px">Dynamic <span class="hl-rl">pri</span>cing on weekday <span class="hl-rl">l</span>unches <span class="hl-rl">l</span>ifts off-peak AOV.</div>
+    </div>
+    <div class="shadow-checks">
+      <span class="checks-label">3× シャドーイング:</span>
+      <label class="shadow-check-item"><input type="checkbox" data-key="rl-1" onchange="onModelCheck(this)"> 1回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="rl-2" onchange="onModelCheck(this)"> 2回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="rl-3" onchange="onModelCheck(this)"> 3回目</label>
+    </div>
+  </div>
+
+  <!-- ② 母音の長短 -->
+  <div class="model-card">
+    <p class="model-card-title"><span class="hl-vowel">② 母音の長短</span> 🟡</p>
+    <div class="target-block">
+      <div class="mp">Minimal pairs: <strong>peak</strong> / pick &nbsp;·&nbsp; sheep / ship &nbsp;·&nbsp; <strong>store</strong> / stir &nbsp;·&nbsp; seat / sit &nbsp;·&nbsp; <strong>three</strong> / thri</div>
+      <div>We need a more efficient kitchen workflow during <span class="hl-vowel">peak</span> hours. <span style="font-size:12px;color:var(--muted)">(peak ≠ pick)</span></div>
+      <div style="margin-top:6px">We will open <span class="hl-th">th</span><span class="hl-vowel">ree</span> new <span class="hl-vowel">store</span>s this year. <span style="font-size:12px;color:var(--muted)">(long iː / ɔː)</span></div>
+    </div>
+    <div class="shadow-checks">
+      <span class="checks-label">3× シャドーイング:</span>
+      <label class="shadow-check-item"><input type="checkbox" data-key="vow-1" onchange="onModelCheck(this)"> 1回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="vow-2" onchange="onModelCheck(this)"> 2回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="vow-3" onchange="onModelCheck(this)"> 3回目</label>
+    </div>
+  </div>
+
+  <!-- ③ TH -->
+  <div class="model-card">
+    <p class="model-card-title"><span class="hl-th">③ TH</span> 🟢</p>
+    <div class="target-block">
+      <div class="mp">voiceless θ: <span class="hl-th">th</span>ree · <span class="hl-th">th</span>oughts · <span class="hl-th">th</span>rough &nbsp;|&nbsp; voiced ð: <span class="hl-th">th</span>e · <span class="hl-th">th</span>is · <span class="hl-th">th</span>at</div>
+      <div>I'd like to share my <span class="hl-th">th</span>oughts on <span class="hl-th">th</span>e b<span class="hl-rl">r</span>and st<span class="hl-rl">r</span>ategy.</div>
+      <div class="note">舌先を上の歯に軽く当てる。"<span class="hl-th">three</span>" ≠ "tree" · "<span class="hl-th">thoughts</span>" ≠ "sorts"</div>
+    </div>
+    <div class="shadow-checks">
+      <span class="checks-label">3× シャドーイング:</span>
+      <label class="shadow-check-item"><input type="checkbox" data-key="th-1" onchange="onModelCheck(this)"> 1回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="th-2" onchange="onModelCheck(this)"> 2回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="th-3" onchange="onModelCheck(this)"> 3回目</label>
+    </div>
+  </div>
+
+  <!-- ④ LINKING -->
+  <div class="model-card">
+    <p class="model-card-title"><span class="hl-link">④ LINKING（リズム監視）</span> 🔗</p>
+    <div class="target-block">
+      <div class="mp">could→you (/dʒ/化) · stores→in · peak→hours · value→proposition · look→forward</div>
+      <div>Could <span class="hl-link">you</span> walk <span class="hl-link">me</span> through the <span class="hl-link">va</span>lue proposition for this market?</div>
+      <div class="note"><span class="hl-link">could-you</span> / <span class="hl-link">walk-me</span> / <span class="hl-link">value-proposition</span> を繋いで言う</div>
+    </div>
+    <div class="shadow-checks">
+      <span class="checks-label">3× シャドーイング:</span>
+      <label class="shadow-check-item"><input type="checkbox" data-key="lnk-1" onchange="onModelCheck(this)"> 1回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="lnk-2" onchange="onModelCheck(this)"> 2回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="lnk-3" onchange="onModelCheck(this)"> 3回目</label>
+    </div>
+  </div>
+
+</section>
 
 <audio id="audioPlayer" controls></audio>
 
@@ -1686,6 +1876,48 @@ renderStats();
 // Trigger voice load
 setTimeout(loadVoices, 100);
 setTimeout(loadVoices, 500);
+
+// ======= MODEL TAB — speakingCoach_model_v1 (non-invasive) =======
+const MODEL_KEY = "speakingCoach_model_v1";
+function getModelState(){
+  try{ return JSON.parse(localStorage.getItem(MODEL_KEY) || "{}"); }catch(e){ return {}; }
+}
+function saveModelState(s){
+  try{ localStorage.setItem(MODEL_KEY, JSON.stringify(s)); }catch(e){}
+}
+function onModelCheck(cb){
+  const s = getModelState();
+  s[cb.dataset.key] = cb.checked;
+  saveModelState(s);
+  const lbl = cb.closest(".shadow-check-item");
+  if(lbl) lbl.classList.toggle("done", cb.checked);
+}
+function loadModelChecks(){
+  const s = getModelState();
+  document.querySelectorAll("#modelSection input[type=checkbox]").forEach(cb => {
+    cb.checked = !!s[cb.dataset.key];
+    const lbl = cb.closest(".shadow-check-item");
+    if(lbl) lbl.classList.toggle("done", cb.checked);
+  });
+}
+function switchTab(tab){
+  const practice = document.getElementById("practiceSection");
+  const model = document.getElementById("modelSection");
+  const btnP = document.getElementById("tabPracticeBtn");
+  const btnM = document.getElementById("tabModelBtn");
+  if(tab === "model"){
+    practice.style.display = "none";
+    model.classList.add("tab-visible");
+    btnP.classList.remove("active"); btnP.setAttribute("aria-selected","false");
+    btnM.classList.add("active"); btnM.setAttribute("aria-selected","true");
+  } else {
+    practice.style.display = "";
+    model.classList.remove("tab-visible");
+    btnM.classList.remove("active"); btnM.setAttribute("aria-selected","false");
+    btnP.classList.add("active"); btnP.setAttribute("aria-selected","true");
+  }
+}
+loadModelChecks();
 </script>
 
 </body>
