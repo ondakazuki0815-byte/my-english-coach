@@ -414,6 +414,17 @@ audio{display:none}
 .weakness-memo{font-size:12px;color:#8a5a00;background:#FFF8E1;border:1px solid #F0E0B0;
   border-radius:8px;padding:8px 10px;margin-top:12px;line-height:1.6}
 
+/* model media controls — playback (TTS) + self-recording, isolated from practice tab */
+.model-media{display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+  margin-top:12px;padding-top:12px;border-top:1px dashed var(--border)}
+.mm-btn{font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;
+  border:1px solid var(--border);background:#F4F4F4;color:var(--text);
+  border-radius:8px;padding:6px 12px;transition:background .15s,color .15s,border-color .15s}
+.mm-btn:hover{background:#ececec}
+.mm-btn.mm-rec.recording{background:#FDECEA;border-color:#C0392B;color:#C0392B}
+.mm-status{font-size:11px;color:var(--muted);flex-basis:100%;line-height:1.5}
+.mm-audio{width:100%;margin-top:6px;height:38px;display:none}
+
 @media(min-width:720px){.model-section{padding:20px}}
 </style>
 </head>
@@ -2082,6 +2093,93 @@ function switchTab(tab){
   }
 }
 loadModelChecks();
+
+// ======= MODEL MEDIA — playback (TTS) + self-recording (isolated, no scoring) =======
+// Uses ONLY pure helpers getSelectedVoice()/getSupportedMimeType(). Does NOT touch
+// practice-tab globals (mediaRecorder/audioChunks/currentAudioBlob/recognition) or any
+// existing localStorage / IndexedDB. Recordings are in-memory only (ephemeral).
+let modelRec = null;
+let modelChunks = [];
+function modelSpeak(text, rate){
+  if(!('speechSynthesis' in window)){ alert("このブラウザは音声合成に対応していません"); return; }
+  if(!text) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const v = (typeof getSelectedVoice === "function") ? getSelectedVoice() : null;
+  if(v){ u.voice = v; u.lang = v.lang; } else u.lang = "en-US";
+  u.rate = rate || 0.9; u.pitch = 1.0; u.volume = 1.0;
+  window.speechSynthesis.speak(u);
+}
+function modelPlay(btn, rate){
+  const bar = btn.closest(".model-media");
+  if(bar) modelSpeak(bar.dataset.text || "", rate);
+}
+async function modelToggleRec(btn){
+  if(modelRec && modelRec.state === "recording"){ modelRec.stop(); return; }
+  const bar = btn.closest(".model-media");
+  const audio = bar.querySelector(".mm-audio");
+  const status = bar.querySelector(".mm-status");
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const mime = (typeof getSupportedMimeType === "function") ? getSupportedMimeType() : "";
+    try{ modelRec = mime ? new MediaRecorder(stream, {mimeType:mime}) : new MediaRecorder(stream); }
+    catch(e){ modelRec = new MediaRecorder(stream); }
+    modelChunks = [];
+    modelRec.ondataavailable = e=>{ if(e.data && e.data.size>0) modelChunks.push(e.data); };
+    modelRec.onstop = ()=>{
+      const type = (modelRec && modelRec.mimeType) || mime || "audio/webm";
+      const blob = new Blob(modelChunks, {type});
+      try{ if(audio.dataset.url) URL.revokeObjectURL(audio.dataset.url); }catch(e){}
+      const url = URL.createObjectURL(blob);
+      audio.src = url; audio.dataset.url = url; audio.style.display = "block";
+      try{ stream.getTracks().forEach(t=>t.stop()); }catch(e){}
+      btn.textContent = "🎙 録音"; btn.classList.remove("recording");
+      if(status) status.textContent = "✓ 自分の録音とお手本を聞き比べよう";
+      modelRec = null;
+    };
+    modelRec.start(250);
+    btn.textContent = "⏹ 停止"; btn.classList.add("recording");
+    if(status) status.textContent = "● 録音中… もう一度押すと停止";
+  }catch(e){
+    alert("マイクにアクセスできませんでした: " + (e && e.message ? e.message : e));
+  }
+}
+// Extract English-only script text from a model card (skip JP notes, legends, emoji)
+function modelCardText(card){
+  const parts = [];
+  card.querySelectorAll(".model-email-line").forEach(el=>parts.push(el.textContent));
+  card.querySelectorAll(".day-line").forEach(el=>{
+    const s = el.querySelector("span:last-child");
+    parts.push(s ? s.textContent : el.textContent);
+  });
+  card.querySelectorAll(".target-block > div:not(.mp):not(.note):not(.day-line)").forEach(el=>parts.push(el.textContent));
+  let t = parts.join(". ");
+  t = t.replace(/[　-〿぀-ヿ㐀-䶿一-鿿＀-￯]/g, " ");
+  t = t.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F300}-\u{1F9FF}\u{1F1E6}-\u{1F1FF}]/gu, " ");
+  t = t.replace(/[（）()]/g, " ").replace(/[≠·|]/g, " ").replace(/\s+/g, " ").trim();
+  return t;
+}
+// Inject playback + record controls into every model card (idempotent)
+function initModelMedia(){
+  const sec = document.getElementById("modelSection");
+  if(!sec) return;
+  sec.querySelectorAll(".model-card").forEach(card=>{
+    if(card.querySelector(".model-media")) return; // already injected
+    const text = modelCardText(card);
+    if(!text) return;
+    const bar = document.createElement("div");
+    bar.className = "model-media";
+    bar.dataset.text = text;
+    bar.innerHTML =
+      '<button class="mm-btn mm-play" onclick="modelPlay(this,0.9)">🔊 お手本</button>' +
+      '<button class="mm-btn mm-slow" onclick="modelPlay(this,0.6)">🐢 ゆっくり</button>' +
+      '<button class="mm-btn mm-rec" onclick="modelToggleRec(this)">🎙 録音</button>' +
+      '<span class="mm-status"></span>' +
+      '<audio class="mm-audio" controls preload="none"></audio>';
+    card.appendChild(bar);
+  });
+}
+initModelMedia();
 </script>
 
 </body>
