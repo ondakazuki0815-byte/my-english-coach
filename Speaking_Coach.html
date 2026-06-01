@@ -353,6 +353,8 @@ audio{display:none}
 .hl-th{background:#E9F5EE;color:#1E7A44;font-weight:700;border-radius:3px;padding:0 3px}
 .hl-link{color:#1A5CA8;text-decoration:underline;text-underline-offset:3px;
   text-decoration-color:#3567A8;font-weight:600}
+.hl-short{color:#9C7A3C;text-decoration:underline;text-underline-offset:2px;
+  text-decoration-style:dotted;text-decoration-color:#C9A24B;font-weight:600}
 
 .model-card{
   background:var(--card);border:1px solid var(--border);
@@ -405,6 +407,12 @@ audio{display:none}
 .shadow-check-item input[type=checkbox]{
   width:15px;height:15px;cursor:pointer;accent-color:var(--success);flex-shrink:0;
 }
+
+.model-day-meta{font-size:12px;color:var(--muted);margin:-4px 0 10px;line-height:1.6}
+.day-line{font-size:15px;line-height:1.9;padding:4px 0;display:flex;gap:8px}
+.day-num{color:var(--muted);font-weight:700;flex-shrink:0;font-size:13px;min-width:16px}
+.weakness-memo{font-size:12px;color:#8a5a00;background:#FFF8E1;border:1px solid #F0E0B0;
+  border-radius:8px;padding:8px 10px;margin-top:12px;line-height:1.6}
 
 @media(min-width:720px){.model-section{padding:20px}}
 </style>
@@ -542,6 +550,7 @@ audio{display:none}
   <div class="hl-legend">
     <span class="hl-legend-item"><span class="hl-rl">R/L</span> R・L 音</span>
     <span class="hl-legend-item"><span class="hl-vowel">iː/ɔː</span> 母音の長短</span>
+    <span class="hl-legend-item"><span class="hl-short">ɪ</span> 短母音（脱力）</span>
     <span class="hl-legend-item"><span class="hl-th">TH</span> TH 音</span>
     <span class="hl-legend-item"><span class="hl-link">link</span> リンキング</span>
   </div>
@@ -630,6 +639,54 @@ audio{display:none}
       <label class="shadow-check-item"><input type="checkbox" data-key="lnk-1" onchange="onModelCheck(this)"> 1回目</label>
       <label class="shadow-check-item"><input type="checkbox" data-key="lnk-2" onchange="onModelCheck(this)"> 2回目</label>
       <label class="shadow-check-item"><input type="checkbox" data-key="lnk-3" onchange="onModelCheck(this)"> 3回目</label>
+    </div>
+  </div>
+
+  <!-- D. Day別 テーマ・シャドーイングスクリプト（最新Dayを上に） -->
+  <div class="section-title">D. Day別テーマスクリプト</div>
+
+  <!-- Day 14 — Customer Experience / Service -->
+  <div class="model-card">
+    <p class="model-card-title">Day 14 — Customer Experience / Service</p>
+    <div class="model-day-meta">
+      ターゲット: <span class="hl-vowel">② 母音長 iː</span> 🟡 ＋ <span class="hl-link">🔗 linking</span>
+      ／ 長 iː（<span class="hl-vowel">黄</span>）と短 ɪ（<span class="hl-short">脱力</span>）を作り分ける
+    </div>
+    <div class="target-block">
+      <div class="day-line"><span class="day-num">1</span><span>We <span class="hl-vowel">seat</span> guests fast, but we never let serv<span class="hl-short">i</span>ce feel rushed.</span></div>
+      <div class="day-line"><span class="day-num">2</span><span>A qu<span class="hl-short">i</span>ck v<span class="hl-short">i</span>s<span class="hl-short">i</span>t can still <span class="hl-vowel">leave</span> a strong <span class="hl-link">impression if</span> the <span class="hl-vowel">greeting</span> is warm.</span></div>
+      <div class="day-line"><span class="day-num">3</span><span>We <span class="hl-vowel">repeat</span> the same standard at <span class="hl-vowel">peak</span> hours: <span class="hl-vowel">greet</span>, <span class="hl-vowel">seat</span>, serve.</span></div>
+      <div class="day-line"><span class="day-num">4</span><span><span class="hl-vowel">Li</span><span class="hl-short">s</span>ten f<span class="hl-short">i</span>rst, f<span class="hl-short">i</span>x <span class="hl-link">the issue</span>, then <span class="hl-link">check in again</span>.</span></div>
+      <div class="day-line"><span class="day-num">5</span><span><span class="hl-vowel">Cons</span><span class="hl-short">i</span>stency <span class="hl-vowel">keeps</span> guests com<span class="hl-short">i</span>ng back — every sh<span class="hl-short">i</span>ft, every v<span class="hl-short">i</span>s<span class="hl-short">i</span>t.</span></div>
+    </div>
+    <div class="weakness-memo">弱点メモ: <strong>seat / sit</strong> の短 ɪ に力が入りすぎる（→ iː に化ける）。短い語ほど脱力。文4は短 ɪ 連続の難所。</div>
+    <div class="shadow-checks">
+      <span class="checks-label">3× シャドーイング:</span>
+      <label class="shadow-check-item"><input type="checkbox" data-key="day14-1" onchange="onModelCheck(this)"> 1回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="day14-2" onchange="onModelCheck(this)"> 2回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="day14-3" onchange="onModelCheck(this)"> 3回目</label>
+    </div>
+  </div>
+
+  <!-- Day 13 — Store Ops / Kitchen Workflow -->
+  <div class="model-card">
+    <p class="model-card-title">Day 13 — Store Ops / Kitchen Workflow</p>
+    <div class="model-day-meta">
+      ターゲット: <span class="hl-rl">① R / L</span> 🔴 ＋ <span class="hl-link">🔗 linking</span>
+    </div>
+    <div class="target-block">
+      <div class="day-line"><span class="day-num">1</span><span>Du<span class="hl-rl">r</span>ing <span class="hl-rl">p</span>eak hou<span class="hl-rl">r</span>s, the kitchen wo<span class="hl-rl">r</span>kflow <span class="hl-link">needs to</span> be faste<span class="hl-rl">r</span>.</span></div>
+      <div class="day-line"><span class="day-num">2</span><span>We <span class="hl-rl">r</span>ed<span class="hl-rl">r</span>ew the p<span class="hl-rl">r</span>ep <span class="hl-rl">l</span>ine at the f<span class="hl-rl">l</span>agship <span class="hl-link">sto<span class="hl-rl">r</span>e in</span> Camden.</span></div>
+      <div class="day-line"><span class="day-num">3</span><span>C<span class="hl-rl">l</span>ea<span class="hl-rl">r</span> ro<span class="hl-rl">l</span>es and a simp<span class="hl-rl">l</span>e p<span class="hl-rl">l</span>aybook keep the <span class="hl-link">f<span class="hl-rl">l</span>oor unde<span class="hl-rl">r</span></span> cont<span class="hl-rl">r</span>ol.</span></div>
+      <div class="day-line"><span class="day-num">4</span><span>Ou<span class="hl-rl">r</span> se<span class="hl-rl">r</span>ve<span class="hl-rl">r</span>s <span class="hl-rl">l</span>ea<span class="hl-rl">r</span>ned to c<span class="hl-rl">l</span>ea<span class="hl-rl">r</span> tab<span class="hl-rl">l</span>es faste<span class="hl-rl">r</span> without <span class="hl-rl">r</span>ushing custome<span class="hl-rl">r</span>s.</span></div>
+      <div class="day-line"><span class="day-num">5</span><span>A g<span class="hl-rl">r</span>eat <span class="hl-rl">l</span>unch <span class="hl-rl">r</span>ush <span class="hl-rl">r</span>ewa<span class="hl-rl">r</span>ds a we<span class="hl-rl">ll</span>-d<span class="hl-rl">r</span>i<span class="hl-rl">ll</span>ed team.</span></div>
+    </div>
+    <div class="weakness-memo">弱点メモ: <strong>glue</strong> が "girl" に化ける（"loo→glue" ルート）／ <span class="hl-link">floor under</span> = Linking R。</div>
+    <div class="shadow-checks">
+      <span class="checks-label">3× シャドーイング:</span>
+      <label class="shadow-check-item"><input type="checkbox" data-key="day13-1" onchange="onModelCheck(this)"> 1回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="day13-2" onchange="onModelCheck(this)"> 2回目</label>
+      <label class="shadow-check-item"><input type="checkbox" data-key="day13-3" onchange="onModelCheck(this)"> 3回目</label>
     </div>
   </div>
 
