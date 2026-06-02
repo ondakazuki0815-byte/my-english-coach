@@ -425,6 +425,29 @@ audio{display:none}
 .mm-status{font-size:11px;color:var(--muted);flex-basis:100%;line-height:1.5}
 .mm-audio{width:100%;margin-top:6px;height:38px;display:none}
 
+/* E. Contractions — rendered from contractions.json (distinct class so initModelMedia() skips these) */
+.cx-grp-note{font-size:12px;color:var(--muted);margin:0 0 10px;line-height:1.6}
+.cx-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:12px 14px;margin-bottom:10px;box-shadow:var(--shadow);
+}
+.cx-card.speaking{outline:2px solid #FFD24D}
+.cx-row1{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.cx-contraction{font-size:20px;font-weight:700;color:var(--primary)}
+.cx-expansion{font-size:12px;color:var(--muted)}
+.cx-ipa{font-size:14px;color:var(--text);font-family:"Times New Roman",serif}
+.cx-tags{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.cx-tag{font-size:10px;font-weight:700;border-radius:6px;padding:1px 6px;color:#fff;white-space:nowrap}
+.cx-jp{font-size:12.5px;color:var(--text);margin:8px 0 0;line-height:1.6}
+.cx-jp b{color:#C0392B}
+.cx-example{font-size:14px;margin:6px 0 0;padding-left:10px;
+  border-left:3px solid var(--border);line-height:1.7}
+.cx-btns{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.cx-said{margin-left:auto;display:flex;align-items:center;gap:5px;
+  font-size:12px;color:var(--muted);cursor:pointer;user-select:none}
+.cx-said input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--success)}
+.cx-said.done{color:var(--success);font-weight:600}
+
 @media(min-width:720px){.model-section{padding:20px}}
 </style>
 </head>
@@ -699,6 +722,15 @@ audio{display:none}
       <label class="shadow-check-item"><input type="checkbox" data-key="day13-2" onchange="onModelCheck(this)"> 2回目</label>
       <label class="shadow-check-item"><input type="checkbox" data-key="day13-3" onchange="onModelCheck(this)"> 3回目</label>
     </div>
+  </div>
+
+  <!-- E. 短縮形の発音集（Contractions）— rendered from contractions.json -->
+  <div class="section-title">E. 短縮形の発音集</div>
+  <p class="model-day-meta" style="margin-top:-4px">
+    会議で詰まりやすい短縮形を、発音記号・典型ミス・F&amp;B 例文で。<strong>▶</strong> ボタンで UK 音声を再生（録音はしない）。色チップは連動するターゲット音（<span class="hl-rl">R/L</span> / <span class="hl-vowel">母音長</span> / <span class="hl-th">TH</span> / <span class="hl-link">🔗</span>）。
+  </p>
+  <div id="contractionsContainer">
+    <p class="model-day-meta" id="contractionsLoading">短縮形データを読み込み中…</p>
   </div>
 
 </section>
@@ -2180,6 +2212,95 @@ function initModelMedia(){
   });
 }
 initModelMedia();
+
+// ======= E. CONTRACTIONS — rendered from contractions.json (non-invasive) =======
+// Uses pure helper getSelectedVoice() + Web Speech, same UK voice as the rest of the
+// model tab. Cards use class .cx-card (NOT .model-card) so initModelMedia() skips them.
+// "言えた" checks persist to the existing MODEL_KEY store (no new keys, no existing-key clash).
+const CX_TAG = {
+  RL:   {c:"#C0392B", l:"R/L"},
+  VOWEL:{c:"#B7650A", l:"母音長"},
+  TH:   {c:"#1E7A44", l:"TH"},
+  LINK: {c:"#1A5CA8", l:"🔗"}
+};
+function cxEsc(s){
+  return String(s==null?"":s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function cxSpeak(text, card){
+  if(!('speechSynthesis' in window) || !text) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const v = (typeof getSelectedVoice === "function") ? getSelectedVoice() : null;
+  if(v){ u.voice = v; u.lang = v.lang; } else u.lang = "en-GB";
+  u.rate = 0.85; u.pitch = 1.0; u.volume = 1.0;
+  if(card){ u.onstart = ()=>card.classList.add("speaking"); u.onend = ()=>card.classList.remove("speaking"); }
+  window.speechSynthesis.speak(u);
+}
+function renderContractions(data){
+  const box = document.getElementById("contractionsContainer");
+  if(!box || !data || !Array.isArray(data.groups)) return;
+  const state = getModelState();
+  box.innerHTML = "";
+  data.groups.forEach(g => {
+    const head = document.createElement("div");
+    head.innerHTML =
+      '<p class="model-card-title" style="margin-top:6px">' + cxEsc(g.title) + '</p>' +
+      (g.note ? '<p class="cx-grp-note">' + cxEsc(g.note) + '</p>' : '');
+    box.appendChild(head);
+    (g.items || []).forEach(it => {
+      const tags = (it.targets || []).map(k => {
+        const tg = CX_TAG[k]; if(!tg) return "";
+        return '<span class="cx-tag" style="background:' + tg.c + '">' + tg.l + '</span>';
+      }).join("");
+      const key = "cx-" + it.contraction;
+      const card = document.createElement("div");
+      card.className = "cx-card";
+      card.innerHTML =
+        '<div class="cx-row1">' +
+          '<span class="cx-contraction">' + cxEsc(it.contraction) + '</span>' +
+          '<span class="cx-expansion">= ' + cxEsc(it.expansion) + '</span>' +
+          '<span class="cx-ipa">' + cxEsc(it.ipa) + '</span>' +
+          '<span class="cx-tags">' + tags + '</span>' +
+        '</div>' +
+        '<p class="cx-jp"><b>注意:</b> ' + cxEsc(it.jpError) + '</p>' +
+        '<p class="cx-example">“' + cxEsc(it.example) + '”</p>' +
+        '<div class="cx-btns">' +
+          '<button type="button" class="mm-btn" data-say="' + cxEsc(it.contraction) + '">▶ 単語</button>' +
+          '<button type="button" class="mm-btn" data-say="' + cxEsc(it.example) + '">▶ 例文</button>' +
+          '<label class="cx-said' + (state[key] ? " done" : "") + '">' +
+            '<input type="checkbox" data-key="' + cxEsc(key) + '"' + (state[key] ? " checked" : "") + '> 言えた' +
+          '</label>' +
+        '</div>';
+      box.appendChild(card);
+    });
+  });
+  box.addEventListener("click", e => {
+    const b = e.target.closest("button[data-say]");
+    if(!b) return;
+    cxSpeak(b.dataset.say, b.closest(".cx-card"));
+  });
+  box.addEventListener("change", e => {
+    const cb = e.target.closest('input[type=checkbox][data-key]');
+    if(!cb) return;
+    const s = getModelState();
+    s[cb.dataset.key] = cb.checked;
+    saveModelState(s);
+    const lbl = cb.closest(".cx-said");
+    if(lbl) lbl.classList.toggle("done", cb.checked);
+  });
+}
+function loadContractions(){
+  fetch("contractions.json")
+    .then(r => { if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(renderContractions)
+    .catch(() => {
+      const box = document.getElementById("contractionsContainer");
+      if(box) box.innerHTML =
+        '<p class="model-day-meta">短縮形データを読み込めませんでした。オンライン（my-english-coach.vercel.app）で開き直してください。</p>';
+    });
+}
+loadContractions();
 </script>
 
 </body>

@@ -1,0 +1,349 @@
+{
+  "meta": {
+    "title": "短縮形の発音集（Contractions Pronunciation）",
+    "phase": "Phase 1 (Day 11 → ~30)",
+    "learner": "JP native, CEFR A2→B1, global F&B business",
+    "updated": "2026-06-02 (Day 15)",
+    "soundTargets": {
+      "RL": { "label": "R/L", "color": "#c0392b", "emoji": "🔴" },
+      "VOWEL": { "label": "母音の長短", "color": "#e08e0b", "emoji": "🟡" },
+      "TH": { "label": "TH", "color": "#0a7d2c", "emoji": "🟢" },
+      "LINK": { "label": "Linking", "color": "#2563eb", "emoji": "🔗" }
+    },
+    "notation": "正書法は contraction、ipa は発音記号(UK寄り)、jpError は日本語ネイティブの典型ミス、example は F&B 業務文脈の例文、targets はハイライト対象の音。"
+  },
+  "groups": [
+    {
+      "id": "negatives",
+      "title": "① 否定の短縮形（意味が反転する最重要グループ）",
+      "note": "会議で聞き違えると意思決定が逆転する。否定語は母音の長短・子音クラスタを落とさず明確に。",
+      "items": [
+        {
+          "contraction": "don't",
+          "expansion": "do not",
+          "ipa": "/dəʊnt/",
+          "syllables": 1,
+          "jpError": "語尾の t を落として don になりがち。oʊ は二重母音、しっかり丸める。",
+          "example": "We don't discount the premium line on weekdays.",
+          "targets": ["VOWEL"]
+        },
+        {
+          "contraction": "doesn't",
+          "expansion": "does not",
+          "ipa": "/ˈdʌz.ənt/",
+          "syllables": 2,
+          "jpError": "1音節で言おうとして潰れる。実際は2音節（ダ・ズントゥ）。中間の弱い ə を入れる。",
+          "example": "The flagship doesn't rely on volume; it relies on margin.",
+          "targets": []
+        },
+        {
+          "contraction": "won't",
+          "expansion": "will not",
+          "ipa": "/wəʊnt/",
+          "syllables": 1,
+          "jpError": "want /wɒnt/ と混同。won't は長め oʊ で丸める。意味が真逆になるので致命的。",
+          "example": "Margins won't recover without a pricing change.",
+          "targets": ["VOWEL"]
+        },
+        {
+          "contraction": "can't",
+          "expansion": "cannot",
+          "ipa": "/kɑːnt/",
+          "syllables": 1,
+          "jpError": "can /kən/ と聞き分けられない最大の難所。can't は長い ɑː。否定が伝わらないと逆の指示になる。",
+          "example": "We can't cut quality just to defend the price point.",
+          "targets": ["VOWEL"]
+        },
+        {
+          "contraction": "isn't",
+          "expansion": "is not",
+          "ipa": "/ˈɪz.ənt/",
+          "syllables": 2,
+          "jpError": "z を s 化（イスント）。有声の z を保つ。",
+          "example": "The real issue isn't price — it's perceived value.",
+          "targets": []
+        },
+        {
+          "contraction": "aren't",
+          "expansion": "are not",
+          "ipa": "/ɑːnt/",
+          "syllables": 1,
+          "jpError": "r を強く立てて2音節化しがち（UK では r を発音しない）。long ɑː 一発で。",
+          "example": "Repeat rates aren't improving as fast as we expected.",
+          "targets": ["RL", "VOWEL"]
+        },
+        {
+          "contraction": "didn't",
+          "expansion": "did not",
+          "ipa": "/ˈdɪd.ənt/",
+          "syllables": 2,
+          "jpError": "短い ɪ に力が入り iː 化（ディードゥント）。短く脱力。",
+          "example": "We didn't catch the drop in footfall early enough.",
+          "targets": ["VOWEL"]
+        },
+        {
+          "contraction": "wouldn't",
+          "expansion": "would not",
+          "ipa": "/ˈwʊd.ənt/",
+          "syllables": 2,
+          "jpError": "d をはっきり出しすぎる。中間の d は軽く、鼻に抜ける ən。",
+          "example": "I wouldn't roll this out chain-wide before the trial.",
+          "targets": []
+        },
+        {
+          "contraction": "couldn't",
+          "expansion": "could not",
+          "ipa": "/ˈkʊd.ənt/",
+          "syllables": 2,
+          "jpError": "l を発音してしまう（l は無音）。クドゥントゥ。",
+          "example": "We couldn't keep wait times down during peak hours.",
+          "targets": ["VOWEL"]
+        },
+        {
+          "contraction": "shouldn't",
+          "expansion": "should not",
+          "ipa": "/ˈʃʊd.ənt/",
+          "syllables": 2,
+          "jpError": "l は無音。sh を s 化しない。",
+          "example": "We shouldn't compete on price in this market.",
+          "targets": []
+        }
+      ]
+    },
+    {
+      "id": "th-initial",
+      "title": "② TH 始まりの短縮形（TH ターゲット音と連動 🟢）",
+      "note": "舌先を上の歯に軽く当てる。their/there/they're の3つは音はほぼ同じだが文脈で判断。",
+      "items": [
+        {
+          "contraction": "that's",
+          "expansion": "that is / that has",
+          "ipa": "/ðæts/",
+          "syllables": 1,
+          "jpError": "ð を z/d 化（ザッツ→ダッツ）。語尾 ts クラスタも省略しない。",
+          "example": "That's our strongest market in the region.",
+          "targets": ["TH"]
+        },
+        {
+          "contraction": "there's",
+          "expansion": "there is / there has",
+          "ipa": "/ðeəz/",
+          "syllables": 1,
+          "jpError": "ð を d 化。語尾は有声 z。",
+          "example": "There's room to lift AOV before we touch headline price.",
+          "targets": ["TH"]
+        },
+        {
+          "contraction": "they're",
+          "expansion": "they are",
+          "ipa": "/ðeə/",
+          "syllables": 1,
+          "jpError": "their / there と同音。ð を保つ。文脈で『彼らは〜だ』と判断。",
+          "example": "They're price-sensitive on weekdays, not weekends.",
+          "targets": ["TH"]
+        },
+        {
+          "contraction": "they've",
+          "expansion": "they have",
+          "ipa": "/ðeɪv/",
+          "syllables": 1,
+          "jpError": "語尾 v を b 化（ゼイブ）。下唇を軽く噛む v。",
+          "example": "They've already trialled this in three stores.",
+          "targets": ["TH"]
+        },
+        {
+          "contraction": "they'd",
+          "expansion": "they would / they had",
+          "ipa": "/ðeɪd/",
+          "syllables": 1,
+          "jpError": "ð を d 化すると they'd 全体が dade に。冒頭の ð を丁寧に。",
+          "example": "They'd prefer a premium anchor over a discount.",
+          "targets": ["TH"]
+        }
+      ]
+    },
+    {
+      "id": "be-have",
+      "title": "③ be / have の短縮（'m / 're / 've / 's）",
+      "note": "短縮部は弱く速く。ただし v を b 化しない、長母音 iː を保つ点に注意。",
+      "items": [
+        {
+          "contraction": "I'm",
+          "expansion": "I am",
+          "ipa": "/aɪm/",
+          "syllables": 1,
+          "jpError": "アイ・アム と2音節化。1音で aɪm。",
+          "example": "I'm proposing a £16 premium anchor for the lunch set.",
+          "targets": []
+        },
+        {
+          "contraction": "I've",
+          "expansion": "I have",
+          "ipa": "/aɪv/",
+          "syllables": 1,
+          "jpError": "v を b 化（アイブ）。下唇を上の歯に。",
+          "example": "I've reviewed the same-store sales for last quarter.",
+          "targets": []
+        },
+        {
+          "contraction": "we're",
+          "expansion": "we are",
+          "ipa": "/wɪə/",
+          "syllables": 1,
+          "jpError": "were /wɜː/ と混同。we're は wi に寄せる。",
+          "example": "We're planning to open three new flagship stores.",
+          "targets": ["VOWEL", "RL"]
+        },
+        {
+          "contraction": "we've",
+          "expansion": "we have",
+          "ipa": "/wiːv/",
+          "syllables": 1,
+          "jpError": "iː を短く詰める＋v を b 化。長い iː ＋ v。",
+          "example": "We've kept food cost under thirty percent all year.",
+          "targets": ["VOWEL"]
+        },
+        {
+          "contraction": "you're",
+          "expansion": "you are",
+          "ipa": "/jɔː/",
+          "syllables": 1,
+          "jpError": "your と同音。ユー・アー と割らない。",
+          "example": "You're right that the weekday traffic is softer.",
+          "targets": ["RL"]
+        },
+        {
+          "contraction": "you've",
+          "expansion": "you have",
+          "ipa": "/juːv/",
+          "syllables": 1,
+          "jpError": "v を b 化。",
+          "example": "You've seen the footfall data for Camden, right?",
+          "targets": []
+        },
+        {
+          "contraction": "it's",
+          "expansion": "it is / it has",
+          "ipa": "/ɪts/",
+          "syllables": 1,
+          "jpError": "its（所有格）と同音。語尾 ts を落とさない。",
+          "example": "It's the perceived value, not the price, that drives repeat visits.",
+          "targets": []
+        },
+        {
+          "contraction": "what's",
+          "expansion": "what is / what has",
+          "ipa": "/wɒts/",
+          "syllables": 1,
+          "jpError": "ts を省略（ワッ）。",
+          "example": "What's driving the dip in our lunch covers?",
+          "targets": []
+        },
+        {
+          "contraction": "here's",
+          "expansion": "here is",
+          "ipa": "/hɪəz/",
+          "syllables": 1,
+          "jpError": "語尾 z を s 化。",
+          "example": "Here's the context behind the pricing proposal.",
+          "targets": ["RL"]
+        }
+      ]
+    },
+    {
+      "id": "will-would",
+      "title": "④ will / would の短縮（'ll / 'd）",
+      "note": "'ll は L をはっきり、'd は軽く。会議で頻出する申し出・提案表現。",
+      "items": [
+        {
+          "contraction": "I'll",
+          "expansion": "I will",
+          "ipa": "/aɪl/",
+          "syllables": 1,
+          "jpError": "aisle/isle と同音。末尾の L（舌先を歯茎に）を出す。アイ・ウィル と割らない。",
+          "example": "I'll walk you through the three-week test plan.",
+          "targets": ["RL"]
+        },
+        {
+          "contraction": "we'll",
+          "expansion": "we will",
+          "ipa": "/wiːl/",
+          "syllables": 1,
+          "jpError": "wheel と同音。long iː ＋ L。will と混同しない。",
+          "example": "We'll introduce the premium tier so customers trade up.",
+          "targets": ["VOWEL", "RL"]
+        },
+        {
+          "contraction": "you'll",
+          "expansion": "you will",
+          "ipa": "/juːl/",
+          "syllables": 1,
+          "jpError": "末尾 L を落とす。",
+          "example": "You'll see AOV rise once the anchor is in place.",
+          "targets": ["RL"]
+        },
+        {
+          "contraction": "it'll",
+          "expansion": "it will",
+          "ipa": "/ˈɪt.əl/",
+          "syllables": 2,
+          "jpError": "イッル と詰める。t の後に軽い ə＋L。",
+          "example": "It'll take three weeks to read the trial results.",
+          "targets": ["RL"]
+        },
+        {
+          "contraction": "I'd",
+          "expansion": "I would / I had",
+          "ipa": "/aɪd/",
+          "syllables": 1,
+          "jpError": "アイ・ウッド と割る。1音 aɪd。capability language の起点（I'd like to）。",
+          "example": "I'd like to share my thoughts on the brand strategy.",
+          "targets": ["TH"]
+        },
+        {
+          "contraction": "we'd",
+          "expansion": "we would / we had",
+          "ipa": "/wiːd/",
+          "syllables": 1,
+          "jpError": "long iː を短く。weed と同音。",
+          "example": "We'd rather protect margin than chase volume.",
+          "targets": ["VOWEL"]
+        }
+      ]
+    },
+    {
+      "id": "casual",
+      "title": "⑤ 口語の縮約（gonna / wanna / gotta）— 聞き取り専用",
+      "note": "ビジネス register では自分から多用しない。相手（特に米英ネイティブ）の発話を聞き取るために知っておく。",
+      "items": [
+        {
+          "contraction": "gonna",
+          "expansion": "going to",
+          "ipa": "/ˈɡɒn.ə/",
+          "syllables": 2,
+          "jpError": "going to を毎回フルで言う／gonna を書き言葉でも使う（NG）。聞き取り用と割り切る。",
+          "example": "(聞き取り例) We're gonna trial it in Camden first.",
+          "targets": []
+        },
+        {
+          "contraction": "wanna",
+          "expansion": "want to",
+          "ipa": "/ˈwɒn.ə/",
+          "syllables": 2,
+          "jpError": "want to との対応が取れない。会議メモでは want to と書く。",
+          "example": "(聞き取り例) Do you wanna review the numbers now?",
+          "targets": []
+        },
+        {
+          "contraction": "gotta",
+          "expansion": "have got to / got to",
+          "ipa": "/ˈɡɒt.ə/",
+          "syllables": 2,
+          "jpError": "義務の意味が拾えない。フォーマル文では have to に置き換える。",
+          "example": "(聞き取り例) We gotta keep wait times under four minutes.",
+          "targets": []
+        }
+      ]
+    }
+  ]
+}
