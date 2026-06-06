@@ -2,45 +2,60 @@
 
 Personalized 90-day English learning program for global F&B leadership.
 
+A collection of self-contained, browser-based study tools — no build step, no
+backend. Just open a page and start practicing.
+
 ## 🌐 Live URL
 
 **https://my-english-coach.vercel.app**
 
 Hosted on Vercel (migrated from Netlify on 2026-05-16 due to free-tier limits).
 
-## 📱 Apps
+## 🧰 Tools
 
-| File | Description |
-|------|-------------|
-| `index.html` | Landing page — entry point with menu |
-| `Lesson_Studio.html` | Daily Reading + Writing exercises (interactive) |
-| `Phrase_Master.html` | Phrase library with 5-level mastery + 3-mode quiz |
-| `Speaking_Coach.html` | Voice recording + AI transcription scoring |
-| `Question_Master.html` | Question pattern drills |
-| `Preposition_Visual.html` | Preposition learning with SVG visuals |
-| `Idiom_Master.html` | Business idioms top 50 |
-| `Phrasal_Verb_Master.html` | Phrasal verbs top 50 |
-| `lessons.json` | Daily lesson data |
+Each tool is a standalone HTML page. Start from `index.html` (the home menu) or
+open any tool directly.
+
+| Tool | What it does |
+|------|--------------|
+| `index.html` | Home menu — entry point that links to every tool |
+| `Lesson_Studio.html` | Daily Reading + Writing exercises loaded from `lessons.json` |
+| `Phrase_Master.html` | Phrase library with 5-level mastery tracking and a 3-mode quiz |
+| `Speaking_Coach.html` | Voice recording with AI transcription and pronunciation scoring |
+| `Speaking_Coach_Diagnostic.html` | Pronunciation baseline recorder for the initial diagnostic |
+| `Question_Master.html` | Drills for common English question patterns |
+| `Preposition_Visual.html` | Preposition & adverb learning with SVG visuals |
+| `Idiom_Master.html` | Practice set of the top 50 business idioms |
+| `Phrasal_Verb_Master.html` | Practice set of the top 50 phrasal verbs |
+| `Rhythm_Practice.html` | Stress-rhythm drills to internalize the beat of spoken English |
+
+### Data files
+
+| File | Contents |
+|------|----------|
+| `lessons.json` | Daily lesson data used by Lesson Studio |
+| `contractions.json` | Contraction reference data used by the speaking tools |
 
 ## 🚀 How It Works
 
-1. Open https://my-english-coach.vercel.app on iPhone or Mac
-2. **Lesson Studio** loads today's lesson from `lessons.json`
-3. Type answers in the textareas — auto-saves to localStorage
-4. Share answers with the coach via Google Docs (the in-app clipboard route is deprecated)
+1. Open https://my-english-coach.vercel.app on iPhone or Mac.
+2. **Lesson Studio** loads today's lesson from `lessons.json`.
+3. Type answers in the textareas — they auto-save to `localStorage`.
+4. Share answers with the coach via Google Docs (the in-app clipboard route is
+   deprecated).
 
 ## 🔒 Privacy
 
-- All answers stored in browser localStorage (device-only)
-- No external services contacted
-- No analytics, no tracking
+- All answers are stored in browser `localStorage` (device-only).
+- No external services contacted.
+- No analytics, no tracking.
 
 ## 🛠 Tech Stack
 
-- Pure HTML/CSS/JS — no frameworks, no build step
-- localStorage for persistence
-- Web Speech API for transcription (Speaking Coach)
-- SpeechSynthesis API for native pronunciation (Phrase Master, Speaking Coach)
+- Pure HTML/CSS/JS — no frameworks, no build step.
+- `localStorage` for persistence.
+- Web Speech API for transcription (Speaking Coach).
+- SpeechSynthesis API for native pronunciation (Phrase Master, Speaking Coach).
 
 ## 🚢 Deployment
 
@@ -53,16 +68,19 @@ Hosted on Vercel (migrated from Netlify on 2026-05-16 due to free-tier limits).
 ```
 
 The script:
-- Stages all changes
-- Checks that no private files (CLAUDE.md, memory/, Lessons/, etc.) are about to be pushed
-- Commits with the provided message
-- Pushes to `origin/main`, which triggers Vercel auto-deploy
+
+- Stages all changes.
+- Checks that no private files (CLAUDE.md, memory/, Lessons/, etc.) are about to
+  be pushed.
+- Commits with the provided message.
+- Pushes to `origin/main`, which triggers Vercel auto-deploy.
 
 See `VERCEL_MIGRATION.md` for migration history and Vercel setup details.
 
 ## 👤 User
 
-Kazuki Onda — F&B Strategy Lead, overseeing overseas brands at a global food company. Goal: CEFR A2 → B1 in 90 days.
+Kazuki Onda — F&B Strategy Lead, overseeing overseas brands at a global food
+company. Goal: CEFR A2 → B1 in 90 days.
 
 ---
 
