@@ -490,6 +490,10 @@ audio{display:none}
       <label>🌍 アクセント:</label>
       <select id="voiceSelect"></select>
     </div>
+    <p class="voice-hint" style="font-size:11px;color:var(--muted);margin:4px 0 0;line-height:1.55">
+      💡 より自然な声に: <strong>システム設定 → アクセシビリティ → 読み上げコンテンツ → システムの声 → 英語「管理…」</strong>で
+      Siri / Premium / Enhanced 音声をDL → このページを再読み込み。<strong>★付き</strong>が高品質音声です。
+    </p>
   </div>
 
   <div class="target-card" id="targetCard">
@@ -1513,11 +1517,25 @@ function populateVoiceSelect(){
     sel.innerHTML = `<option>音声が見つかりません</option>`;
     return;
   }
-  // Categorize
-  const order = ["en-US","en-GB","en-AU","en-IN","en-CA","en"];
-  const sorted = englishVoices.sort((a,b)=>{
-    const ai = order.findIndex(p=>a.lang.startsWith(p));
-    const bi = order.findIndex(p=>b.lang.startsWith(p));
+  // 自然さスコア（高いほど上位）: Siri / Premium / Enhanced / Natural を最優先、
+  // London HQ 文脈で UK(en-GB)→US(en-US) を加点。同点は従来のアクセント表示順で安定化。
+  const langOrder = ["en-US","en-GB","en-AU","en-IN","en-CA","en"];
+  const naturalness = v=>{
+    let s = 0; const n = (v.name||"").toLowerCase();
+    if(n.includes("siri")) s += 100;
+    if(n.includes("premium")) s += 60;
+    if(n.includes("enhanced")) s += 50;
+    if(n.includes("natural")) s += 40;
+    if(v.lang === "en-GB") s += 12;
+    if(v.lang === "en-US") s += 8;
+    if(v.localService === false) s += 5;
+    return s;
+  };
+  const sorted = englishVoices.slice().sort((a,b)=>{
+    const dq = naturalness(b) - naturalness(a);
+    if(dq) return dq;
+    const ai = langOrder.findIndex(p=>a.lang.startsWith(p));
+    const bi = langOrder.findIndex(p=>b.lang.startsWith(p));
     return (ai<0?99:ai) - (bi<0?99:bi);
   });
   sel.innerHTML = sorted.map(v=>{
@@ -1526,11 +1544,14 @@ function populateVoiceSelect(){
                  v.lang.startsWith("en-AU") ? "🇦🇺" :
                  v.lang.startsWith("en-IN") ? "🇮🇳" :
                  v.lang.startsWith("en-CA") ? "🇨🇦" : "🌍";
-    return `<option value="${escapeAttr(v.name)}">${flag} ${escapeHtml(v.name)} (${v.lang})</option>`;
+    const star = /siri|premium|enhanced|natural/i.test(v.name) ? " ★" : "";
+    return `<option value="${escapeAttr(v.name)}">${flag} ${escapeHtml(v.name)} (${v.lang})${star}</option>`;
   }).join("");
-  // Restore preference
+  // 保存済みの好みを優先。無ければ先頭（=最も自然な音声）を自動選択。
   if(state.voicePref && sorted.some(v=>v.name===state.voicePref)){
     sel.value = state.voicePref;
+  } else {
+    sel.selectedIndex = 0;
   }
   sel.addEventListener("change", ()=>{
     state.voicePref = sel.value;
