@@ -87,6 +87,36 @@ body{
   white-space:nowrap;transition:all 0.15s;
 }
 .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* ===== Vocab tab (Day10-22, additive) ===== */
+#vocabView{display:none;padding:4px 12px 24px}
+body.vocab-mode #vocabView{display:block}
+body.vocab-mode .modes,
+body.vocab-mode .search-row,
+body.vocab-mode .legend,
+body.vocab-mode #masterListTitle,
+body.vocab-mode #phraseList,
+body.vocab-mode .log-section,
+body.vocab-mode .utility{display:none !important}
+.vsearch{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;font-size:14px;margin:8px 0 4px;box-sizing:border-box}
+.vsearch:focus{outline:none;border-color:var(--accent)}
+.vgroup{margin-top:14px;border:1px solid var(--border);border-radius:12px;background:var(--card);overflow:hidden;box-shadow:var(--shadow)}
+.vgroup>summary{cursor:pointer;list-style:none;padding:12px 14px;font-weight:700;color:var(--primary);background:var(--sand);font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.vgroup>summary::-webkit-details-marker{display:none}
+.vgroup>summary .vcount{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
+.vgroup .gnote{font-size:12px;color:var(--muted);padding:8px 14px 0;line-height:1.6}
+.vitems{padding:8px 10px 12px;display:grid;gap:8px}
+.vitem{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:#fff}
+.vitem.known{background:#F2F8F3;border-color:#CDE6D2}
+.vterm{font-weight:700;font-size:15px;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.vpos{font-size:11px;color:var(--muted);font-weight:600}
+.vjp{font-size:13px;color:var(--text);margin-top:3px;line-height:1.6}
+.vex{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.55}
+.vchip{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:99px;background:var(--role-amount-bg);color:var(--role-amount-fg);border:1px solid rgba(0,0,0,0.05)}
+.vbtns{margin-top:7px;display:flex;gap:6px;flex-wrap:wrap}
+.vbtn{font-size:11.5px;padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--text);cursor:pointer}
+.vbtn.spk{color:var(--accent);border-color:var(--accent-soft)}
+.vknow{font-size:11.5px;padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer}
+.vitem.known .vknow{background:var(--success);color:#fff;border-color:var(--success)}
 .tab .count{font-size:11px;opacity:0.8;margin-left:4px}
 
 .search-row{padding:8px 12px;background:var(--bg)}
@@ -623,6 +653,8 @@ body.hide-jp .example-jp{display:none}
   <select id="voiceSelect"></select>
 </div>
 
+<div id="vocabView"></div>
+
 <div class="legend">
   <span class="legend-item" style="background:var(--role-subject-bg);color:var(--role-subject-fg)"><span class="legend-dot" style="background:var(--role-subject-fg)"></span>主語</span>
   <span class="legend-item" style="background:var(--role-verb-bg);color:var(--role-verb-fg)"><span class="legend-dot" style="background:var(--role-verb-fg)"></span>動詞</span>
@@ -632,7 +664,7 @@ body.hide-jp .example-jp{display:none}
   <span class="legend-item" style="background:var(--role-time-bg);color:var(--role-time-fg)"><span class="legend-dot" style="background:var(--role-time-fg)"></span>時/数</span>
 </div>
 
-<div class="section-title">Master List · 50 Phrases (with IPA & Audio)</div>
+<div class="section-title" id="masterListTitle">Master List · 50 Phrases (with IPA & Audio)</div>
 <div class="phrases" id="phraseList"></div>
 
 <div class="log-section">
@@ -903,7 +935,8 @@ const CATS = [
   {id:"self",label:"👋 Self-Intro"},
   {id:"email",label:"📧 Email"},
   {id:"meeting",label:"💬 Meeting"},
-  {id:"industry",label:"🍽 Industry"}
+  {id:"industry",label:"🍽 Industry"},
+  {id:"vocab",label:"📚 単語集"}
 ];
 
 // ============== SCENARIOS (when to use each phrase) ==============
@@ -1443,10 +1476,117 @@ const LESSON_PHRASES = [
     jp:"Xは背後にあるYの強さに依存する（裏側の仕組み・人・実行力を強調）",
     ex:"An overseas brand is only as strong as the playbook behind it. A flagship store is only as strong as the operations behind the storefront. Our pricing strategy is only as strong as the menu engineering behind it. (派生: 'the operations behind the storefront' = 店頭の裏のオペレーション)",
     cat:"meeting"
-  }
+  },
+  // ===== Day 10-22 Pre-writing Pack sentence cards (auto-added 2026-06-29; ids day11..day22, transition->meeting) =====
+  {lessonId:"day11_pricing_drift",en:"Without disciplined price points, AOV drifts. With it, margin compounds.",jp:"規律ある価格設定が無いとAOVはブレ、有ると margin が複利で効く",ex:"",cat:"meeting"},
+  {lessonId:"day11_pricing_anchor",en:"We introduced an £18 price anchor at the top of the menu, and AOV rose from £14 to £16.",jp:"価格アンカーを置くと trade up が起き、客単価が上がる",ex:"",cat:"meeting"},
+  {lessonId:"day11_pricing_reengineer",en:"Rather than cut the lunch price, we re-engineered the menu so that the premium tier lifts margin.",jp:"値下げではなく、メニューを設計し直して margin を守る",ex:"",cat:"meeting"},
+  {lessonId:"day13_ops_prep",en:"We did the prep before the rush, not during it, so the team moved faster at noon.",jp:"仕込みは混雑前に。昼のスピードが上がる",ex:"",cat:"meeting"},
+  {lessonId:"day13_ops_tech",en:"A kitchen display system helps, but it does not replace a well-designed prep line.",jp:"技術は助けになるが、規律の代わりにはならない",ex:"",cat:"meeting"},
+  {lessonId:"day13_ops_throughput",en:"After we redrew the workflow and retrained the team, throughput rose to 90 covers an hour.",jp:"動線を引き直し再教育すると処理能力が上がる",ex:"",cat:"meeting"},
+  {lessonId:"day14_cx_speedwarmth",en:"Speed gets them in the door; warmth brings them back.",jp:"スピードは入店、温かみは再来店を生む",ex:"",cat:"meeting"},
+  {lessonId:"day14_cx_touchpoint",en:"We define clear service standards for each touchpoint, so the experience does not depend on who is on shift.",jp:"接点ごとに基準を決めれば体験がブレない",ex:"",cat:"meeting"},
+  {lessonId:"day14_cx_recovery",en:"A guest whose problem is recovered well often becomes more loyal than one who never had a problem.",jp:"うまく挽回された客はむしろ忠実になる",ex:"",cat:"meeting"},
+  {lessonId:"day15_brand_coreedge",en:"The core — our promise, our flagship product, our service standard — stays consistent in every market; the edge flexes to local taste.",jp:"核はどの市場でも固定、外縁は現地に合わせる",ex:"",cat:"meeting"},
+  {lessonId:"day15_brand_playbook",en:"Without a clear playbook, local adaptation quietly eats the core and consistency drifts.",jp:"型が無いと現地適応が核を侵食し、一貫性がブレる",ex:"",cat:"meeting"},
+  {lessonId:"day15_brand_nonneg",en:"Rather than adapting everything, let's define what is non-negotiable so that the brand holds.",jp:"全部変えるより、譲れない核を決める",ex:"",cat:"meeting"},
+  {lessonId:"day16_store_modelfirst",en:"Before we fall in love with a site or a dish, we should model it first.",jp:"惚れ込む前にまず試算する",ex:"",cat:"meeting"},
+  {lessonId:"day16_store_footfall",en:"The Shoreditch site does have heavy footfall, but premium rent would consume the entire margin.",jp:"客足はあるが、高い家賃が利益を食い尽くす",ex:"",cat:"meeting"},
+  {lessonId:"day16_store_walkaway",en:"I recommend we walk away and keep looking.",jp:"今回は見送り、探し続けることを勧める",ex:"",cat:"email"},
+  {lessonId:"day17_menu_quadrant",en:"We rank every dish by popularity and contribution margin, then move Plowhorses toward Stars.",jp:"出数×利益で判定し、人気高利益低を改善する",ex:"",cat:"meeting"},
+  {lessonId:"day17_menu_puzzle",en:"A Puzzle has high margin but low popularity, so it needs better placement or a story to sell.",jp:"利益は高いが人気が低い品は、配置や物語で売る",ex:"",cat:"meeting"},
+  {lessonId:"day18_supply_chain_2026-06-09",en:"Holding redundancy ties up some cash, but it buys the resilience that protects your margin.",jp:"予備を持つと現金は少し寝るが、利益を守る強靭さが買える",ex:"A supply chain is only as strong as its weakest link.",cat:"meeting"},
+  {lessonId:"day18_supply_premium",en:"Adding a second supplier is not waste; it is an insurance premium against disruption.",jp:"二社購買は無駄ではなく、途絶への保険料だ",ex:"",cat:"meeting"},
+  {lessonId:"day18_supply_pricecost",en:"The vendor is 10% cheaper, but a three-week lead time ties up cash and shortens shelf life.",jp:"最安の価格と最安のコストは別物",ex:"",cat:"meeting"},
+  {lessonId:"day18_correlative_comparative_2026-06-09",en:"The shorter the lead time, the fresher the produce.",jp:"Xなほど、Yも（相関比較）",ex:"The higher the inventory, the more cash we tie up.",cat:"meeting"},
+  {lessonId:"day18_idiom_saying_2026-06-09",en:"As the saying goes, the cheapest supplier is rarely the cheapest supply chain.",jp:"ことわざにもあるように、〜",ex:"As the saying goes, you get what you pay for.",cat:"meeting"},
+  {lessonId:"day19_fr_trainfirst",en:"If we invest in training first, our franchisees will protect the brand.",jp:"研修に先に投資すれば、加盟店がブランドを守る",ex:"",cat:"meeting"},
+  {lessonId:"day19_fr_notcost",en:"Strong support is not just a cost; it is an investment in our brand equity.",jp:"支援はコストではなく、ブランド資産への投資だ",ex:"",cat:"meeting"},
+  {lessonId:"day19_fr_scale",en:"A franchise network grows only as fast as its support can keep quality steady.",jp:"支援が品質を保てる速さでしか網は伸びない",ex:"",cat:"meeting"},
+  {lessonId:"day20_con_checklist",en:"Before we fall in love with a site or a dish, we should model it first.",jp:"重要な意思決定の前に、まず試算する",ex:"",cat:"meeting"},
+  {lessonId:"day20_con_floor",en:"Standardization is the floor; local edge is the upgrade — not the other way around.",jp:"標準化が土台、現地裁量は上乗せ（逆ではない）",ex:"",cat:"meeting"},
+  {lessonId:"day21_dd_discovery",en:"Rather than treating the aggregator as a destination, we should treat it as a discovery channel.",jp:"集約業者は目的地でなく、認知の入口として扱う",ex:"",cat:"meeting"},
+  {lessonId:"day21_dd_orderflow",en:"If we improve the order flow on our first-party app, we can raise conversion without paying commission.",jp:"自社アプリの導線を改善すれば、手数料なしで完了率が上がる",ex:"",cat:"meeting"},
+  {lessonId:"day21_dd_goal",en:"The goal is not to leave the aggregators; it is to move loyal customers to our own app.",jp:"目的は撤退ではなく、忠実な客を自社アプリへ移すこと",ex:"",cat:"meeting"},
+  {lessonId:"day22_pt_notcost",en:"Onboarding is not a cost; it is an investment in retention.",jp:"研修はコストではない；定着への投資だ",ex:"",cat:"meeting"},
+  {lessonId:"day22_pt_propose",en:"I'd like to propose that we run a 90-day pilot at our flagship store, starting next month.",jp:"旗艦店で90日パイロットを来月から試したい",ex:"",cat:"email"},
+  {lessonId:"day22_pt_rollout",en:"If the pilot works at that store, we can roll it out across the other stores.",jp:"その店で成功したら、他店へ展開できる",ex:"",cat:"meeting"},
+  {lessonId:"day22_pt_upfront",en:"You might think this is an added cost. There is a cost upfront, but onboarding is an investment in retention.",jp:"初期費用はかかるが、研修は定着への投資だ",ex:"",cat:"meeting"},
 ];
 
 // ============== STATE ==============
+const VOCAB_DATA = {"meta":{"title":"単語集（ジャンル別）— Day 10–22","phase":"Phase 1 (Day 11 → ~30)","learner":"JP native, CEFR A2→B1, global F&B business","updated":"2026-06-28 (Day 22)","fields":"term=見出し語 / pos=品詞 / jp=日本語の意味 / example=F&B業務の例文 / tag=学習上の注意（不可算・単複・冠詞・前置詞・復習など）","source":"Day 10–22 の Pre-writing Pack §1 と Reading コア語彙より集約","weaknessTags":{"uncountable":{"label":"不可算 (s不可)","emoji":"🚫s"},"plural":{"label":"単複注意","emoji":"①②"},"article":{"label":"冠詞注意","emoji":"a/the"},"prep":{"label":"前置詞注意","emoji":"→"},"review":{"label":"復習（既習）","emoji":"↻"}}},"groups":[{"id":"pricing","title":"① 価格戦略 (Pricing Strategy) — Day 11–12","note":"値ごろ層と上位層、価格アンカー、客単価(AOV)で margin を設計する語彙。","items":[{"term":"pricing power","pos":"n.","jp":"価格を上げても客が離れにくい力","example":"Our flagship udon brand has strong pricing power in the UK market.","tag":""},{"term":"price point","pos":"n.","jp":"設定価格そのもの／価格帯の一点","example":"We tested a £12 price point for the lunch set.","tag":"複数 price points / a price point"},{"term":"elasticity","pos":"n.","jp":"需要の価格反応度（弾力性）","example":"Lunch sets show higher elasticity than dinner mains.","tag":"綴り: elasticity"},{"term":"margin","pos":"n.","jp":"粗利／利益率","example":"Premium toppings improve margin by 6 points.","tag":""},{"term":"menu engineering","pos":"n.","jp":"売上×粗利でメニューを設計する手法","example":"Menu engineering moves Plowhorse items into Stars.","tag":"不可算"},{"term":"AOV (average order value)","pos":"n.","jp":"客単価","example":"AOV rose from £14 to £16 after the bundle launch.","tag":"単数扱い: AOV is"},{"term":"value tier","pos":"n.","jp":"価格帯のうち値ごろ層","example":"Our value tier protects volume during downturns.","tag":""},{"term":"premium tier","pos":"n.","jp":"価格帯のうち上位層","example":"The premium tier drives margin even at lower volume.","tag":""},{"term":"price anchor","pos":"n.","jp":"比較基準として置く高価格商品","example":"The £18 set works as a price anchor, lifting the £14 set.","tag":""},{"term":"dynamic pricing","pos":"n.","jp":"時間帯・需要に応じた価格変動","example":"Dynamic pricing on weekday lunches lifts off-peak AOV.","tag":""},{"term":"price-sensitive","pos":"adj.","jp":"価格に敏感な","example":"Office workers are price-sensitive at lunch but not at dinner.","tag":""},{"term":"trade up / trade down","pos":"v.","jp":"上位／下位の価格帯へ移る顧客行動","example":"Customers trade up when toppings tell a story.","tag":""},{"term":"absorb the cost","pos":"v.","jp":"コスト増を価格転嫁せず吸収する","example":"We absorbed the cost of flour for two months to protect AOV.","tag":""}]},{"id":"store-ops","title":"② 店舗オペレーション (Store Ops / Kitchen Workflow) — Day 13","note":"ピーク時間の動線・標準化・処理能力(throughput)。","items":[{"term":"kitchen workflow","pos":"n.","jp":"厨房の作業動線・段取り","example":"The kitchen workflow slows down during peak hours.","tag":""},{"term":"peak hours","pos":"n.","jp":"混雑のピーク時間帯","example":"We lose covers when the line backs up at peak hours.","tag":""},{"term":"prep / prep line","pos":"n.","jp":"仕込み／仕込みの作業ライン","example":"We redrew the prep line to cut steps.","tag":""},{"term":"mise en place","pos":"n.","jp":"仕込み・配置を事前に整えること","example":"Strong mise en place lets the team move faster at noon.","tag":""},{"term":"station","pos":"n.","jp":"厨房の持ち場・ポジション","example":"Each station has one clear role.","tag":""},{"term":"standardization","pos":"n.","jp":"標準化","example":"Standardization keeps quality stable across shifts.","tag":"不可算"},{"term":"playbook","pos":"n.","jp":"運用手順書・型","example":"A written playbook tells each new hire how a dish is built.","tag":""},{"term":"throughput","pos":"n.","jp":"時間あたりさばける量（処理能力）","example":"Throughput rose to 90 covers an hour.","tag":"不可算"},{"term":"covers","pos":"n.","jp":"客数・提供食数（飲食用語）","example":"The Camden store turns 120 covers at lunch.","tag":"複数で使う"},{"term":"service time","pos":"n.","jp":"提供までの時間","example":"Average service time dropped from 8 to 5 minutes.","tag":""},{"term":"staff turnover","pos":"n.","jp":"人材の入れ替わり・離職","example":"High staff turnover makes standardization harder.","tag":"staff は集合名詞: staff are"},{"term":"bottleneck","pos":"n.","jp":"詰まる工程・ボトルネック","example":"The fryer station is the bottleneck at peak.","tag":""},{"term":"retrain","pos":"v.","jp":"再教育する","example":"We retrained the team on the new prep sequence.","tag":""}]},{"id":"cx","title":"③ 顧客体験 (Customer Experience / Service) — Day 14","note":"接点(touchpoint)ごとの基準と、温かみ→loyalty。speed=入店, warmth=再来店。","items":[{"term":"customer experience (CX)","pos":"n.","jp":"来店〜退店の体験全体","example":"A consistent customer experience builds repeat visits.","tag":""},{"term":"service standard","pos":"n.","jp":"接客の基準・水準","example":"Our service standards must hold across every store.","tag":"複数: standards are"},{"term":"touchpoint","pos":"n.","jp":"顧客との接点","example":"Every touchpoint, from greeting to payment, shapes CX.","tag":""},{"term":"repeat visit / repeat rate","pos":"n.","jp":"再来店／再来店率","example":"Faster, warmer service lifted our repeat rate by 8 points.","tag":""},{"term":"hospitality","pos":"n.","jp":"おもてなし","example":"Hospitality turns a meal into an experience.","tag":"不可算"},{"term":"complaint handling","pos":"n.","jp":"クレーム対応","example":"Good complaint handling can win a customer back.","tag":""},{"term":"feedback","pos":"n.","jp":"顧客の声","example":"We collect feedback through a short survey.","tag":"不可算 (s不可)"},{"term":"wait time","pos":"n.","jp":"待ち時間","example":"Long wait times hurt CX at peak hours.","tag":""},{"term":"consistency","pos":"n.","jp":"一貫性","example":"Consistency across shifts is the heart of good service.","tag":"不可算"},{"term":"frontline staff","pos":"n.","jp":"最前線の接客スタッフ","example":"Frontline staff need a simple service playbook.","tag":""},{"term":"loyalty","pos":"n.","jp":"顧客ロイヤルティ","example":"Loyalty grows when service feels personal.","tag":"不可算 / 形容詞は loyal"},{"term":"service recovery","pos":"n.","jp":"失敗の挽回対応","example":"Good service recovery makes a guest more loyal, not less.","tag":""},{"term":"net promoter score (NPS)","pos":"n.","jp":"推奨度の指標","example":"Our NPS rose after we cut wait times.","tag":""}]},{"id":"brand","title":"④ ブランド・ポジショニング (Brand Positioning) — Day 15","note":"global core（譲れない核）と local edge（柔軟な外縁）の線引き。","items":[{"term":"non-negotiable","pos":"adj.","jp":"譲れない・絶対に変えない","example":"The signature burger is non-negotiable in every market.","tag":""},{"term":"drift","pos":"v./n.","jp":"基準からじわじわズレる","example":"Without a playbook, consistency drifts.","tag":""},{"term":"playbook","pos":"n.","jp":"運用指針・型","example":"We need a brand playbook before we enter Bangkok.","tag":""},{"term":"tone-deaf","pos":"adj.","jp":"現地感覚を読めていない","example":"Localizing too little feels tone-deaf.","tag":""},{"term":"portion size","pos":"n.","jp":"一人前の量","example":"Portion sizes flex to local taste.","tag":""},{"term":"core","pos":"n.","jp":"ブランドの中核","example":"The core is the promise and the signature product.","tag":""},{"term":"edge","pos":"n.","jp":"柔軟に変えられる外縁","example":"The edge flexes to local taste.","tag":""},{"term":"flagship product","pos":"n.","jp":"看板商品","example":"Keep the flagship product identical worldwide.","tag":""},{"term":"market entry","pos":"n.","jp":"市場参入","example":"This note outlines our market entry approach.","tag":""},{"term":"consistency","pos":"n.","jp":"一貫性","example":"Consistency is what makes the brand worth exporting.","tag":"不可算"},{"term":"adapt","pos":"v.","jp":"適応させる","example":"We adapt flavors, not the core promise.","tag":""},{"term":"pricing tier","pos":"n.","jp":"価格帯","example":"Pricing tiers can flex by market.","tag":""}]},{"id":"new-store","title":"⑤ 新規出店 (New Store Opening) — Day 16","note":"惚れ込む前に試算（model first）。break-even と footfall、rent に ceiling。","items":[{"term":"screening tool","pos":"n.","jp":"出店可否をふるいにかける判断基準","example":"We use a simple screening tool before signing any lease.","tag":""},{"term":"break-even point","pos":"n.","jp":"損益分岐点","example":"The site needs about 220 covers a day at £14 just to break even.","tag":""},{"term":"covers","pos":"n.","jp":"客数・提供食数","example":"Even at full capacity, the store can still lose money.","tag":"複数で使う"},{"term":"footfall","pos":"n.","jp":"通行量・来店人通り","example":"The Shoreditch site does have heavy footfall, but premium rent eats the margin.","tag":"不可算"},{"term":"flagship bias","pos":"n.","jp":"旗艦店を基準にしすぎる思い込み","example":"Flagship bias makes us overestimate a new site.","tag":""},{"term":"walk away (from)","pos":"v.","jp":"（案件から）手を引く","example":"I recommend we walk away and keep looking.","tag":""},{"term":"set a ceiling on","pos":"v.","jp":"〜に上限を設ける","example":"We set a ceiling on rent at 10% of sales.","tag":""},{"term":"model it first","pos":"v.","jp":"先に試算する（惚れ込む前に）","example":"Before we fall in love with a site, we should model it first.","tag":""}]},{"id":"menu-engineering","title":"⑥ メニュー・エンジニアリング (Menu Engineering) — Day 17","note":"popularity（出数）× contribution margin（利益）で4象限に判定。","items":[{"term":"contribution margin","pos":"n.","jp":"限界利益（売価−変動費）","example":"We rank dishes by popularity and contribution margin.","tag":""},{"term":"popularity","pos":"n.","jp":"人気度（出数）","example":"A Star is high popularity and high contribution margin.","tag":"不可算"},{"term":"Star","pos":"n.","jp":"人気高×利益高のメニュー","example":"Keep Stars visible at the top of the menu.","tag":""},{"term":"Plowhorse","pos":"n.","jp":"人気高×利益低のメニュー","example":"Re-engineer Plowhorses to lift margin without losing volume.","tag":""},{"term":"Puzzle","pos":"n.","jp":"人気低×利益高のメニュー","example":"Puzzles need better placement or a story to sell.","tag":""},{"term":"Dog","pos":"n.","jp":"人気低×利益低のメニュー","example":"Dogs are candidates to cut from the menu.","tag":""},{"term":"verdict","pos":"n.","jp":"判定・評決","example":"The menu data gives a clear verdict on each dish.","tag":""},{"term":"garnish","pos":"n.","jp":"付け合わせ・飾り","example":"A small garnish can lift the perceived value of a Puzzle.","tag":""}]},{"id":"supply-chain","title":"⑦ サプライチェーン (Supply Chain) — Day 18","note":"最安サプライヤー≠最安サプライチェーン。redundancy→resilience。","items":[{"term":"procurement","pos":"n.","jp":"調達","example":"Our procurement is 80% standardized and 20% local sourcing.","tag":"不可算"},{"term":"dual sourcing","pos":"n.","jp":"二社購買","example":"I'd like to propose dual sourcing for our key ingredients.","tag":""},{"term":"redundancy","pos":"n.","jp":"予備・冗長性（手段）","example":"Holding redundancy ties up cash but buys resilience.","tag":"[C/U]"},{"term":"resilience","pos":"n.","jp":"強靭さ（結果）","example":"Dual sourcing builds resilience against disruption.","tag":"不可算"},{"term":"disruption","pos":"n.","jp":"供給の途絶・混乱","example":"A backup vendor protects us against disruption.","tag":"[C/U]"},{"term":"lead time","pos":"n.","jp":"発注〜納品までの時間","example":"A three-week lead time ties up cash and shortens shelf life.","tag":""},{"term":"inventory","pos":"n.","jp":"在庫","example":"High inventory ties up cash.","tag":"不可算"},{"term":"supplier","pos":"n.","jp":"仕入先","example":"The cheapest supplier is rarely the cheapest supply chain.","tag":""},{"term":"insurance premium","pos":"n.","jp":"保険料（比喩）","example":"Adding a second supplier is not waste; it is an insurance premium.","tag":""},{"term":"tie up cash","pos":"v.","jp":"現金を寝かせる・拘束する","example":"High inventory ties up cash.","tag":""},{"term":"free up cash","pos":"v.","jp":"現金を解放する（tie up の逆）","example":"Cutting inventory frees up cash.","tag":""},{"term":"weakest link","pos":"n.","jp":"最も弱い鎖","example":"A supply chain is only as strong as its weakest link.","tag":""}]},{"id":"franchise","title":"⑧ フランチャイズ管理 (Franchise Management) — Day 19","note":"研修と支援を先に投資→加盟店がブランドを守る。brand equity への投資。","items":[{"term":"franchisee","pos":"n.","jp":"加盟店（側）","example":"If we invest in training first, our franchisees protect the brand.","tag":""},{"term":"franchisor","pos":"n.","jp":"本部（側）","example":"The franchisor sets the brand standards.","tag":""},{"term":"brand standards","pos":"n.","jp":"ブランド基準","example":"Protect brand standards firmly while leaving room for local adaptation.","tag":"複数"},{"term":"operating standards","pos":"n.","jp":"運営基準","example":"Partners follow the operating standards more easily with support.","tag":"複数"},{"term":"training and support","pos":"n.","jp":"研修と支援","example":"Strong training and support is an investment, not a cost.","tag":""},{"term":"onboarding","pos":"n.","jp":"立ち上げ研修","example":"A structured onboarding shortens ramp-up time.","tag":"→ Day22 にも"},{"term":"local adaptation","pos":"n.","jp":"現地適応","example":"Leave room for local adaptation without breaking the core.","tag":""},{"term":"incentive alignment","pos":"n.","jp":"インセンティブの方向一致","example":"Royalties tied to sales create incentive alignment.","tag":""},{"term":"royalty","pos":"n.","jp":"ロイヤルティ（使用料）","example":"The royalty is a percentage of franchise sales.","tag":"[C]"},{"term":"brand equity","pos":"n.","jp":"ブランド資産価値","example":"Strong support is an investment in brand equity.","tag":"不可算"},{"term":"scale","pos":"v.","jp":"規模を拡大する","example":"Before we scale, let's align on the support model.","tag":""},{"term":"rollout","pos":"n.","jp":"横展開","example":"Plan the rollout market by market.","tag":"名詞 rollout / 動詞 roll out"},{"term":"compliance","pos":"n.","jp":"順守","example":"Brand compliance keeps quality steady across the network.","tag":"不可算"}]},{"id":"consolidation","title":"⑨ 横断復習 (Consolidation) — Day 20","note":"既習語の再会。standardization=床, local edge=上乗せ。model first。","items":[{"term":"unit economics","pos":"n.","jp":"1店舗/1商品あたりの採算","example":"Model the unit economics before you open.","tag":"復習"},{"term":"standardization","pos":"n.","jp":"標準化","example":"Standardization is the floor; local edge is the upgrade.","tag":"不可算・復習"},{"term":"local edge","pos":"n.","jp":"現地裁量の差分","example":"Standardization is the floor; local edge is the upgrade.","tag":"復習"},{"term":"consistency","pos":"n.","jp":"一貫性","example":"Consistency is the heart of good service.","tag":"不可算・復習"},{"term":"model first","pos":"v.","jp":"先に試算してから惚れ込む","example":"Before we fall in love with a site or a dish, we should model it first.","tag":"復習"},{"term":"set a ceiling on","pos":"v.","jp":"〜に上限を設ける","example":"Set a ceiling on rent as a share of sales.","tag":"復習"}]},{"id":"digital-delivery","title":"⑩ デジタル＆デリバリー (Digital & Delivery) — Day 21","note":"aggregator は destination ではなく discovery channel。自社アプリで margin。","items":[{"term":"aggregator","pos":"n.","jp":"デリバリー集約業者","example":"Aggregators bring volume but charge a high commission.","tag":""},{"term":"commission","pos":"n.","jp":"手数料（25–30%）","example":"The 30% commission eats into our margin.","tag":""},{"term":"first-party app","pos":"n.","jp":"自社アプリ","example":"Our first-party app has no commission.","tag":""},{"term":"order flow","pos":"n.","jp":"注文導線","example":"A slow order flow causes drop-off.","tag":""},{"term":"conversion (rate)","pos":"n.","jp":"注文完了（率）","example":"A faster checkout lifts conversion.","tag":""},{"term":"drop-off","pos":"n.","jp":"離脱","example":"Most drop-off happens at the payment step.","tag":""},{"term":"margin","pos":"n.","jp":"利益率","example":"We protect margin by reducing commission.","tag":"復習"},{"term":"discovery channel","pos":"n.","jp":"認知の入口","example":"We treat the aggregator as a discovery channel.","tag":""},{"term":"reach","pos":"n.","jp":"到達","example":"Aggregators buy us reach; our app buys us margin.","tag":""},{"term":"average order value (AOV)","pos":"n.","jp":"平均注文単価","example":"Bundles raise AOV on the app.","tag":"単数扱い・復習"},{"term":"push notification","pos":"n.","jp":"プッシュ通知","example":"A lunch push notification drives repeat orders.","tag":""},{"term":"checkout","pos":"n.","jp":"決済画面","example":"A one-tap checkout reduces drop-off.","tag":""},{"term":"menu visibility","pos":"n.","jp":"メニュー露出","example":"Better menu visibility raises orders.","tag":""}]},{"id":"people-training","title":"⑪ 人材・研修 (People & Training) — Day 10 / Day 22","note":"早期離職(turnover)を防ぐ構造化 onboarding は最も安い保険。retention を守る。","items":[{"term":"onboarding","pos":"n.","jp":"新人受け入れ・立ち上げ研修","example":"A structured onboarding program shortens the time to full productivity.","tag":""},{"term":"turnover","pos":"n.","jp":"離職率／人の入れ替わり","example":"Our first-90-day turnover is higher than the regional average.","tag":"売上のturnoverと別義"},{"term":"retention","pos":"n.","jp":"定着（人が辞めずに残ること）","example":"Better training improves staff retention.","tag":""},{"term":"a structured process","pos":"n.","jp":"体系立ったプロセス","example":"We need a structured process, not ad-hoc coaching.","tag":""},{"term":"a named mentor","pos":"n.","jp":"担当が明確なメンター","example":"Each new hire is paired with a named mentor.","tag":""},{"term":"standards","pos":"n.","jp":"基準","example":"Clear standards keep service consistent across stores.","tag":"複数が普通"},{"term":"ramp-up time","pos":"n.","jp":"戦力化までの時間","example":"A good first week cuts ramp-up time in half.","tag":""},{"term":"pilot","pos":"n.","jp":"試験運用","example":"I'd like to run a pilot at the Camden flagship store.","tag":""},{"term":"roll out","pos":"v.","jp":"横展開する","example":"If the pilot works, we can roll it out to other stores.","tag":"動詞 roll out / 名詞 rollout"},{"term":"frontline staff","pos":"n.","jp":"現場スタッフ","example":"Frontline staff shape the guest experience every day.","tag":""},{"term":"guest experience","pos":"n.","jp":"顧客体験","example":"Untrained staff put the guest experience at risk.","tag":""},{"term":"recruiting cost","pos":"n.","jp":"採用コスト","example":"High turnover quietly raises our recruiting cost.","tag":""},{"term":"insurance","pos":"n.","jp":"保険（比喩）","example":"Onboarding is the cheapest insurance a multi-site operator can buy.","tag":""}]}]};
+
+const VOCAB_TOTAL = VOCAB_DATA.groups.reduce((n,g)=>n+g.items.length,0);
+const VOCAB_KEY = "phraseMaster_vocab_v1";
+function vocabKnown(){ try{ return JSON.parse(localStorage.getItem(VOCAB_KEY)||"{}"); }catch(e){ return {}; } }
+function vocabSaveKnown(o){ try{ localStorage.setItem(VOCAB_KEY, JSON.stringify(o)); }catch(e){} }
+function vocabSpeak(gi,ii,which){
+  var g=VOCAB_DATA.groups[gi]; if(!g) return; var it=g.items[ii]; if(!it) return;
+  speak(which==='ex' ? (it.example||it.term) : it.term);
+}
+function vocabToggleKnown(id){
+  var k=vocabKnown();
+  if(k[id]) delete k[id]; else k[id]=1;
+  vocabSaveKnown(k);
+  renderVocab();
+}
+function _vTagEmoji(t){
+  if(!t) return "";
+  if(t.indexOf("不可算")>=0) return "🚫s";
+  if(t.indexOf("単複")>=0||t.indexOf("単数")>=0||t.indexOf("複数")>=0) return "①②";
+  if(t.indexOf("冠詞")>=0) return "a/the";
+  if(t.indexOf("前置詞")>=0||t.indexOf("→")>=0) return "→";
+  if(t.indexOf("復習")>=0||t.indexOf("既習")>=0||t.indexOf("↻")>=0) return "↻";
+  return "•";
+}
+function _vEsc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+var _vocabQuery="";
+function renderVocab(){
+  var root=document.getElementById("vocabView");
+  if(!root) return;
+  var known=vocabKnown();
+  var q=_vocabQuery.toLowerCase().trim();
+  var groupsHtml=VOCAB_DATA.groups.map(function(g,gi){
+    var items=g.items.map(function(it,ii){return {it:it,ii:ii};}).filter(function(o){
+      if(!q) return true;
+      return (o.it.term||"").toLowerCase().indexOf(q)>=0 || (o.it.jp||"").toLowerCase().indexOf(q)>=0;
+    });
+    if(!items.length) return "";
+    var rows=items.map(function(o){
+      var it=o.it, ii=o.ii, id=gi+"_"+ii, isK=!!known[id];
+      var em=_vTagEmoji(it.tag);
+      var chip=it.tag?'<span class="vchip">'+(em?em+" ":"")+_vEsc(it.tag)+'</span>':"";
+      var ex=it.example?'<div class="vex">'+_vEsc(it.example)+'</div>':"";
+      var exBtn=it.example?'<button class="vbtn spk" onclick="vocabSpeak('+gi+','+ii+',\'ex\')">▶ 例文</button>':"";
+      var pos=it.pos?'<span class="vpos">'+_vEsc(it.pos)+'</span>':"";
+      return '<div class="vitem '+(isK?'known':'')+'" id="vi_'+id+'">'
+        +'<div class="vterm">'+_vEsc(it.term)+' '+pos+' '+chip+'</div>'
+        +'<div class="vjp">'+_vEsc(it.jp)+'</div>'
+        +ex
+        +'<div class="vbtns">'
+          +'<button class="vbtn spk" onclick="vocabSpeak('+gi+','+ii+',\'term\')">▶ 単語</button>'
+          +exBtn
+          +'<button class="vknow" onclick="vocabToggleKnown(\''+id+'\')">'+(isK?'✓ 覚えた':'覚えた')+'</button>'
+        +'</div>'
+      +'</div>';
+    }).join("");
+    var open = (q || gi===0) ? "open" : "";
+    return '<details class="vgroup" '+open+'>'
+      +'<summary><span>'+_vEsc(g.title)+'</span><span class="vcount">'+g.items.length+'語</span></summary>'
+      +(g.note?'<div class="gnote">'+_vEsc(g.note)+'</div>':'')
+      +'<div class="vitems">'+rows+'</div>'
+    +'</details>';
+  }).join("");
+  var knownCount=Object.keys(known).length;
+  root.innerHTML =
+    '<input type="text" class="vsearch" id="vocabSearch" placeholder="🔍 単語集を検索（英語・日本語）" value="'+_vEsc(_vocabQuery)+'">'
+    +'<div class="gnote" style="padding:2px 2px 0">'+VOCAB_TOTAL+'語中 '+knownCount+'語を「覚えた」 · '+VOCAB_DATA.groups.length+'ジャンル</div>'
+    +(groupsHtml || '<div class="gnote">該当なし</div>');
+  var si=document.getElementById("vocabSearch");
+  if(si){ si.oninput=function(e){ _vocabQuery=e.target.value; var pos=e.target.selectionStart; renderVocab(); var ni=document.getElementById("vocabSearch"); if(ni){ ni.focus(); try{ni.setSelectionRange(pos,pos);}catch(_){} } }; }
+}
+
 const STORAGE_KEY = "phraseMaster_v3";
 const OLD_KEYS = ["phraseMaster_v2","phraseMaster_v1"];
 let state = loadState();
@@ -1575,12 +1715,12 @@ function speak(text, rate=1.0){
 function renderTabs(){
   const tabsEl = document.getElementById("tabs");
   tabsEl.innerHTML = CATS.map(c=>{
-    const count = c.id==="all" ? PHRASES.length : PHRASES.filter(p=>p.cat===c.id).length;
+    const count = c.id==="all" ? PHRASES.length : c.id==="vocab" ? VOCAB_TOTAL : PHRASES.filter(p=>p.cat===c.id).length;
     const active = state.activeCat===c.id ? "active":"";
     return `<div class="tab ${active}" onclick="setCat('${c.id}')">${c.label}<span class="count">${count}</span></div>`;
   }).join("");
 }
-function setCat(c){ state.activeCat=c; saveState(); renderTabs(); renderPhrases(); }
+function setCat(c){ state.activeCat=c; saveState(); document.body.classList.toggle("vocab-mode", c==="vocab"); renderTabs(); renderPhrases(); if(c==="vocab") renderVocab(); }
 
 function renderVis(visArr){
   if(!visArr || !visArr.length) return "";
@@ -2345,6 +2485,7 @@ seedLessonPhrases();
 
 renderTabs();
 renderPhrases();
+if(state.activeCat==="vocab"){ document.body.classList.add("vocab-mode"); renderVocab(); }
 renderProgress();
 renderLog();
 applyDisplayModes();
